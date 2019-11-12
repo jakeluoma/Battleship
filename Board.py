@@ -2,7 +2,8 @@ from Tile import *
 from Coordinate import *
 
 # Provides a board abstraction to a User.  The user may only interact with
-# the Board's tiles, protected by the Board.
+# the Board's tiles, protected by the Board.  The 0,0 location is in the
+# upper left corner.
 class Board:
     boardDimension = 0
     boardTiles = []
@@ -47,6 +48,60 @@ class Board:
             return False
 
     """ Ship Placement Helper Functions for Client"""
+    # returns a run of tiles of length n, given a starting row, column, and direction.  If no
+    # run meets that criteria or if an invalid direction is given, returns an empty list.
+    # Note that runs are always ordered left to right or up to down.
+    def getRunOfTilesLengthN(self, n, row, col, direction):
+        run = []
+        if direction == "right":
+            possibleRun = []
+            for i in range(n):
+                colIndex = col + i
+                tile = self.getTile(row, colIndex)
+                if tile is None:
+                    break
+                possibleRun.append(tile)
+            run = possibleRun
+        elif direction == "left":
+            possibleRun = []
+            for i in range(n):
+                colIndex = col - i
+                tile = self.getTile(row, colIndex)
+                if tile is None:
+                    break
+                possibleRun.insert(0, tile)
+            run = possibleRun
+        elif direction == "down":
+            possibleRun = []
+            for i in range(n):
+                rowIndex = row + i
+                tile = self.getTile(rowIndex, col)
+                if tile is None:
+                    break
+                possibleRun.append(tile)
+            run = possibleRun
+        elif direction == "up":
+            possibleRun = []
+            for i in range(n):
+                rowIndex = row - i
+                tile = self.getTile(rowIndex, col)
+                if tile is None:
+                    break
+                possibleRun.insert(0, tile)
+            run = possibleRun
+        
+        return run
+
+    # checks if there is no ship on any of the tiles in the given run.  If no ship,
+    # returns true.  Else returns false.
+    def noShipInRun(self, run):
+        noShip = True
+        for tile in run:
+            if tile.getShip() is not None:
+                noShip = False
+                break
+        return noShip
+
     # returns two lists of lists (aka runs) of tiles of length n.  The first returned
     # list contains the horizontal runs, the second contains the vertical runs.  None 
     # of the tiles in a given run contain a ship.
@@ -57,33 +112,19 @@ class Board:
         # check for horizontal runs
         for row in range(self.boardDimension):
             for col in range(self.boardDimension):
-                possibleRun = []
-                for i in range(n):
-                    colIndex = i + col
-                    tile = boardTiles.getTile(row, colIndex)
-                    if tile is None:
-                        break
-                    if tile.getShip() is not None:
-                        break
-                    else:
-                        possibleRun.append(tile)
-                if len(possibleRun) == n:
+                possibleRun = self.getRunOfTilesLengthN(n, row, col, "right")
+                if not possibleRun:
+                    break
+                if self.noShipInRun(possibleRun):
                     horizontal.append(possibleRun)
 
         # check for vertical runs
         for col in range(self.boardDimension):
             for row in range(self.boardDimension):
-                possibleRun = []
-                for i in range(n):
-                    rowIndex = i + row
-                    tile = boardTiles.getTile(rowIndex, col)
-                    if tile is None:
-                        break
-                    if tile.getShip() is not None:
-                        break
-                    else:
-                        possibleRun.append(tile)
-                if len(possibleRun) == n:
+                possibleRun = self.getRunOfTilesLengthN(n, row, col, "down")
+                if not possibleRun:
+                    break
+                if self.noShipInRun(possibleRun):
                     vertical.append(possibleRun)
 
         return horizontal, vertical
@@ -115,25 +156,53 @@ class Board:
         tilesWithShips = []
         for row in range(self.boardDimension):
             for col in range(self.boardDimension):
-                tile = boardTiles.getTile(row, col)
+                tile = self.getTile(row, col)
                 if tile is None:
                     continue
                 if tile.getShip() is not None:
                     tilesWithShips.append(tile)
         
+        # starting tiles are tiles without ships adjacent to the tiles that have ships
         startingTiles = []
         for tile in tilesWithShips:
             adjacentTiles = self.getAdjacentTiles(tile)
             for adjacentTile in adjacentTiles:
                 if adjacentTile.getShip() is None:
                     startingTiles.append(adjacentTile)
-        list(set(startingTiles)) # get rid of duplicates
+        list(set(startingTiles)) # get rid of duplicate tiles
 
-        # TODO
         # from each starting tile, try to get a run of length N in each direction
-        # may be worth making a helper method to get a run of length n given a starting tile
-        # and a direction.  Then refactor getRunsofTilesWithNoShipOfLengthN.  Put the
-        # checking for no ship, or no shot in the wrapper methods...
+        horizontal = []
+        vertical = []
+        for tile in startingTiles:
+            row, col = tile.getCoordinate().getRowAndColumn()
+
+            possibleRun = self.getRunOfTilesLengthN(n, row, col, "up")
+            if possibleRun:
+                if self.noShipInRun(possibleRun):
+                    vertical.append(possibleRun)
+            
+            possibleRun = self.getRunOfTilesLengthN(n, row, col, "down")
+            if possibleRun:
+                if self.noShipInRun(possibleRun):
+                    vertical.append(possibleRun)
+
+            possibleRun = self.getRunOfTilesLengthN(n, row, col, "right")
+            if possibleRun:
+                if self.noShipInRun(possibleRun):
+                    horizontal.append(possibleRun)
+
+            possibleRun = self.getRunOfTilesLengthN(n, row, col, "left")
+            if possibleRun:
+                if self.noShipInRun(possibleRun):
+                    horizontal.append(possibleRun)
+
+        # only want unique runs
+        # https://stackoverflow.com/questions/3724551/python-uniqueness-for-list-of-lists
+        horizontal = [list(x) for x in set(tuple(x) for x in horizontal)]
+        vertical = [list(x) for x in set(tuple(x) for x in vertical)]
+
+        return horizontal, vertical
 
 
     """Attack Processing Functions"""
@@ -144,7 +213,7 @@ class Board:
         misses = []
         for coordinate in coordinates:
             row, col = coordinate.getRowAndColumn()
-            tile = boardTiles.getTile(row, col)
+            tile = self.getTile(row, col)
             if tile is None:
                 continue
             if tile.getShip() is not None:
@@ -160,18 +229,25 @@ class Board:
     def updateHitsAndMisses(self, hits, misses):
         for hit in hits:
             row, col = hit.getRowAndColumn()
-            tile = boardTiles.getTile(row, col)
+            tile = self.getTile(row, col)
             if tile is None:
                 continue
             tile.setHitStatus(TileHitStatus.HIT)
         for miss in misses:
             row, col = hit.getRowAndColumn()
-            tile = boardTiles.getTile(row, col)
+            tile = self.getTile(row, col)
             if tile is None:
                 continue
             tile.setHitStatus(TileHitStatus.MISS)
 
     """ Attack Selection Helper Functions for Client"""
+    def getRunsOfTilesWithNoAttackLengthN(self, n):
+        return
 
+    def getTilesWithNoAttackAdjacentToHits(self):
+        return
+
+    def getTilesWithNoAttackAtEndOfHitRuns(self):
+        return
 
     
