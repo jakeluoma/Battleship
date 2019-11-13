@@ -241,13 +241,147 @@ class Board:
             tile.setHitStatus(TileHitStatus.MISS)
 
     """ Attack Selection Helper Functions for Client"""
+    # checks if there is no ship on any of the tiles in the given run.  If no ship,
+    # returns true.  Else returns false.
+    def noAttackInRun(self, run):
+        noAttack = True
+        for tile in run:
+            if tile.getHitStatus() != TileHitStatus.EMPTY:
+                noAttack = False
+                break
+        return noAttack
+
+    # returns two lists of lists (aka runs) of tiles of length n.  The first returned
+    # list contains the horizontal runs, the second contains the vertical runs.  None 
+    # of the tiles in a given run contain a ship.
     def getRunsOfTilesWithNoAttackLengthN(self, n):
-        return
+        horizontal = []
+        vertical = []
 
+        # check for horizontal runs
+        for row in range(self.boardDimension):
+            for col in range(self.boardDimension):
+                possibleRun = self.getRunOfTilesLengthN(n, row, col, "right")
+                if not possibleRun:
+                    break
+                if self.noAttackInRun(possibleRun):
+                    horizontal.append(possibleRun)
+
+        # check for vertical runs
+        for col in range(self.boardDimension):
+            for row in range(self.boardDimension):
+                possibleRun = self.getRunOfTilesLengthN(n, row, col, "down")
+                if not possibleRun:
+                    break
+                if self.noAttackInRun(possibleRun):
+                    vertical.append(possibleRun)
+
+        return horizontal, vertical
+
+    # returns a list of Tiles with TileHitStatus.EMPTY adjacent to Tiles with TileHitStatus.HIT
     def getTilesWithNoAttackAdjacentToHits(self):
-        return
+        # find tiles that have been hit
+        tilesWithHits = []
+        for row in range(self.boardDimension):
+            for col in range(self.boardDimension):
+                tile = self.getTile(row, col)
+                if tile is None:
+                    continue
+                if tile.getHitStatus() == TileHitStatus.HIT:
+                    tilesWithHits.append(tile)
+        
+        # get the tiles with TileHitStatus.EMPTY adjacent to the tiles that have been hit
+        tiles = []
+        for tile in tilesWithHits:
+            adjacentTiles = self.getAdjacentTiles(tile)
+            for adjacentTile in adjacentTiles:
+                if adjacentTile.getHitStatus() == TileHitStatus.EMPTY:
+                    tiles.append(adjacentTile)
+        list(set(tiles)) # get rid of duplicate tiles
 
+        return tiles
+
+    # Returns a list of horizontal hit runs and a list of vertical hit runs.
+    # Runs are of length 2 or more.  Horizontal runs are ordered left to right
+    # and vertical runs are ordered top to bottom.
+    def getHitRuns(self):
+        horizontalHitRuns = []
+        verticalHitRuns = []
+
+        # find horizontal hit runs
+        for row in range(self.boardDimension):
+            potentialRun = []
+            for col in range(self.boardDimension):
+                tile = self.getTile(row, col)
+                if tile is None:
+                    if potentialRun:
+                        horizontalHitRuns.append(potentialRun)
+                        potentialRun = []
+                    continue
+                if tile.getHitStatus() == TileHitStatus.HIT:
+                    potentialRun.append(tile)
+                if tile.getHitStatus() != TileHitStatus.HIT and potentialRun:
+                    horizontalHitRuns.append(potentialRun)
+                    potentialRun = []
+
+        # find vertical hit runs
+        for col in range(self.boardDimension):
+            potentialRun = []
+            for row in range(self.boardDimension):
+                tile = self.getTile(row, col)
+                if tile is None:
+                    if potentialRun:
+                        verticalHitRuns.append(potentialRun)
+                        potentialRun = []
+                    continue
+                if tile.getHitStatus() == TileHitStatus.HIT:
+                    potentialRun.append(tile)
+                if tile.getHitStatus() != TileHitStatus.HIT and potentialRun:
+                    verticalHitRuns.append(potentialRun)
+                    potentialRun = []
+
+        # get rid of any runs < length 2
+        if horizontalHitRuns:
+            for run in horizontalHitRuns:
+                if len(run) < 2:
+                    horizontalHitRuns.remove(run)
+        if verticalHitRuns:
+            for run in verticalHitRuns:
+                if len(run) < 2:
+                    verticalHitRuns.remove(run)
+
+        return horizontalHitRuns, verticalHitRuns
+
+    # returns a list of the tiles with TileHitStatus.EMPTY that are at 
+    # the ends of hit runs
     def getTilesWithNoAttackAtEndOfHitRuns(self):
-        return
+        endTiles = []
+        horizontalHitRuns, verticalHitRuns = self.getHitRuns()
 
-    
+        for run in horizontalHitRuns:
+            first = run[0]
+            row, col = first.getCoordinate().getRowAndColumn()
+            tile = self.getTile(row, col - 1)
+            if tile:
+                endTiles.append(tile)
+
+            last = run[-1]
+            row, col = first.getCoordinate().getRowAndColumn()
+            tile = self.getTile(row, col + 1)
+            if tile:
+                endTiles.append(tile)
+
+        for run in verticalHitRuns:
+            first = run[0]
+            row, col = first.getCoordinate().getRowAndColumn()
+            tile = self.getTile(row - 1, col)
+            if tile:
+                endTiles.append(tile)
+
+            last = run[-1]
+            row, col = first.getCoordinate().getRowAndColumn()
+            tile = self.getTile(row + 1, col)
+            if tile:
+                endTiles.append(tile)
+
+        return endTiles
