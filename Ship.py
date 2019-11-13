@@ -19,4 +19,14 @@ class Ship:
                 break
         return sunk
 
-    
+
+class ShipType(Enum):
+    patrol_board = 0
+    submarine = 1
+    destroyer = 2
+    battelship = 3
+    carrier = 4
+
+
+class ShipFactory:
+    pass
