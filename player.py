@@ -29,8 +29,11 @@ class PlayerLogic(ABC):
         pass
 
 
+class CommandLineInstruction(PlayerLogic):
+    pass
+
 class Player:
-    def __init__(self, user_name, player_logic: PlayerLogic):
+    def __init__(self, user_name, player_logic: PlayerLogic = CommandLineInstruction):
         self.user_name = user_name
         self.player_logic = player_logic
         self.player_fleet = []
