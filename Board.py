@@ -1,5 +1,5 @@
 from Tile import *
-from Coordinate import *
+from Coordinate import Coordinates
 
 
 class Direction(Enum):
@@ -19,9 +19,9 @@ class Board:
     def __init__(self, boardDimension):
         self.boardDimension = boardDimension
         for row in range(boardDimension):
-            boardTiles.append([])
+            self.boardTiles.append([])
             for col in range(boardDimension):
-                boardTiles[row].append(Tile(Coordinate(row, col)))
+                self.boardTiles[row].append(Tile(Coordinates(row, col)))
 
     def getTile(self, row, column):
         if row >= self.boardDimension or column >= self.boardDimension:

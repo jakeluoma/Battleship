@@ -11,6 +11,9 @@ class UserProfile:
     def __init__(self, user_name):
         self.user_name = user_name
 
+    def get_user_name(self):
+        return self.user_name
+
 
 class PlayerLogic(ABC):
     ship_factory = None
