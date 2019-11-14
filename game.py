@@ -22,17 +22,3 @@ class Game:
         pass
 
 
-class IntelligentSource(ABC):
-    ship_factory = None
-
-    def __init__(self, ship_factory: ShipFactory):
-        self.ship_factory = ship_factory
-
-    def select_ships(self) -> List[Ship]:
-        return []
-
-    def place_ship(self, board: Board, ship_type: ShipType) -> Ship:
-        pass
-
-    def select_attack(self, target_board: Board) -> Coordinates:
-        pass

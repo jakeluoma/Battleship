@@ -1,6 +1,14 @@
 from Tile import *
 from Coordinate import *
 
+
+class Direction(Enum):
+    up = 0
+    down = 1
+    left = 2
+    right = 3
+
+
 # Provides a board abstraction to a User.  The user may only interact with
 # the Board's tiles, protected by the Board.  The 0,0 location is in the
 # upper left corner.
@@ -51,9 +59,9 @@ class Board:
     # returns a run of tiles of length n, given a starting row, column, and direction.  If no
     # run meets that criteria or if an invalid direction is given, returns an empty list.
     # Note that runs are always ordered left to right or up to down.
-    def getRunOfTilesLengthN(self, n, row, col, direction):
+    def getRunOfTilesLengthN(self, n, row, col, direction: Direction):
         run = []
-        if direction == "right":
+        if direction == direction.right:
             possibleRun = []
             for i in range(n):
                 colIndex = col + i
@@ -62,7 +70,7 @@ class Board:
                     break
                 possibleRun.append(tile)
             run = possibleRun
-        elif direction == "left":
+        elif direction == direction.left:
             possibleRun = []
             for i in range(n):
                 colIndex = col - i
@@ -71,7 +79,7 @@ class Board:
                     break
                 possibleRun.insert(0, tile)
             run = possibleRun
-        elif direction == "down":
+        elif direction == direction.down:
             possibleRun = []
             for i in range(n):
                 rowIndex = row + i
@@ -80,7 +88,7 @@ class Board:
                     break
                 possibleRun.append(tile)
             run = possibleRun
-        elif direction == "up":
+        elif direction == direction.up:
             possibleRun = []
             for i in range(n):
                 rowIndex = row - i
@@ -112,7 +120,7 @@ class Board:
         # check for horizontal runs
         for row in range(self.boardDimension):
             for col in range(self.boardDimension):
-                possibleRun = self.getRunOfTilesLengthN(n, row, col, "right")
+                possibleRun = self.getRunOfTilesLengthN(n, row, col, Direction.right)
                 if not possibleRun:
                     break
                 if self.noShipInRun(possibleRun):
@@ -121,7 +129,7 @@ class Board:
         # check for vertical runs
         for col in range(self.boardDimension):
             for row in range(self.boardDimension):
-                possibleRun = self.getRunOfTilesLengthN(n, row, col, "down")
+                possibleRun = self.getRunOfTilesLengthN(n, row, col, Direction.down)
                 if not possibleRun:
                     break
                 if self.noShipInRun(possibleRun):
@@ -177,22 +185,22 @@ class Board:
         for tile in startingTiles:
             row, col = tile.getCoordinate().getRowAndColumn()
 
-            possibleRun = self.getRunOfTilesLengthN(n, row, col, "up")
+            possibleRun = self.getRunOfTilesLengthN(n, row, col, Direction.up)
             if possibleRun:
                 if self.noShipInRun(possibleRun):
                     vertical.append(possibleRun)
             
-            possibleRun = self.getRunOfTilesLengthN(n, row, col, "down")
+            possibleRun = self.getRunOfTilesLengthN(n, row, col, Direction.down)
             if possibleRun:
                 if self.noShipInRun(possibleRun):
                     vertical.append(possibleRun)
 
-            possibleRun = self.getRunOfTilesLengthN(n, row, col, "right")
+            possibleRun = self.getRunOfTilesLengthN(n, row, col, Direction.right)
             if possibleRun:
                 if self.noShipInRun(possibleRun):
                     horizontal.append(possibleRun)
 
-            possibleRun = self.getRunOfTilesLengthN(n, row, col, "left")
+            possibleRun = self.getRunOfTilesLengthN(n, row, col, Direction.left)
             if possibleRun:
                 if self.noShipInRun(possibleRun):
                     horizontal.append(possibleRun)
@@ -261,7 +269,7 @@ class Board:
         # check for horizontal runs
         for row in range(self.boardDimension):
             for col in range(self.boardDimension):
-                possibleRun = self.getRunOfTilesLengthN(n, row, col, "right")
+                possibleRun = self.getRunOfTilesLengthN(n, row, col, Direction.right)
                 if not possibleRun:
                     break
                 if self.noAttackInRun(possibleRun):
@@ -270,7 +278,7 @@ class Board:
         # check for vertical runs
         for col in range(self.boardDimension):
             for row in range(self.boardDimension):
-                possibleRun = self.getRunOfTilesLengthN(n, row, col, "down")
+                possibleRun = self.getRunOfTilesLengthN(n, row, col, Direction.down)
                 if not possibleRun:
                     break
                 if self.noAttackInRun(possibleRun):
