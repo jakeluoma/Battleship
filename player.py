@@ -1,9 +1,8 @@
-from abc import ABC
 from typing import List
 
-from Board import Board, Direction
-from Coordinate import Coordinates
-from Ship import ShipFactory, Ship, ShipType
+from Board import Board
+from Coordinate import Coordinate
+from Ship import ShipBuilder, Ship, ShipType
 from Tile import Tile
 
 
@@ -13,24 +12,6 @@ class UserProfile:
 
     def get_user_name(self):
         return self.user_name
-
-
-class PlayerLogic(ABC):
-    ship_factory = None
-
-    def __init__(self, ship_factory: ShipFactory):
-        self.ship_factory = ship_factory
-        self.fleet = []
-
-    def place_ship(self, board: Board, ship_type: ShipType) -> Ship:
-        pass
-
-    def select_attack(self, target_board: Board) -> Coordinates:
-        pass
-
-
-class CommandLineInstruction(PlayerLogic):
-    pass
 
 class Player:
     def __init__(self, user_name, player_logic: PlayerLogic = CommandLineInstruction):
@@ -59,6 +40,6 @@ class Player:
         victory = False
         return victory
 
-    def recieve_attack(self, coordinates: Coordinates):
-        self.player_board.processIncomingAttack(coordinates)
+    def recieve_attack(self, coordinate: Coordinate):
+        self.player_board.processIncomingAttack(coordinate)
         self.player_board.updateHitsAndMisses()

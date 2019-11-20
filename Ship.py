@@ -1,15 +1,20 @@
 from abc import ABC
 from Tile import *
 
+from typing import List
+
 # for now, no special attacks.  Let's just get the program working first.
 class Ship:
-    def __init__(self, name, size, tiles):
-        if size != len(tiles):
-            print("Size of ship " + name + " is " + size + " but it was assigned " + len(tiles) + " tiles")
-
+    def __init__(self, name, size):
         self.name = name
         self.size = size
+        self.tiles = List[Tile]
+
+    def setTiles(self, tiles: List[Tile]):
         self.tiles = tiles
+
+    def getSize(self) -> int:
+        return self.size
 
     def isSunk(self):
         sunk = True
@@ -19,50 +24,47 @@ class Ship:
                 break
         return sunk
 
-
-# class Carrier(Ship):
-#     def __init__(self, tiles):
-#         Ship.__init__(self, 'carrier', 5, tiles)
-#
-# class BattleShip(Ship):
-#     def __init__(self, tiles):
-#         Ship.__init__(self, 'battleship', 4, tiles)
-#
-# class Destroyer(Ship):
-#     def __init__(self, tiles):
-#         Ship.__init__(self, 'destroyer', 3, tiles)
-#
-# class Submarine(Ship):
-#     def __init__(self, tiles):
-#         Ship.__init__(self, 'submarine', 3, tiles)
-#
-# class PatrolBoat(Ship):
-#     def __init__(self, tiles):
-#         Ship.__init__(self, 'patrolboat', 2, tiles)
-
 class ShipType(Enum):
-    patrol_board = 0
+    patrol_boat = 0
     submarine = 1
     destroyer = 2
-    battelship = 3
+    battleship = 3
     carrier = 4
 
+# Usage: call startShip, then placeShip, then returnCompletedShip to get a Ship object.
+# Can call getShipSize at any time
+class ShipBuilder:
+    def __init__(self):
+        self.ship = None
+        self.finished = False
 
-class ShipFactory:
+    def startShip(self, ship_type: ShipType):
+        self.finished = False
 
-    def __init__(self, ship_type_num):
-        self.ship_type = ShipType(ship_type_num)
-        self.ship_name = self.ship_type.name
+        if ship_type == ShipType.patrol_boat:
+            self.ship = Ship(ship_type.name, 2)
+        if ship_type == ShipType.submarine:
+            self.ship = Ship(ship_type.name, 3)
+        if ship_type == ShipType.destroyer:
+            self.ship = Ship(ship_type.name, 3)
+        if ship_type == ShipType.battleship:
+            self.ship = Ship(ship_type.name, 4)
+        if ship_type == ShipType.carrier:
+            self.ship = Ship(ship_type.name, 5)
 
-    def makeShip(self, tiles):
-        if self.ship_name == 'carrier':
-            return Ship(self.ship_name, 5, tiles)
-        elif self.ship_name == 'battleship':
-            return Ship(self.ship_name, 4, tiles)
-        elif self.ship_name == 'destroyer':
-            return Ship(self.ship_name, 3, tiles)
-        elif self.ship_name == 'submarine':
-            return Ship(self.ship_name, 3, tiles)
+    def placeShip(self, tiles: List[Tile]):
+        if self.ship is not None:
+            self.finished = True
+            self.ship.setTiles(tiles)
+            for tile in tiles:
+                tile.setShip(ship)
+
+    def returnCompletedShip(self) -> Ship:
+        if self.finished == True:
+            return self.ship
+
+    def getShipSize(self) -> int:
+        if self.ship is not None:
+            return self.ship.getSize()
         else:
-            return Ship(self.ship_name, 2, tiles)
-
+            return 0

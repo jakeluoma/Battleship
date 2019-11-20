@@ -1,4 +1,6 @@
 from enum import Enum
+from Ship import Ship
+from Coordinate import Coordinate
 
 class TileHitStatus(Enum):
     EMPTY = 1
@@ -6,22 +8,22 @@ class TileHitStatus(Enum):
     MISS = 3
 
 class Tile:
-    def __init__(self, coordinate):
+    def __init__(self, coordinate: Coordinate):
         self.coordinate = coordinate
         self.ship = None
         self.hitStatus = TileHitStatus.EMPTY
 
-    def getCoordinate(self):
+    def getCoordinate(self) -> Coordinate:
         return self.coordinate
 
-    def getShip(self):
+    def getShip(self) -> Ship:
         return self.ship
 
-    def getHitStatus(self):
+    def getHitStatus(self) -> TileHitStatus:
         return self.hitStatus
 
-    def setShip(self, ship):
+    def setShip(self, ship: Ship):
         self.ship = ship
 
-    def setHitStatus(self, hitStatus):
+    def setHitStatus(self, hitStatus: TileHitStatus):
         self.hitStatus = hitStatus
