@@ -27,7 +27,33 @@ class PlayerLogic(ABC):
 
 """ Player Control """
 class CommandLineInstruction(PlayerLogic):
-    pass
+    def place_ship(self, board: Board, ship_type: ShipType) -> Ship:
+        """
+        I'm proposing that getting user input be handled by the view.
+        Some Likely Pseudocode:
+
+        self.ship_builder.startShip(ship_type)
+
+        make a ship-placing canvas that says which ship is being placed and prompts for a coordinate
+        self.view.paint(canvas)
+        coordinate = self.view.getCoordinate()
+        make a ship-placing canvas that says which ship is being placed and prompts for a directioon
+        self.view.paint(canvas)
+        direction = self.view.getDirection()
+
+        calculate the list of desired coordinates and convert into a list of tiles using board.getTile()
+        board.validShipPlacement(tiles)
+        if valid, self.ship_builder.placeShip(tiles) and return self.ship_builder.returnCompeltedShip()
+        else loop back to prompting for coordinate and direction.
+        """
+        pass
+
+    def select_attack(self, target_board: Board) -> Coordinate:
+        """
+        similar to place_ship()... just make the right canvas, give to view, call self.view.getCoordinate(),
+        check with board via board.getTile(coordinate) that it's a valid coordinate before returning it.
+        """
+        pass
 
 
 """ AI Control """
@@ -50,6 +76,7 @@ class AI(PlayerLogic):
 
         if len(runs) == 0:
             print("Impossible to place ship " + ship_type.name)
+            return None
         index = randrange(0, len(runs)) # pick where to place ship among valid places
         run = runs[index]
         self.ship_builder.placeShip(run)
@@ -58,7 +85,28 @@ class AI(PlayerLogic):
 
     # choose where to attack and return that Coordinate
     def select_attack(self, target_board: Board) -> Coordinate:
-        pass
+        potentialTargetTiles = List[Tile]
+
+        # always attack ends of hit runs if there are any
+        potentialTargetTiles = self.getTilesWithNoAttackAtEndOfHitRuns(target_board)
+        if potentialTargetTiles:
+            index = randrange(0, len(potentialTargetTiles))
+            return potentialTargetTiles[index].getCoordinate()
+
+        # choose whether to attack tiles adjacent to hits, if there are any, or attack randomly
+        if randrange(0, 4) < 3:
+            # attack tiles adjacent to hits if there are any
+            potentialTargetTiles = self.getTilesWithNoAttackAdjacentToHits(target_board)
+            if potentialTargetTiles:
+                index = randrange(0, len(potentialTargetTiles))
+                return potentialTargetTiles[index].getCoordinate()
+
+        # attack randomly
+        n = 2 # hardcoded to length of patrol boat for now
+        potentialTargetTiles = self.getRunsOfTilesWithNoAttackLengthN(target_board, n) 
+        index = randrange(0, len(potentialTargetTiles))
+        return potentialTargetTiles[index][n-1].getCoordinate()
+
 
     """ General Helper Functions """
     # returns a run of tiles of length n, given a starting row, column, and direction.  If no

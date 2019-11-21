@@ -29,6 +29,13 @@ class Board:
             return None
         return self.boardTiles[row][column]
 
+    # returns true if a ship can be placed on the given Tiles, else returns false
+    def validShipPlacement(self, tiles):
+        for tile in tiles:
+            if self.tileContainsShip(tile):
+                return False
+        return True
+
     """Attack Processing Functions"""
     # given a list of coordinates, determines which coordinates were hits
     # and which coordinates were misses.  Returns them as separate lists.

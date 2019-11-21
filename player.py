@@ -18,7 +18,7 @@ class Player:
         self.user_name = user_name
         self.player_logic = player_logic
         self.player_fleet = []
-        #self.enemy_fleet = [] Not sure why this is required?
+        #self.enemy_fleet = [] Not sure why this is required? #JEL: with the way we're implementing ships/tiles, this is no longer required
 
     def set_boards(self, player_board: Board, opponent_board: Board) -> None:
         self.player_board = player_board

@@ -1,0 +1,4 @@
+PlayerLogic.getRunsOfTilesWithNoAttackLengthN() might be improved to check each tile whether the run going right and the run going down both have no attack.
+If both are clear, return both, else return neither.  Accept if one of the runs goes off the board and all tiles in it have not been attacked.
+I think this will work more efficiently without leaving any tiles out.  Could further improve so that runs don't overlap.  Then, as long as you always attack
+a given position in a run, will achieve complete coverage most efficiently.
