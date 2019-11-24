@@ -13,7 +13,7 @@ class Ship:
     def __init__(self, name: str, size: int):
         self.name = name
         self.size = size
-        self.tiles = List[Tile.Tile]
+        self.tiles: List[Tile.Tile] = []
 
     def setTiles(self, tiles: List[Tile.Tile]):
         self.tiles = tiles
@@ -30,11 +30,11 @@ class Ship:
         return sunk
 
 class ShipType(Enum):
-    patrol_boat = 0
-    submarine = 1
-    destroyer = 2
-    battleship = 3
-    carrier = 4
+    PATROL_BOAT = 0
+    SUBMARINE = 1
+    DESTROYER = 2
+    BATTLESHIP = 3
+    CARRIER = 4
 
 # Usage: call startShip(), then placeShip(), then returnCompletedShip() to get a Ship object.
 # Can call getShipSize() at any time
@@ -46,27 +46,31 @@ class ShipBuilder:
     def startShip(self, ship_type: ShipType):
         self.finished = False
 
-        if ship_type == ShipType.patrol_boat:
+        if ship_type == ShipType.PATROL_BOAT:
             self.ship = Ship(ship_type.name, 2)
-        if ship_type == ShipType.submarine:
+        if ship_type == ShipType.SUBMARINE:
             self.ship = Ship(ship_type.name, 3)
-        if ship_type == ShipType.destroyer:
+        if ship_type == ShipType.DESTROYER:
             self.ship = Ship(ship_type.name, 3)
-        if ship_type == ShipType.battleship:
+        if ship_type == ShipType.BATTLESHIP:
             self.ship = Ship(ship_type.name, 4)
-        if ship_type == ShipType.carrier:
+        if ship_type == ShipType.CARRIER:
             self.ship = Ship(ship_type.name, 5)
 
     def placeShip(self, tiles: List[Tile.Tile]):
         if self.ship is not None:
+            if len(tiles) != self.getShipSize():
+                print("Length of tiles given for ship placement doesn't match ship length!")
             self.finished = True
             self.ship.setTiles(tiles)
             for tile in tiles:
-                tile.setShip(ship)
+                tile.setShip(self.ship)
 
     def returnCompletedShip(self) -> Ship:
         if self.finished == True:
             return self.ship
+        else:
+            return None
 
     def getShipSize(self) -> int:
         if self.ship is not None:
