@@ -1,6 +1,12 @@
 from player import UserProfile
 import pandas as pd
 
+# note from Jake: it would be a lot cleaner if UserProfile had a reference to Statistics instead of Statistics to UserProfile.
+# on init of statistics, it would make sense to generate an object that only contains the statistics relevant to that UserProfile.
+# UserProfile would initialize Statistics during its own initialization.  Then it would be easy to update statistics during a Game
+# by simply having UserProfile pass the update call to Statistics each turn.
+# The way it's set up now almost requires Program to have a reference to Statistics and pass that reference down to Game, which passes
+# it down to Player, etc.  Not very clean.
 class Statistics:
     def __init__(self, user: UserProfile):
         self.row_name = user.get_user_name()
@@ -59,18 +65,32 @@ class Statistics:
 
         self.user_stats.to_csv('user_stats.csv')
 
-    def update_stats(self, hit, outgoing, sunk):
+    # updates the statistics for a single shot
+    def update_stats(self, hit: bool, outgoing: bool, sunk: bool):
 
         index = self.get_row_index()
 
-        if hit:
+        if hit and outgoing:
+            self.user_stats.at[index, 'most_recent_game_hits'] += 1
             self.user_stats.at[index, 'lifetime_hits'] += 1
+            if sunk:
+                self.user_stats.at[index, 'most_recent_game_ships_sunk'] += 1
+                self.user_stats.at[index, 'lifetime_ships_sunk'] += 1
 
-        if outgoing and not hit:
+        elif hit and not outgoing:
+            self.user_stats.at[index, 'most_recent_game_hits_received'] += 1
+            self.user_stats.at[index, 'lifetime_hits_received'] += 1
+            if sunk:
+                self.user_stats.at[index, 'most_recent_game_ships_lost'] += 1
+                self.user_stats.at[index, 'lifetime_ships_lost'] += 1
+
+        elif not hit and outgoing:
+            self.user_stats.at[index, 'most_recent_game_misses'] += 1
             self.user_stats.at[index, 'lifetime_misses'] += 1
 
-        if sunk:
-            self.user_stats.at[index, 'lifetime_ships_sunk'] += 1
+        elif not hit and not outgoing:
+            self.user_stats.at[index, 'most_recent_game_misses_received'] += 1
+            self.user_stats.at[index, 'lifetime_misses_received'] += 1
 
         self.user_stats.to_csv('user_stats.csv')
 

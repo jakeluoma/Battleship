@@ -17,7 +17,6 @@ class Direction(Enum):
 class PlayerLogic(ABC):
     def __init__(self):
         self.ship_builder = ShipBuilder()
-        self.fleet = []
 
     def place_ship(self, board: Board, ship_type: ShipType) -> Ship:
         pass
@@ -27,6 +26,9 @@ class PlayerLogic(ABC):
 
 """ Player Control """
 class CommandLineInstruction(PlayerLogic):
+    def __init__(self):
+        super()
+    
     def place_ship(self, board: Board, ship_type: ShipType) -> Ship:
         """
         I'm proposing that getting user input be handled by the view.

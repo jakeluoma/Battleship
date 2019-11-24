@@ -4,37 +4,58 @@ from typing import List
 from Board import Board
 from Coordinate import Coordinates
 from Ship import ShipType, Ship, ShipFactory
-from player import Player
+from player import Player, UserProfile
+from PlayerLogic import CommandLineInstruction, AI
 
+# TODO
+class GameMode:
+    def __init__(self):
+        pass
+
+    def getBoardDimension(self) -> int:
+        pass
+
+    def getShipTypes(self) -> List[ShipType]:
+        pass
 
 class Game:
-    # Takes in each player
-    def __init__(self, user_name: str, opponent_type: str, board_dimensions: int):
-        self.player_board = Board(board_dimensions)
-        self.opponent_board = Board(board_dimensions)
-        self.player = Player(user_name)
-        self.opponent = AIFactory.generateAI(opponent_type)
-        self.player.set_boards(self.player_board, self.opponent_board)
-        self.opponent.set_boards(self.opponent_board, self.player_board)
+    def __init__(self, user_profile: UserProfile, game_mode: GameMode):
+        # initialize human player
+        fleet_board = Board(game_mode.getBoardDimension())
+        target_board = Board(game_mode.getBoardDimension())
+        self.player1 = Player(user_profile, CommandLineInstruction(), fleet_board, target_board, game_mode.getShipTypes())
 
-    # Creates a new board on behalf of a player
-    def create_board(self, board_dimensions):
-        return Board(board_dimensions)
+        # initialize AI player
+        fleet_board = Board(game_mode.getBoardDimension())
+        target_board = Board(game_mode.getBoardDimension())
+        self.player2 = Player(user_profile, AI(), fleet_board, target_board, game_mode.getShipTypes())
 
-    def switch_player(self, current_player):
-        if not current_player or current_player == self.opponent:
-            return self.player
-        return self.opponent
+        # set each Player's opponent to finish Player initialization
+        self.player1.setOpponent(self.player2)
+        self.player2.setOpponent(self.player1)
 
-    # Alternates between player's turns. Continues loop as long as no player has achieved victory
+        # human player will start first
+        self.current_player = self.player1
+
+    # Switch the current player
+    def switch_player(self):
+        if self.current_player == self.player1:
+            self.current_player = self.player2
+        else:
+            self.current_player = self.player1
+
+    # Alternates between players' turns. Continues loop as long as no player has achieved victory
     def run_game(self):
-        current_player = self.player
         while not self.current_player.take_turn():
-            self.switch_player(current_player)
+            self.switch_player()
         self.end_game()
 
-    # Prints Victory screen and ends game
+    # Prints Victory or Loss screen and ends game
     def end_game(self):
+        if self.current_player == self.player1:
+            pass # victory screen
+        else:
+            pass # loss screen
         pass
 
 

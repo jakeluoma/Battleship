@@ -1,9 +1,8 @@
 from Tile import *
-from Coordinate import Coordinates
+from Coordinate import Coordinate
 
 from typing import List
-
-
+from typing import Tuple
 
 # Provides a board abstraction to a User.  The user may only interact with
 # the Board's tiles, protected by the Board.  The 0,0 location is in the
@@ -17,7 +16,7 @@ class Board:
         for row in range(boardDimension):
             self.boardTiles.append([])
             for col in range(boardDimension):
-                self.boardTiles[row].append(Tile(Coordinates(row, col)))
+                self.boardTiles[row].append(Tile(Coordinate(row, col)))
 
     def getDimension(self) -> int:
         return self.boardDimension
@@ -30,7 +29,7 @@ class Board:
         return self.boardTiles[row][column]
 
     # returns true if a ship can be placed on the given Tiles, else returns false
-    def validShipPlacement(self, tiles):
+    def validShipPlacement(self, tiles: List[Tile]) -> bool:
         for tile in tiles:
             if self.tileContainsShip(tile):
                 return False
@@ -39,9 +38,9 @@ class Board:
     """Attack Processing Functions"""
     # given a list of coordinates, determines which coordinates were hits
     # and which coordinates were misses.  Returns them as separate lists.
-    def processIncomingAttack(self, coordinates):
-        hits = []
-        misses = []
+    def processIncomingAttack(self, coordinates: List[Coordinate]) -> Tuple[List[Coordinate], List[Coordinate]]:
+        hits = List[Coordinate]
+        misses = List[Coordinate]
         for coordinate in coordinates:
             row, col = coordinate.getRowAndColumn()
             tile = self.getTile(row, col)
@@ -57,7 +56,7 @@ class Board:
 
     # updates the boardTiles to reflect the given hit coordinates and miss
     # coordinates
-    def updateHitsAndMisses(self, hits, misses):
+    def updateHitsAndMisses(self, hits: List[Coordinate], misses: List[Coordinate]):
         for hit in hits:
             row, col = hit.getRowAndColumn()
             tile = self.getTile(row, col)

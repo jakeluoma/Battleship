@@ -5,7 +5,7 @@ from typing import List
 
 # for now, no special attacks.  Let's just get the program working first.
 class Ship:
-    def __init__(self, name, size):
+    def __init__(self, name: str, size: int):
         self.name = name
         self.size = size
         self.tiles = List[Tile]
@@ -16,7 +16,7 @@ class Ship:
     def getSize(self) -> int:
         return self.size
 
-    def isSunk(self):
+    def isSunk(self) -> bool:
         sunk = True
         for tile in self.tiles:
             if tile.getHitStatus != TileHitStatus.HIT:
@@ -31,8 +31,8 @@ class ShipType(Enum):
     battleship = 3
     carrier = 4
 
-# Usage: call startShip, then placeShip, then returnCompletedShip to get a Ship object.
-# Can call getShipSize at any time
+# Usage: call startShip(), then placeShip(), then returnCompletedShip() to get a Ship object.
+# Can call getShipSize() at any time
 class ShipBuilder:
     def __init__(self):
         self.ship = None
