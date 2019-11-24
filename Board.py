@@ -8,13 +8,10 @@ from typing import Tuple
 # the Board's tiles, protected by the Board.  The 0,0 location is in the
 # upper left corner.
 class Board:
-    boardDimension = 0
-    boardTiles = List[List[Tile]]
-
     def __init__(self, boardDimension: int):
         self.boardDimension = boardDimension
+        self.boardTiles: List[List[Tile]] = [[] for i in range(boardDimension)]
         for row in range(boardDimension):
-            self.boardTiles.append([])
             for col in range(boardDimension):
                 self.boardTiles[row].append(Tile(Coordinate(row, col)))
 
@@ -39,8 +36,8 @@ class Board:
     # given a list of coordinates, determines which coordinates were hits
     # and which coordinates were misses.  Returns them as separate lists.
     def processIncomingAttack(self, coordinates: List[Coordinate]) -> Tuple[List[Coordinate], List[Coordinate]]:
-        hits = List[Coordinate]
-        misses = List[Coordinate]
+        hits: List[Coordinate] = []
+        misses: List[Coordinate] = []
         for coordinate in coordinates:
             row, col = coordinate.getRowAndColumn()
             tile = self.getTile(row, col)
@@ -64,7 +61,7 @@ class Board:
                 continue
             tile.setHitStatus(TileHitStatus.HIT)
         for miss in misses:
-            row, col = hit.getRowAndColumn()
+            row, col = miss.getRowAndColumn()
             tile = self.getTile(row, col)
             if tile is None:
                 continue

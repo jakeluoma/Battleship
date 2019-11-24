@@ -1,16 +1,21 @@
+from __future__ import annotations
 from abc import ABC
-from Tile import *
+from enum import Enum
 
 from typing import List
+
+import Tile
+
+# need to do "import Tile" since it has a circular import with Ship
 
 # for now, no special attacks.  Let's just get the program working first.
 class Ship:
     def __init__(self, name: str, size: int):
         self.name = name
         self.size = size
-        self.tiles = List[Tile]
+        self.tiles = List[Tile.Tile]
 
-    def setTiles(self, tiles: List[Tile]):
+    def setTiles(self, tiles: List[Tile.Tile]):
         self.tiles = tiles
 
     def getSize(self) -> int:
@@ -19,7 +24,7 @@ class Ship:
     def isSunk(self) -> bool:
         sunk = True
         for tile in self.tiles:
-            if tile.getHitStatus != TileHitStatus.HIT:
+            if tile.getHitStatus() != Tile.TileHitStatus.HIT:
                 sunk = False
                 break
         return sunk
@@ -52,7 +57,7 @@ class ShipBuilder:
         if ship_type == ShipType.carrier:
             self.ship = Ship(ship_type.name, 5)
 
-    def placeShip(self, tiles: List[Tile]):
+    def placeShip(self, tiles: List[Tile.Tile]):
         if self.ship is not None:
             self.finished = True
             self.ship.setTiles(tiles)

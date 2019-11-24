@@ -1,6 +1,10 @@
+from __future__ import annotations
 from enum import Enum
-from Ship import Ship
+
+import Ship
 from Coordinate import Coordinate
+
+# need to do "import Ship" since it has a circular import with Tile
 
 class TileHitStatus(Enum):
     EMPTY = 1
@@ -16,13 +20,13 @@ class Tile:
     def getCoordinate(self) -> Coordinate:
         return self.coordinate
 
-    def getShip(self) -> Ship:
+    def getShip(self) -> Ship.Ship:
         return self.ship
 
     def getHitStatus(self) -> TileHitStatus:
         return self.hitStatus
 
-    def setShip(self, ship: Ship):
+    def setShip(self, ship: Ship.Ship):
         self.ship = ship
 
     def setHitStatus(self, hitStatus: TileHitStatus):
