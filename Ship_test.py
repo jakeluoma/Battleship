@@ -9,35 +9,35 @@ def test_ship_init_and_isSunk():
     coordinate = Coordinate(0, 0)
     tile = Tile.Tile(coordinate)
 
-    tile.setShip(ship)
+    tile.set_ship(ship)
 
     tiles = []
     tiles.append(tile)
     ship.setTiles(tiles)
 
-    assert ship.getSize() == 1
-    assert ship.isSunk() == False
+    assert ship.get_size() == 1
+    assert ship.is_sunk() == False
 
-    tile.setHitStatus(Tile.TileHitStatus.HIT)
-    assert ship.isSunk() == True
+    tile.set_hit_status(Tile.TileHitStatus.HIT)
+    assert ship.is_sunk() == True
 
 def test_shipBuilder():
     ship_builder = Ship.ShipBuilder()
-    ship_builder.startShip(Ship.ShipType.BATTLESHIP)
-    assert ship_builder.getShipSize() == 4
-    assert ship_builder.returnCompletedShip() == None
+    ship_builder.start_ship(Ship.ShipType.BATTLESHIP)
+    assert ship_builder.get_ship_size() == 4
+    assert ship_builder.return_completed_ship() == None
 
     tiles = []
     for i in range(4):
         coordinate = Coordinate(0, i)
         tiles.append(Tile.Tile(coordinate))
 
-    ship_builder.placeShip(tiles)
-    ship = ship_builder.returnCompletedShip()
+    ship_builder.place_ship(tiles)
+    ship = ship_builder.return_completed_ship()
 
     assert len(ship.tiles) == 4
     for tile in ship.tiles:
-        assert tile.getShip() == ship
+        assert tile.get_ship() == ship
         
     for tile in tiles:
-        assert tile.getShip() == ship
+        assert tile.get_ship() == ship

@@ -9,26 +9,26 @@ def test_board_init():
     dimension = 10
     board = Board(dimension)
 
-    assert dimension == board.getDimension()
+    assert dimension == board.get_dimension()
     assert len(board.boardTiles) == dimension
     for i in range(dimension):
         assert len(board.boardTiles[i]) == dimension
 
     for row in range(dimension):
         for col in range(dimension):
-            tile = board.getTile(row, col)
+            tile = board.get_tile(row, col)
             assert tile != None
-            coordinate = tile.getCoordinate()
+            coordinate = tile.get_coordinate()
             assert coordinate != None
-            assert coordinate.getRowAndColumn() == (row, col)
+            assert coordinate.get_row_and_column() == (row, col)
 
-def test_processIncomingAttack():
+def test_process_incoming_attack():
     dimension = 2
     board = Board(dimension)
 
     ship = Ship.Ship("test", 1)
-    tile = board.getTile(0, 0)
-    tile.setShip(ship)
+    tile = board.get_tile(0, 0)
+    tile.set_ship(ship)
 
     tiles = []
     tiles.append(tile)
@@ -43,7 +43,7 @@ def test_processIncomingAttack():
     coordinates.append(miss)
     coordinates.append(another_miss)
 
-    hits, misses = board.processIncomingAttack(coordinates)
+    hits, misses = board.process_incoming_attack(coordinates)
 
     assert len(hits) == 1
     assert hit in hits
@@ -51,9 +51,9 @@ def test_processIncomingAttack():
     assert miss in misses
     assert another_miss in misses
 
-    assert ship.isSunk() == True
+    assert ship.is_sunk() == True
 
-def test_updateHitsAndMisses():
+def test_update_hits_and_misses():
     dimension = 2
     board = Board(dimension)
 
@@ -68,8 +68,8 @@ def test_updateHitsAndMisses():
     misses = []
     misses.append(miss)
 
-    board.updateHitsAndMisses(hits, misses)
-    assert board.getTile(0, 0).getHitStatus() == Tile.TileHitStatus.HIT
-    assert board.getTile(1, 0).getHitStatus() == Tile.TileHitStatus.HIT
-    assert board.getTile(0, 1).getHitStatus() == Tile.TileHitStatus.MISS
-    assert board.getTile(1, 1).getHitStatus() == Tile.TileHitStatus.EMPTY
+    board.update_hits_and_misses(hits, misses)
+    assert board.get_tile(0, 0).get_hit_status() == Tile.TileHitStatus.HIT
+    assert board.get_tile(1, 0).get_hit_status() == Tile.TileHitStatus.HIT
+    assert board.get_tile(0, 1).get_hit_status() == Tile.TileHitStatus.MISS
+    assert board.get_tile(1, 1).get_hit_status() == Tile.TileHitStatus.EMPTY

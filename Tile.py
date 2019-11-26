@@ -17,17 +17,17 @@ class Tile:
         self.ship = None
         self.hitStatus = TileHitStatus.EMPTY
 
-    def getCoordinate(self) -> Coordinate:
+    def get_coordinate(self) -> Coordinate:
         return self.coordinate
 
-    def getShip(self) -> Ship.Ship:
+    def get_ship(self) -> Ship.Ship:
         return self.ship
 
-    def getHitStatus(self) -> TileHitStatus:
+    def get_hit_status(self) -> TileHitStatus:
         return self.hitStatus
 
-    def setShip(self, ship: Ship.Ship):
+    def set_ship(self, ship: Ship.Ship):
         self.ship = ship
 
-    def setHitStatus(self, hitStatus: TileHitStatus):
+    def set_hit_status(self, hitStatus: TileHitStatus):
         self.hitStatus = hitStatus

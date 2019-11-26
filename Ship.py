@@ -15,16 +15,16 @@ class Ship:
         self.size = size
         self.tiles: List[Tile.Tile] = []
 
-    def setTiles(self, tiles: List[Tile.Tile]):
+    def set_tiles(self, tiles: List[Tile.Tile]):
         self.tiles = tiles
 
-    def getSize(self) -> int:
+    def get_size(self) -> int:
         return self.size
 
-    def isSunk(self) -> bool:
+    def is_sunk(self) -> bool:
         sunk = True
         for tile in self.tiles:
-            if tile.getHitStatus() != Tile.TileHitStatus.HIT:
+            if tile.get_hit_status() != Tile.TileHitStatus.HIT:
                 sunk = False
                 break
         return sunk
@@ -43,7 +43,7 @@ class ShipBuilder:
         self.ship = None
         self.finished = False
 
-    def startShip(self, ship_type: ShipType):
+    def start_ship(self, ship_type: ShipType):
         self.finished = False
 
         if ship_type == ShipType.PATROL_BOAT:
@@ -57,23 +57,23 @@ class ShipBuilder:
         if ship_type == ShipType.CARRIER:
             self.ship = Ship(ship_type.name, 5)
 
-    def placeShip(self, tiles: List[Tile.Tile]):
+    def place_ship(self, tiles: List[Tile.Tile]):
         if self.ship is not None:
-            if len(tiles) != self.getShipSize():
+            if len(tiles) != self.get_ship_size():
                 print("Length of tiles given for ship placement doesn't match ship length!")
             self.finished = True
             self.ship.setTiles(tiles)
             for tile in tiles:
-                tile.setShip(self.ship)
+                tile.set_ship(self.ship)
 
-    def returnCompletedShip(self) -> Ship:
+    def return_completed_ship(self) -> Ship:
         if self.finished == True:
             return self.ship
         else:
             return None
 
-    def getShipSize(self) -> int:
+    def get_ship_size(self) -> int:
         if self.ship is not None:
-            return self.ship.getSize()
+            return self.ship.get_size()
         else:
             return 0

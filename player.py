@@ -56,11 +56,11 @@ class Player:
 
     # returns a list of hit coordinates, a list of miss coordinates, and the number of ships sunk by the attack
     def receive_attack(self, coordinates: List[Coordinate]) -> Tuple[List[Coordinate], List[Coordinate], int]:
-        hits, misses = self.fleet_board.processIncomingAttack(coordinates)
+        hits, misses = self.fleet_board.process_incoming_attack(coordinates)
         # should update statistics here
 
         for ship in self.player_fleet:
-            if ship.isSunk():
+            if ship.is_sunk():
                 self.player_ships_lost.append(ship)
 
         num_ships_sunk_this_turn = 0

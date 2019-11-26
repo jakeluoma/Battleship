@@ -5,5 +5,5 @@ class Coordinate:
         self.row = row
         self.column = column
 
-    def getRowAndColumn(self) -> Tuple[int, int]:
+    def get_row_and_column(self) -> Tuple[int, int]:
         return self.row, self.column
