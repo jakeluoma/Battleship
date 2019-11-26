@@ -56,6 +56,7 @@ class Statistics:
         if index == -1:
             return
 
+        # Change to self.row.property = 0?
         self.user_stats.at[index, 'most_recent_game_hits'] = 0
         self.user_stats.at[index, 'most_recent_game_hits_received'] = 0
         self.user_stats.at[index, 'most_recent_game_misses'] = 0
@@ -71,6 +72,7 @@ class Statistics:
         index = self.get_row_index()
 
         if hit and outgoing:
+            # Change to self.row.property += 1?
             self.user_stats.at[index, 'most_recent_game_hits'] += 1
             self.user_stats.at[index, 'lifetime_hits'] += 1
             if sunk:

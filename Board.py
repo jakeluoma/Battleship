@@ -25,6 +25,33 @@ class Board:
             return None
         return self.boardTiles[row][column]
 
+    # returns true if the given Tile contains a ship, else returns false
+    def tileContainsShip(self, tile: Tile) -> bool:
+        if tile.getShip() is not None:
+            return True
+        else:
+            return False
+
+    # checks if there is no ship on any of the tiles in the given run.  If ship,
+    # returns true.  Else returns false.
+    def shipInRun(self, run: List[Tile]) -> bool:
+        ship = False
+        for tile in run:
+            if tile.getShip() is not None:
+                ship = True
+                break
+        return ship
+
+    # checks if any tiles in the given run have been attacked.  If attacked,
+    # returns true.  Else returns false.
+    def attackInRun(self, run: List[Tile]) -> bool:
+        attack = False
+        for tile in run:
+            if tile.getHitStatus() != TileHitStatus.EMPTY:
+                attack = True
+                break
+        return attack
+
     # returns true if a ship can be placed on the given Tiles, else returns false
     def validShipPlacement(self, tiles: List[Tile]) -> bool:
         for tile in tiles:

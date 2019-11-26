@@ -2,8 +2,7 @@ from abc import ABC
 from typing import List
 
 from Board import Board
-from Coordinate import Coordinates
-from Ship import ShipType, Ship, ShipFactory
+from Ship import ShipType
 from player import Player, UserProfile
 from PlayerLogic import CommandLineInstruction, AI
 

@@ -36,9 +36,9 @@ class Player:
             fleet.append(self.player_logic.place_ship(self.fleet_board, ship))
         return fleet
 
-    # Set reference to opponent.  Since both Players can't be initialized and have their reference to each other set at the same time,
+    # Set reference to opponent. Since both Players can't be initialized and have their reference to each other set at the same time,
     # a setOpponent() method is required to complete initialization.
-    def setOpponent(self, opponent: Player):
+    def setOpponent(self, opponent: 'Player'):
         self.opponent = opponent
 
     # Takes a turn in the game - involving making a guess and striking the opponent's board.
@@ -70,4 +70,3 @@ class Player:
                 num_ships_sunk_this_turn += 1
 
         return hits, misses, num_ships_sunk_this_turn
-        

@@ -1,4 +1,5 @@
 from abc import ABC
+from enum import Enum
 from typing import List
 from typing import Tuple
 from random import randrange
@@ -14,107 +15,14 @@ class Direction(Enum):
     left = 2
     right = 3
 
-class PlayerLogic(ABC):
-    def __init__(self):
-        self.ship_builder = ShipBuilder()
-
-    def place_ship(self, board: Board, ship_type: ShipType) -> Ship:
-        pass
-
-    def select_attack(self, target_board: Board) -> Coordinate:
-        pass
-
-""" Player Control """
-class CommandLineInstruction(PlayerLogic):
-    def __init__(self):
-        super()
-    
-    def place_ship(self, board: Board, ship_type: ShipType) -> Ship:
-        """
-        I'm proposing that getting user input be handled by the view.
-        Some Likely Pseudocode:
-
-        self.ship_builder.startShip(ship_type)
-
-        make a ship-placing canvas that says which ship is being placed and prompts for a coordinate
-        self.view.paint(canvas)
-        coordinate = self.view.getCoordinate()
-        make a ship-placing canvas that says which ship is being placed and prompts for a directioon
-        self.view.paint(canvas)
-        direction = self.view.getDirection()
-
-        calculate the list of desired coordinates and convert into a list of tiles using board.getTile()
-        board.validShipPlacement(tiles)
-        if valid, self.ship_builder.placeShip(tiles) and return self.ship_builder.returnCompeltedShip()
-        else loop back to prompting for coordinate and direction.
-        """
-        pass
-
-    def select_attack(self, target_board: Board) -> Coordinate:
-        """
-        similar to place_ship()... just make the right canvas, give to view, call self.view.getCoordinate(),
-        check with board via board.getTile(coordinate) that it's a valid coordinate before returning it.
-        """
-        pass
-
-
-""" AI Control """
-class AI(PlayerLogic):
-    def __init__(self):
-        super()
-        self.num_ships_placed = 0
-
-    # Places a ship onto the board
-    def place_ship(self, board: Board, ship_type: ShipType) -> Ship:
-        self.ship_builder.startShip(ship_type)
-
-        runs = List[List[Tile]]
-        if self.num_ships_placed == 0: # place ship anywhere
-            runs = self.getRunsOfTilesWithNoShipLengthN(board, self.ship_builder.getShipSize())
-        elif randrange(0, 3) == 0: # maybe place ship next to an already placed ship
-            runs = self.getRunsOfTilesWithNoShipLengthNNextToShip(board, self.ship_builder.getShipSize())
-        else: # place ship anywhere
-            runs = self.getRunsOfTilesWithNoShipLengthN(board, self.ship_builder.getShipSize())
-
-        if len(runs) == 0:
-            print("Impossible to place ship " + ship_type.name)
-            return None
-        index = randrange(0, len(runs)) # pick where to place ship among valid places
-        run = runs[index]
-        self.ship_builder.placeShip(run)
-        self.num_ships_placed += 1
-        return self.ship_builder.returnCompletedShip()
-
-    # choose where to attack and return that Coordinate
-    def select_attack(self, target_board: Board) -> Coordinate:
-        potentialTargetTiles = List[Tile]
-
-        # always attack ends of hit runs if there are any
-        potentialTargetTiles = self.getTilesWithNoAttackAtEndOfHitRuns(target_board)
-        if potentialTargetTiles:
-            index = randrange(0, len(potentialTargetTiles))
-            return potentialTargetTiles[index].getCoordinate()
-
-        # choose whether to attack tiles adjacent to hits, if there are any, or attack randomly
-        if randrange(0, 4) < 3:
-            # attack tiles adjacent to hits if there are any
-            potentialTargetTiles = self.getTilesWithNoAttackAdjacentToHits(target_board)
-            if potentialTargetTiles:
-                index = randrange(0, len(potentialTargetTiles))
-                return potentialTargetTiles[index].getCoordinate()
-
-        # attack randomly
-        n = 2 # hardcoded to length of patrol boat for now
-        potentialTargetTiles = self.getRunsOfTilesWithNoAttackLengthN(target_board, n) 
-        index = randrange(0, len(potentialTargetTiles))
-        return potentialTargetTiles[index][n-1].getCoordinate()
-
-
+class BoardHelper:
     """ General Helper Functions """
+
     # returns a run of tiles of length n, given a starting row, column, and direction.  If no
     # run meets that criteria or if an invalid direction is given, returns an empty list.
     # Note that runs are always ordered left to right or up to down.
-    def getRunOfTilesLengthN(self, board: Board, n: int, row: int, col: int, direction: Direction) -> List[Tile]:
+    @staticmethod
+    def getRunOfTilesLengthN(board: Board, n: int, row: int, col: int, direction: Direction) -> List[Tile]:
         run = []
         if direction == direction.right:
             possibleRun = []
@@ -152,19 +60,15 @@ class AI(PlayerLogic):
                     break
                 possibleRun.insert(0, tile)
             run = possibleRun
-        
+
         return run
 
-    # returns true if the given Tile contains a ship, else returns false
-    def tileContainsShip(self, tile: Tile) -> bool:
-        if tile.getShip() is not None:
-            return True
-        else:
-            return False
-
+    # @staticmethod
+    
     # gets tiles adjacent to the given tile.  Will only return tiles that
     # are within the board.
-    def getAdjacentTiles(self, board: Board, tile: Tile) -> List[Tile]:
+    @staticmethod
+    def getAdjacentTiles(board: Board, tile: Tile) -> List[Tile]:
         ret = List[Tile]
         locations = List[Tuple[int, int]]
         row, col = tile.getRowAndColumn()
@@ -180,36 +84,18 @@ class AI(PlayerLogic):
 
         return ret
 
-    # checks if there is no ship on any of the tiles in the given run.  If ship,
-    # returns true.  Else returns false.
-    def shipInRun(self, run: List[Tile]) -> bool:
-        ship = False
-        for tile in run:
-            if tile.getShip() is not None:
-                ship = True
-                break
-        return ship
-
-    # checks if any tiles in the given run have been attacked.  If attacked,
-    # returns true.  Else returns false.
-    def attackInRun(self, run: List[Tile]) -> bool:
-        attack = False
-        for tile in run:
-            if tile.getHitStatus() != TileHitStatus.EMPTY:
-                attack = True
-                break
-        return attack
-
     """ Ship Placement Helper Functions """
+
     # returns a list of runs of tiles of length n.  No tile in a run contains a ship.
     # the list contains both horizontal and vertical runs.
-    def getRunsOfTilesWithNoShipLengthN(self, board: Board, n: int) -> List[List[Tile]]:
+    @staticmethod
+    def getRunsOfTilesWithNoShipLengthN(board: Board, n: int) -> List[List[Tile]]:
         ret = List[List[Tile]]
 
         # check for horizontal runs
         for row in range(board.getDimension()):
             for col in range(board.getDimension()):
-                possibleRun = self.getRunOfTilesLengthN(board, n, row, col, Direction.right)
+                possibleRun = BoardHelper.getRunOfTilesLengthN(board, n, row, col, Direction.right)
                 if not possibleRun:
                     break
                 if not board.shipInRun(possibleRun):
@@ -218,19 +104,19 @@ class AI(PlayerLogic):
         # check for vertical runs
         for col in range(board.getDimension()):
             for row in range(board.getDimension()):
-                possibleRun = self.getRunOfTilesLengthN(board, n, row, col, Direction.down)
+                possibleRun = BoardHelper.getRunOfTilesLengthN(board, n, row, col, Direction.down)
                 if not possibleRun:
                     break
                 if not board.shipInRun(possibleRun):
                     ret.append(possibleRun)
 
         return ret
-    
 
-    # returns a list of runs of tiles of length n.  It contains both horizontal and vertical runs.  None 
+    # returns a list of runs of tiles of length n.  It contains both horizontal and vertical runs.  None
     # of the tiles in a given run contain a ship.  The runs must have at least one
     # tile adjacent to a tile that already contains a ship.
-    def getRunsOfTilesWithNoShipLengthNNextToShip(self, board: Board, n: int) -> List[List[Tile]]:
+    @staticmethod
+    def getRunsOfTilesWithNoShipLengthNNextToShip(board: Board, n: int) -> List[List[Tile]]:
         # find tiles that already have ships
         tilesWithShips = List[Tile]
         for row in range(board.getDimension()):
@@ -240,7 +126,7 @@ class AI(PlayerLogic):
                     continue
                 if tile.getShip() is not None:
                     tilesWithShips.append(tile)
-        
+
         # starting tiles are tiles without ships adjacent to the tiles that have ships
         startingTiles = List[Tile]
         for tile in tilesWithShips:
@@ -248,31 +134,31 @@ class AI(PlayerLogic):
             for adjacentTile in adjacentTiles:
                 if adjacentTile.getShip() is None:
                     startingTiles.append(adjacentTile)
-        list(set(startingTiles)) # get rid of duplicate tiles
+        list(set(startingTiles))  # get rid of duplicate tiles
 
         # from each starting tile, try to get a run of length N in each direction
         ret = List[List[Tile]]
         for tile in startingTiles:
             row, col = tile.getCoordinate().getRowAndColumn()
 
-            possibleRun = self.getRunOfTilesLengthN(board, n, row, col, Direction.up)
+            possibleRun = BoardHelper.getRunOfTilesLengthN(board, n, row, col, Direction.up)
             if possibleRun:
-                if self.noShipInRun(possibleRun):
-                    ret.append(possibleRun)
-            
-            possibleRun = self.getRunOfTilesLengthN(board, n, row, col, Direction.down)
-            if possibleRun:
-                if self.noShipInRun(possibleRun):
+                if BoardHelper.noShipInRun(possibleRun):
                     ret.append(possibleRun)
 
-            possibleRun = self.getRunOfTilesLengthN(board, n, row, col, Direction.right)
+            possibleRun = BoardHelper.getRunOfTilesLengthN(board, n, row, col, Direction.down)
             if possibleRun:
-                if self.noShipInRun(possibleRun):
+                if BoardHelper.noShipInRun(possibleRun):
                     ret.append(possibleRun)
 
-            possibleRun = self.getRunOfTilesLengthN(board, n, row, col, Direction.left)
+            possibleRun = BoardHelper.getRunOfTilesLengthN(board, n, row, col, Direction.right)
             if possibleRun:
-                if self.noShipInRun(possibleRun):
+                if BoardHelper.noShipInRun(possibleRun):
+                    ret.append(possibleRun)
+
+            possibleRun = BoardHelper.getRunOfTilesLengthN(board, n, row, col, Direction.left)
+            if possibleRun:
+                if BoardHelper.noShipInRun(possibleRun):
                     ret.append(possibleRun)
 
         # only want unique runs
@@ -282,33 +168,36 @@ class AI(PlayerLogic):
         return ret
 
     """ Attack Selection Helper Functions """
-    # returns a list of runs of tiles of length n.  None 
+
+    # returns a list of runs of tiles of length n.  None
     # of the tiles in a given run have been attacked yet.
-    def getRunsOfTilesWithNoAttackLengthN(self, board: Board, n: int) -> List[List[Tile]]:
+    @staticmethod
+    def getRunsOfTilesWithNoAttackLengthN(board: Board, n: int) -> List[List[Tile]]:
         ret = List[List[Tile]]
 
         # check for horizontal runs
         for row in range(board.getDimension()):
             for col in range(board.getDimension()):
-                possibleRun = self.getRunOfTilesLengthN(board, n, row, col, Direction.right)
+                possibleRun = BoardHelper.getRunOfTilesLengthN(board, n, row, col, Direction.right)
                 if not possibleRun:
                     break
-                if not self.attackInRun(possibleRun):
+                if not BoardHelper.attackInRun(possibleRun):
                     ret.append(possibleRun)
 
         # check for vertical runs
         for col in range(board.getDimension()):
             for row in range(board.getDimension()):
-                possibleRun = self.getRunOfTilesLengthN(board, n, row, col, Direction.down)
+                possibleRun = BoardHelper.getRunOfTilesLengthN(board, n, row, col, Direction.down)
                 if not possibleRun:
                     break
-                if not self.attackInRun(possibleRun):
+                if not BoardHelper.attackInRun(possibleRun):
                     ret.append(possibleRun)
 
         return ret
 
     # returns a list of Tiles with TileHitStatus.EMPTY adjacent to Tiles with TileHitStatus.HIT
-    def getTilesWithNoAttackAdjacentToHits(self, board: Board) -> List[Tile]:
+    @staticmethod
+    def getTilesWithNoAttackAdjacentToHits(board: Board) -> List[Tile]:
         # find tiles that have been hit
         tilesWithHits = List[Tile]
         for row in range(board.getDimension()):
@@ -318,22 +207,23 @@ class AI(PlayerLogic):
                     continue
                 if tile.getHitStatus() == TileHitStatus.HIT:
                     tilesWithHits.append(tile)
-        
+
         # get the tiles with TileHitStatus.EMPTY adjacent to the tiles that have been hit
         tiles = List[Tile]
         for tile in tilesWithHits:
-            adjacentTiles = self.getAdjacentTiles(board, tile)
+            adjacentTiles = BoardHelper.getAdjacentTiles(board, tile)
             for adjacentTile in adjacentTiles:
                 if adjacentTile.getHitStatus() == TileHitStatus.EMPTY:
                     tiles.append(adjacentTile)
-        list(set(tiles)) # get rid of duplicate tiles
+        list(set(tiles))  # get rid of duplicate tiles
 
         return tiles
 
     # Returns a list of horizontal hit runs and a list of vertical hit runs.
     # Runs are of length 2 or more.  Horizontal runs are ordered left to right
     # and vertical runs are ordered top to bottom.
-    def getHitRuns(self, board: Board) -> Tuple[List[List[Tile]], List[List[Tile]]]:
+    @staticmethod
+    def getHitRuns(board: Board) -> Tuple[List[List[Tile]], List[List[Tile]]]:
         horizontalHitRuns = List[List[Tile]]
         verticalHitRuns = List[List[Tile]]
 
@@ -381,11 +271,12 @@ class AI(PlayerLogic):
 
         return horizontalHitRuns, verticalHitRuns
 
-    # returns a list of the tiles with TileHitStatus.EMPTY that are at 
+    # returns a list of the tiles with TileHitStatus.EMPTY that are at
     # the ends of hit runs
-    def getTilesWithNoAttackAtEndOfHitRuns(self, board: Board):
+    @staticmethod
+    def getTilesWithNoAttackAtEndOfHitRuns(board: Board):
         endTiles = List[Tile]
-        horizontalHitRuns, verticalHitRuns = self.getHitRuns(board)
+        horizontalHitRuns, verticalHitRuns = BoardHelper.getHitRuns(board)
 
         for run in horizontalHitRuns:
             first = run[0]
@@ -414,3 +305,128 @@ class AI(PlayerLogic):
                 endTiles.append(tile)
 
         return endTiles
+
+
+class PlayerLogic(ABC):
+    def __init__(self):
+        self.ship_builder = ShipBuilder()
+
+    def place_ship(self, board: Board, ship_type: ShipType) -> Ship:
+        pass
+
+    def select_attack(self, target_board: Board) -> Coordinate:
+        pass
+
+
+
+""" Player Control """
+class CommandLineInstruction(PlayerLogic):
+    def __init__(self):
+        super()
+        self.num_ships_placed = 0
+    
+    def place_ship(self, board: Board, ship_type: ShipType) -> Ship:
+        """
+        I'm proposing that getting user input be handled by the view.
+        Some Likely Pseudocode:
+
+        self.ship_builder.startShip(ship_type)
+
+        make a ship-placing canvas that says which ship is being placed and prompts for a coordinate
+        self.view.paint(canvas)
+        coordinate = self.view.getCoordinate()
+        make a ship-placing canvas that says which ship is being placed and prompts for a directioon
+        self.view.paint(canvas)
+        direction = self.view.getDirection()
+
+        calculate the list of desired coordinates and convert into a list of tiles using board.getTile()
+        board.validShipPlacement(tiles)
+        if valid, self.ship_builder.placeShip(tiles) and return self.ship_builder.returnCompeltedShip()
+        else loop back to prompting for coordinate and direction.
+        """
+        self.ship_builder.startShip(ship_type)
+
+        runs = List[List[Tile]]
+        if self.num_ships_placed == 0: # place ship anywhere
+            runs = BoardHelper.getRunsOfTilesWithNoShipLengthN(board, self.ship_builder.getShipSize())
+        elif randrange(0, 3) == 0: # maybe place ship next to an already placed ship
+            runs = BoardHelper.getRunsOfTilesWithNoShipLengthNNextToShip(board, self.ship_builder.getShipSize())
+        else: # place ship anywhere
+            runs = BoardHelper.getRunsOfTilesWithNoShipLengthN(board, self.ship_builder.getShipSize())
+
+        # Get initial coordinate and direction from shell
+        if self.num_ships_placed == 0:
+            possibleRun = BoardHelper.getRunOfTilesLengthN(board, self.ship_builder.getShipSize(), row, col, direction)
+            if not possibleRun:
+                break
+            if not board.shipInRun(possibleRun):
+                ret.append(possibleRun)
+
+        if len(runs) == 0:
+            print("Impossible to place ship " + ship_type.name)
+            return None
+        index = randrange(0, len(runs)) # pick where to place ship among valid places
+        run = runs[index]
+        self.ship_builder.placeShip(run)
+        self.num_ships_placed += 1
+        return self.ship_builder.returnCompletedShip()
+
+
+    def select_attack(self, target_board: Board) -> Coordinate:
+        """
+        similar to place_ship()... just make the right canvas, give to view, call self.view.getCoordinate(),
+        check with board via board.getTile(coordinate) that it's a valid coordinate before returning it.
+        """
+        pass
+
+
+""" AI Control """
+class AI(PlayerLogic):
+    def __init__(self):
+        super()
+        self.num_ships_placed = 0
+
+    # Places a ship onto the board
+    def place_ship(self, board: Board, ship_type: ShipType) -> Ship:
+        self.ship_builder.startShip(ship_type)
+
+        runs = List[List[Tile]]
+        if self.num_ships_placed == 0: # place ship anywhere
+            runs = BoardHelper.getRunsOfTilesWithNoShipLengthN(board, self.ship_builder.getShipSize())
+        elif randrange(0, 3) == 0: # maybe place ship next to an already placed ship
+            runs = BoardHelper.getRunsOfTilesWithNoShipLengthNNextToShip(board, self.ship_builder.getShipSize())
+        else: # place ship anywhere
+            runs = BoardHelper.getRunsOfTilesWithNoShipLengthN(board, self.ship_builder.getShipSize())
+
+        if len(runs) == 0:
+            print("Impossible to place ship " + ship_type.name)
+            return None
+        index = randrange(0, len(runs)) # pick where to place ship among valid places
+        run = runs[index]
+        self.ship_builder.placeShip(run)
+        self.num_ships_placed += 1
+        return self.ship_builder.returnCompletedShip()
+
+    # choose where to attack and return that Coordinate
+    def select_attack(self, target_board: Board) -> Coordinate:
+        potentialTargetTiles = List[Tile]
+
+        # always attack ends of hit runs if there are any
+        potentialTargetTiles = BoardHelper.getTilesWithNoAttackAtEndOfHitRuns(target_board)
+        if potentialTargetTiles:
+            index = randrange(0, len(potentialTargetTiles))
+            return potentialTargetTiles[index].getCoordinate()
+
+        # choose whether to attack tiles adjacent to hits, if there are any, or attack randomly
+        if randrange(0, 4) < 3:
+            # attack tiles adjacent to hits if there are any
+            potentialTargetTiles = BoardHelper.getTilesWithNoAttackAdjacentToHits(target_board)
+            if potentialTargetTiles:
+                index = randrange(0, len(potentialTargetTiles))
+                return potentialTargetTiles[index].getCoordinate()
+
+        # attack randomly
+        n = 2 # hardcoded to length of patrol boat for now
+        potentialTargetTiles = BoardHelper.getRunsOfTilesWithNoAttackLengthN(target_board, n)
+        index = randrange(0, len(potentialTargetTiles))
+        return potentialTargetTiles[index][n-1].getCoordinate()
