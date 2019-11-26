@@ -1,6 +1,6 @@
 from abc import ABC
 from enum import Enum
-from typing import List
+from typing import List, Optional
 from typing import Tuple
 from random import randrange
 
@@ -363,12 +363,20 @@ class CommandLineInstruction(PlayerLogic):
         self.num_ships_placed += 1
         return self.ship_builder.return_completed_ship()
 
-    def select_attack(self, target_board: Board) -> Coordinate:
+    def select_attack(self, target_board: Board) -> Optional[Coordinate]:
         """
         similar to place_ship()... just make the right canvas, give to view, call self.view.getCoordinate(),
         check with board via board.getTile(coordinate) that it's a valid coordinate before returning it.
         """
-        pass
+        # Get attack coordinate from shell
+        row, col = self.view.get_coordinate()
+
+        tile = target_board.get_tile(row, col)
+        if target_board.attack_in_run([tile]):
+           print("This tile has already been hit")
+           return None
+
+        return tile.get_coordinate()
 
 
 """ AI Control """
