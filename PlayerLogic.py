@@ -22,7 +22,7 @@ class BoardHelper:
     # run meets that criteria or if an invalid direction is given, returns an empty list.
     # Note that runs are always ordered left to right or up to down.
     @staticmethod
-    def get_runs_of_tiles_length_n(board: Board, n: int, row: int, col: int, direction: Direction) -> List[Tile]:
+    def get_run_of_tiles_length_n(board: Board, n: int, row: int, col: int, direction: Direction) -> List[Tile]:
         run = []
         if direction == direction.right:
             possibleRun = []
@@ -63,7 +63,18 @@ class BoardHelper:
 
         return run
 
-    # @staticmethod
+    @staticmethod
+    def get_run_of_tiles_length_n_with_no_ship(board: Board, n: int, row: int, col: int,
+                                               direction: Direction) -> List[Tile]:
+        run = BoardHelper.get_run_of_tiles_length_n(board, n, row, col,
+                                                    direction)
+        if not run:
+            print("Selection running out of board")
+        if board.ship_in_run(run):
+            print("Selection intersecting with existing ship")
+            run = []
+
+        return run
 
     # gets tiles adjacent to the given tile.  Will only return tiles that
     # are within the board.
@@ -95,20 +106,18 @@ class BoardHelper:
         # check for horizontal runs
         for row in range(board.get_dimension()):
             for col in range(board.get_dimension()):
-                possibleRun = BoardHelper.get_runs_of_tiles_length_n(board, n, row, col, Direction.right)
+                possibleRun = BoardHelper.get_run_of_tiles_length_n_with_no_ship(board, n, row, col, Direction.right)
                 if not possibleRun:
                     break
-                if not board.ship_in_run(possibleRun):
-                    ret.append(possibleRun)
+                ret.append(possibleRun)
 
         # check for vertical runs
         for col in range(board.get_dimension()):
             for row in range(board.get_dimension()):
-                possibleRun = BoardHelper.get_runs_of_tiles_length_n(board, n, row, col, Direction.down)
+                possibleRun = BoardHelper.get_run_of_tiles_length_n_with_no_ship(board, n, row, col, Direction.down)
                 if not possibleRun:
                     break
-                if not board.ship_in_run(possibleRun):
-                    ret.append(possibleRun)
+                ret.append(possibleRun)
 
         return ret
 
@@ -130,7 +139,7 @@ class BoardHelper:
         # starting tiles are tiles without ships adjacent to the tiles that have ships
         startingTiles = List[Tile]
         for tile in tilesWithShips:
-            adjacentTiles = board.getAdjacentTiles(tile)
+            adjacentTiles = BoardHelper.get_adjacent_tiles(board, tile)
             for adjacentTile in adjacentTiles:
                 if adjacentTile.get_ship() is None:
                     startingTiles.append(adjacentTile)
@@ -141,25 +150,21 @@ class BoardHelper:
         for tile in startingTiles:
             row, col = tile.get_coordinate().get_row_and_column()
 
-            possibleRun = BoardHelper.get_runs_of_tiles_length_n(board, n, row, col, Direction.up)
+            possibleRun = BoardHelper.get_run_of_tiles_length_n_with_no_ship(board, n, row, col, Direction.up)
             if possibleRun:
-                if not board.ship_in_run(possibleRun):
-                    ret.append(possibleRun)
+                ret.append(possibleRun)
 
-            possibleRun = BoardHelper.get_runs_of_tiles_length_n(board, n, row, col, Direction.down)
+            possibleRun = BoardHelper.get_run_of_tiles_length_n_with_no_ship(board, n, row, col, Direction.down)
             if possibleRun:
-                if not board.ship_in_run(possibleRun):
-                    ret.append(possibleRun)
+                ret.append(possibleRun)
 
-            possibleRun = BoardHelper.get_runs_of_tiles_length_n(board, n, row, col, Direction.right)
+            possibleRun = BoardHelper.get_run_of_tiles_length_n_with_no_ship(board, n, row, col, Direction.right)
             if possibleRun:
-                if not board.ship_in_run(possibleRun):
-                    ret.append(possibleRun)
+                ret.append(possibleRun)
 
-            possibleRun = BoardHelper.get_runs_of_tiles_length_n(board, n, row, col, Direction.left)
+            possibleRun = BoardHelper.get_run_of_tiles_length_n_with_no_ship(board, n, row, col, Direction.left)
             if possibleRun:
-                if not board.ship_in_run(possibleRun):
-                    ret.append(possibleRun)
+                ret.append(possibleRun)
 
         # only want unique runs
         # https://stackoverflow.com/questions/3724551/python-uniqueness-for-list-of-lists
@@ -178,7 +183,7 @@ class BoardHelper:
         # check for horizontal runs
         for row in range(board.get_dimension()):
             for col in range(board.get_dimension()):
-                possibleRun = BoardHelper.get_runs_of_tiles_length_n(board, n, row, col, Direction.right)
+                possibleRun = BoardHelper.get_run_of_tiles_length_n(board, n, row, col, Direction.right)
                 if not possibleRun:
                     break
                 if not board.attack_in_run(possibleRun):
@@ -187,7 +192,7 @@ class BoardHelper:
         # check for vertical runs
         for col in range(board.get_dimension()):
             for row in range(board.get_dimension()):
-                possibleRun = BoardHelper.get_runs_of_tiles_length_n(board, n, row, col, Direction.down)
+                possibleRun = BoardHelper.get_run_of_tiles_length_n(board, n, row, col, Direction.down)
                 if not possibleRun:
                     break
                 if not board.attack_in_run(possibleRun):
@@ -346,31 +351,17 @@ class CommandLineInstruction(PlayerLogic):
         """
         self.ship_builder.start_ship(ship_type)
 
-        runs = List[List[Tile]]
-        if self.num_ships_placed == 0: # place ship anywhere
-            runs = BoardHelper.get_runs_of_tiles_with_no_ship_length_n(board, self.ship_builder.get_ship_size())
-        elif randrange(0, 3) == 0: # maybe place ship next to an already placed ship
-            runs = BoardHelper.get_runs_of_tiles_with_no_ship_length_n_next_to_ship(board, self.ship_builder.get_ship_size())
-        else: # place ship anywhere
-            runs = BoardHelper.get_runs_of_tiles_with_no_ship_length_n(board, self.ship_builder.get_ship_size())
-
         # Get initial coordinate and direction from shell
-        if self.num_ships_placed == 0:
-            possibleRun = BoardHelper.get_runs_of_tiles_length_n(board, self.ship_builder.get_ship_size(), row, col, direction)
-            if not possibleRun:
-                break
-            if not board.ship_in_run(possibleRun):
-                ret.append(possibleRun)
-
-        if len(runs) == 0:
+        row, col = self.view.get_coordinate()
+        direction = self.view.get_direction()
+        run = BoardHelper.get_run_of_tiles_length_n_with_no_ship(board, self.ship_builder.get_ship_size(), row, col, direction)
+        if not run:
             print("Impossible to place ship " + ship_type.name)
             return None
-        index = randrange(0, len(runs)) # pick where to place ship among valid places
-        run = runs[index]
+
         self.ship_builder.place_ship(run)
         self.num_ships_placed += 1
         return self.ship_builder.return_completed_ship()
-
 
     def select_attack(self, target_board: Board) -> Coordinate:
         """
