@@ -5,8 +5,7 @@ from Statistics import *
 class Program:
 
     def __init__(self):
-        self.user_stats = pd.read_csv('user_stats.csv')
-        self.known_users =  list(self.user_stats.user_name)
+        self.known_users =  list(Statistics.user_stats.user_name)
         self.ai_types = [0, 1]
 
     def login(self, user_name: str):
@@ -15,13 +14,12 @@ class Program:
         else:
             user = UserProfile(user_name)
             user_df = user.set_stats_to_zero()
-            self.user_stats.append(user_df, ignore_index= True)
-            self.user_stats.to_csv('user_stats.csv')
+            Statistics.update_csv(user_df)
 
     def show_user_stats(self, user: UserProfile):
-        stats = Statistics(user)
-        print(stats.lifetime_stats_to_string())
-        print(stats.most_recent_game_stats_to_string())
+        name = user.get_user_name()
+        print(Statistics.lifetime_stats_to_string(name))
+        print(Statistics.most_recent_game_stats_to_string(name))
 
     def start_game(self):
         pass
