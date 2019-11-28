@@ -61,8 +61,8 @@ class Player:
     # Takes a turn in the game - involving making a guess and striking the opponent's board.
     # Returns whether the move results in victory
     def take_turn(self) -> bool:
-        hits, misses, num_ships_sunk = self.opponent.receive_attack(self.player_logic.select_attack(self.target_board))
-        self.target_board.updateHitsAndMisses(hits, misses)
+        hits, misses, num_ships_sunk = self.opponent.receive_attack([self.player_logic.select_attack(self.target_board)])
+        self.target_board.update_hits_and_misses(hits, misses)
         # should update statistics here
         
         victory = False

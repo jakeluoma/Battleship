@@ -1,4 +1,5 @@
 from abc import ABC
+from enum import Enum
 from typing import List
 
 from Board import Board
@@ -6,23 +7,22 @@ from Ship import ShipType
 from player import Player, UserProfile
 from PlayerLogic import CommandLineInstruction, AI
 
-# TODO
-class GameMode:
-    def __init__(self):
-        pass
 
-    def getBoardDimension(self) -> int:
-        pass
+class GameMode(Enum):
+    EASY = 1
+    MEDIUM = 2
+    HARD = 3
 
-    def getShipTypes(self) -> List[ShipType]:
-        pass
 
 class Game:
+    mode_to_dimension_map = {GameMode.EASY: 5, GameMode.MEDIUM: 10, GameMode.HARD: 20}
+
     def __init__(self, user_profile: UserProfile, game_mode: GameMode):
         # initialize human player
-        fleet_board = Board(game_mode.getBoardDimension())
-        target_board = Board(game_mode.getBoardDimension())
-        self.player1 = Player(user_profile, CommandLineInstruction(), fleet_board, target_board, game_mode.getShipTypes())
+        fleet_board = Board(self.mode_to_dimension(game_mode))
+        target_board = Board(self.mode_to_dimension(game_mode))
+        self.player1 = Player(user_profile, CommandLineInstruction(), fleet_board, target_board,
+                              self.mode_to_ship_types(game_mode))
 
         # initialize AI player
         fleet_board = Board(game_mode.getBoardDimension())
@@ -57,5 +57,8 @@ class Game:
             pass # loss screen
         pass
 
+    def mode_to_dimension(self, gm: GameMode):
+        return self.mode_to_dimension_map[gm]
 
-
+    def mode_to_ship_types(self, gm: GameMode) -> List[ShipType]:
+        pass

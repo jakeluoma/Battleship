@@ -2,8 +2,8 @@ import pandas as pd
 from player import *
 from Statistics import *
 
-class Program:
 
+class Program:
     def __init__(self):
         self.user_stats = pd.read_csv('user_stats.csv')
         self.known_users =  list(self.user_stats.user_name)
