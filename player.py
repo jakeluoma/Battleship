@@ -8,6 +8,7 @@ from Coordinate import Coordinate
 from PlayerLogic import PlayerLogic
 from Ship import ShipBuilder, Ship, ShipType, ShipBuilder
 from Tile import Tile
+from Statistics import *
 
 
 class UserProfile:
@@ -18,10 +19,10 @@ class UserProfile:
     def get_user_name(self):
         return self.user_name
 
-    def set_stats_to_zero(self):
+    def create_stats(self):
         dict = {}
         dict['user_name'] = self.user_name
-        column_names = pd.read_csv('user_stats.csv').columns
+        column_names = Statistics.user_stats.columns
 
         for column in column_names:
             if column != 'user_name':
