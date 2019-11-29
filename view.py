@@ -3,10 +3,42 @@ from typing import Tuple, Optional
 from Coordinate import Coordinate
 from board import Direction
 
+center_format = "{0:^100}\n"
+
+
+class Canvas:
+
+    def __init__(self):
+        self.view_width = 100
+
+    def paint(self):
+        pass
+
+
+class LoginCanvas(Canvas):
+
+    def __init__(self):
+        super().__init__()
+        self.display_string = center_format.format("xxxxxx Login xxxxxx") + \
+            center_format.format("Please Enter your username")
+
+    def paint(self):
+        print(self.display_string)
+
 
 class View:
-    def get_input(self):
-        pass
+    def __init__(self):
+        self.canvas = None
+
+    def set_canvas(self, canvas):
+        self.canvas = canvas
+
+    def display_canvas(self):
+        self.canvas.paint()
+
+    def get_username(self):
+        inp = input()
+        return inp
 
     def get_coordinate(self) -> Coordinate:
         inp = input()
@@ -47,5 +79,11 @@ class View:
 
         raise Exception("Invalid Direction")
 
-view = View()
-view.get_input()
+
+login_canvas = LoginCanvas()
+
+if __name__ == "__main__":
+    # l = LoginCanvas()
+    # l.paint()
+    v = View()
+    v.display_canvas()

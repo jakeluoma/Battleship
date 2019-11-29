@@ -8,6 +8,7 @@ import pandas as pd
 # The way it's set up now almost requires Program to have a reference to Statistics and pass that reference down to Game, which passes
 # it down to Player, etc.  Not very clean.
 from player import UserProfile
+from view import center_format
 
 STATS_FILE = 'user_stats.csv'
 
@@ -21,16 +22,16 @@ class Statistics:
 
         user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == name].squeeze()
 
-        stats_string = 'YOUR OVERALL STATISTICS:\n'
-        stats_string += '==========================\n'
-        stats_string += ('Number of Wins: {}\n'.format(user_row.lifetime_wins))
-        stats_string += ('Number of Losses: {}\n'.format(user_row.lifetime_losses))
-        stats_string += ('Number of Lifetime Hits: {}\n'.format(user_row.lifetime_hits))
-        stats_string += ('Number of Lifetime Hits Received: {}\n'.format(user_row.lifetime_hits_received))
-        stats_string += ('Number of Lifetime Misses: {}\n'.format(user_row.lifetime_misses))
-        stats_string += ('Number of Lifetime Misses Received: {}\n'.format(user_row.lifetime_misses_received))
-        stats_string += ('Number of Lifetime Ships Sunk: {}\n'.format(user_row.lifetime_ships_sunk))
-        stats_string += ('Number of Lifetime Ships Lost: {}\n'.format(user_row.lifetime_ships_lost))
+        stats_string = center_format.format('YOUR OVERALL STATISTICS:') + \
+                       center_format.format('==========================') + \
+                       center_format.format('Number of Wins: {}'.format(user_row.lifetime_wins)) + \
+                       center_format.format('Number of Losses: {}'.format(user_row.lifetime_losses)) + \
+                       center_format.format('Number of Lifetime Hits: {}'.format(user_row.lifetime_hits)) + \
+                       center_format.format('Number of Lifetime Hits Received: {}'.format(user_row.lifetime_hits_received)) + \
+                       center_format.format('Number of Lifetime Misses: {}'.format(user_row.lifetime_misses)) + \
+                       center_format.format('Number of Lifetime Misses Received: {}'.format(user_row.lifetime_misses_received)) + \
+                       center_format.format('Number of Lifetime Ships Sunk: {}'.format(user_row.lifetime_ships_sunk)) + \
+                       center_format.format('Number of Lifetime Ships Lost: {}'.format(user_row.lifetime_ships_lost))
 
         return stats_string
 
@@ -39,14 +40,14 @@ class Statistics:
 
         user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == name].squeeze()
 
-        stats_string = 'YOUR RECENT GAME STATISTICS:\n'
-        stats_string += '============================\n'
-        stats_string += ('Number of Hits: {}\n'.format(user_row.most_recent_game_hits))
-        stats_string += ('Number of Hits Received: {}\n'.format(user_row.most_recent_game_hits_received))
-        stats_string += ('Number of Misses: {}\n'.format(user_row.most_recent_game_misses))
-        stats_string += ('Number of Misses Received: {}\n'.format(user_row.most_recent_game_misses_received))
-        stats_string += ('Number of Ships Sunk: {}\n'.format(user_row.most_recent_game_ships_sunk))
-        stats_string += ('Number of Ships Lost: {}\n'.format(user_row.most_recent_game_ships_lost))
+        stats_string = center_format.format('YOUR RECENT GAME STATISTICS:') + \
+                       center_format.format('============================') + \
+                       center_format.format('Number of Hits: {}'.format(user_row.most_recent_game_hits)) + \
+                       center_format.format('Number of Hits Received: {}'.format(user_row.most_recent_game_hits_received)) + \
+                       center_format.format('Number of Misses: {}'.format(user_row.most_recent_game_misses)) + \
+                       center_format.format('Number of Misses Received: {}'.format(user_row.most_recent_game_misses_received)) + \
+                       center_format.format('Number of Ships Sunk: {}'.format(user_row.most_recent_game_ships_sunk)) + \
+                       center_format.format('Number of Ships Lost: {}'.format(user_row.most_recent_game_ships_lost))
 
         return stats_string
 

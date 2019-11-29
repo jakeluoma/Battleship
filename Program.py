@@ -1,14 +1,17 @@
-import pandas as pd
-from player import *
 from Statistics import *
+from view import View, login_canvas
 
 
 class Program:
     def __init__(self):
         self.known_users = list(Statistics.user_stats.user_name)
         self.ai_types = [0, 1]
+        self.view = View()
 
     def login(self, user_name: str):
+        self.view.set_canvas(login_canvas)
+        self.view.display_canvas()
+        user_name = self.view.get_username()
         user = UserProfile(user_name)
         if user_name in self.known_users:
             pass
