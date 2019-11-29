@@ -21,9 +21,8 @@ class Program:
         return user
 
     def show_user_stats(self, user: UserProfile):
-        name = user.get_user_name()
-        print(Statistics.lifetime_stats_to_string(name))
-        print(Statistics.most_recent_game_stats_to_string(name))
+        print(Statistics.lifetime_stats_to_string(user))
+        print(Statistics.most_recent_game_stats_to_string(user))
 
     def start_game(self):
         pass

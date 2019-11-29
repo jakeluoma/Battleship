@@ -1,3 +1,4 @@
+import os
 from typing import Tuple, Optional
 
 from Coordinate import Coordinate
@@ -33,7 +34,11 @@ class View:
     def set_canvas(self, canvas):
         self.canvas = canvas
 
+    def clear_screen(self):
+        os.system("cls")
+
     def display_canvas(self):
+        self.clear_screen()
         self.canvas.paint()
 
     def get_username(self):
