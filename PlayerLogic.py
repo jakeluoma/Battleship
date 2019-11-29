@@ -4,18 +4,11 @@ from typing import List, Optional
 from typing import Tuple
 from random import randrange
 
-from Board import Board, BoardHelper
 from Coordinate import Coordinate
 from Ship import ShipBuilder, Ship, ShipType
 from Tile import Tile, TileHitStatus
+from board import Board, BoardHelper
 from view import View
-
-
-class Direction(Enum):
-    up = 0
-    down = 1
-    left = 2
-    right = 3
 
 
 class PlayerLogic(ABC):

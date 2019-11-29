@@ -1,7 +1,7 @@
 from typing import Tuple, Optional
 
 from Coordinate import Coordinate
-from PlayerLogic import Direction
+from board import Direction
 
 
 class View:

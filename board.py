@@ -4,6 +4,14 @@ from Coordinate import Coordinate
 from typing import List
 from typing import Tuple
 
+
+class Direction(Enum):
+    up = 0
+    down = 1
+    left = 2
+    right = 3
+
+
 # Provides a board abstraction to a User.  The user may only interact with
 # the Board's tiles, protected by the Board.  The 0,0 location is in the
 # upper left corner.

@@ -1,5 +1,5 @@
-from player import UserProfile
 import pandas as pd
+
 
 # note from Jake: it would be a lot cleaner if UserProfile had a reference to Statistics instead of Statistics to UserProfile.
 # on init of statistics, it would make sense to generate an object that only contains the statistics relevant to that UserProfile.
@@ -7,46 +7,46 @@ import pandas as pd
 # by simply having UserProfile pass the update call to Statistics each turn.
 # The way it's set up now almost requires Program to have a reference to Statistics and pass that reference down to Game, which passes
 # it down to Player, etc.  Not very clean.
+from player import UserProfile
+
+STATS_FILE = 'user_stats.csv'
+
+
 class Statistics:
 
-    user_stats = pd.read_csv('user_stats.csv')
-
-    # def __init__(self):
-    #     # self.row_name = user.get_user_name()
-    #
-    #     # self.row = self.user_stats.loc[self.user_stats.user_name == self.row_name]
+    user_stats = pd.read_csv(STATS_FILE)
 
     @staticmethod
     def lifetime_stats_to_string(name: str):
 
-        row = Statistics.user_stats.loc[Statistics.user_stats.user_name == name]
+        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == name].squeeze()
 
         stats_string = 'YOUR OVERALL STATISTICS:\n'
         stats_string += '==========================\n'
-        stats_string += ('Number of Wins: ' + str(row.lifetime_wins) + '\n')
-        stats_string += ('Number of Losses: ' + str(row.lifetime_losses) + '\n')
-        stats_string += ('Number of Lifetime Hits: ' + str(row.lifetime_hits) + '\n')
-        stats_string += ('Number of Lifetime Hits Received: ' + str(row.lifetime_hits_received) + '\n')
-        stats_string += ('Number of Lifetime Misses: ' + str(row.lifetime_misses) + '\n')
-        stats_string += ('Number of Lifetime Misses Received: ' + str(row.lifetime_misses_received) + '\n')
-        stats_string += ('Number of Lifetime Ships Sunk: ' + str(row.lifetime_ships_sunk) + '\n')
-        stats_string += ('Number of Lifetime Ships Lost: ' + str(row.lifetime_ships_lost) + '\n')
+        stats_string += ('Number of Wins: {}\n'.format(user_row.lifetime_wins))
+        stats_string += ('Number of Losses: {}\n'.format(user_row.lifetime_losses))
+        stats_string += ('Number of Lifetime Hits: {}\n'.format(user_row.lifetime_hits))
+        stats_string += ('Number of Lifetime Hits Received: {}\n'.format(user_row.lifetime_hits_received))
+        stats_string += ('Number of Lifetime Misses: {}\n'.format(user_row.lifetime_misses))
+        stats_string += ('Number of Lifetime Misses Received: {}\n'.format(user_row.lifetime_misses_received))
+        stats_string += ('Number of Lifetime Ships Sunk: {}\n'.format(user_row.lifetime_ships_sunk))
+        stats_string += ('Number of Lifetime Ships Lost: {}\n'.format(user_row.lifetime_ships_lost))
 
         return stats_string
 
     @staticmethod
     def most_recent_game_stats_to_string(name: str):
 
-        row = Statistics.user_stats.loc[Statistics.user_stats.user_name == name]
+        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == name].squeeze()
 
         stats_string = 'YOUR RECENT GAME STATISTICS:\n'
         stats_string += '============================\n'
-        stats_string += ('Number of Hits: ' + str(row.most_recent_game_hits) + '\n')
-        stats_string += ('Number of Hits Received: ' + str(row.most_recent_game_hits_received) + '\n')
-        stats_string += ('Number of Misses: ' + str(row.most_recent_game_misses) + '\n')
-        stats_string += ('Number of Misses Received: ' + str(row.most_recent_game_misses_received) + '\n')
-        stats_string += ('Number of Ships Sunk: ' + str(row.most_recent_game_ships_sunk) + '\n')
-        stats_string += ('Number of Ships Lost: ' + str(row.most_recent_game_ships_lost) + '\n')
+        stats_string += ('Number of Hits: {}\n'.format(user_row.most_recent_game_hits))
+        stats_string += ('Number of Hits Received: {}\n'.format(user_row.most_recent_game_hits_received))
+        stats_string += ('Number of Misses: {}\n'.format(user_row.most_recent_game_misses))
+        stats_string += ('Number of Misses Received: {}\n'.format(user_row.most_recent_game_misses_received))
+        stats_string += ('Number of Ships Sunk: {}\n'.format(user_row.most_recent_game_ships_sunk))
+        stats_string += ('Number of Ships Lost: {}\n'.format(user_row.most_recent_game_ships_lost))
 
         return stats_string
 
@@ -58,22 +58,21 @@ class Statistics:
                 return i
         return -1
 
-
     @staticmethod
     def set_most_recent_game_stats_to_zero(name: str):
 
-        index = Statistics.get_row_index(name)
+        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == name].squeeze()
 
-        if index == -1:
+        if user_row.empty:
             return
 
         # Change to self.row.property = 0?
-        Statistics.user_stats.at[index, 'most_recent_game_hits'] = 0
-        Statistics.user_stats.at[index, 'most_recent_game_hits_received'] = 0
-        Statistics.user_stats.at[index, 'most_recent_game_misses'] = 0
-        Statistics.user_stats.at[index, 'most_recent_game_misses_received'] = 0
-        Statistics.user_stats.at[index, 'most_recent_game_ships_sunk'] = 0
-        Statistics.user_stats.at[index, 'most_recent_game_ships_lost'] = 0
+        user_row.most_recent_game_hits = 0
+        user_row.most_recent_game_hits_received = 0
+        user_row.most_recent_game_misses = 0
+        user_row.most_recent_game_misses_received = 0
+        user_row.most_recent_game_ships_sunk = 0
+        user_row.most_recent_game_ships_lost = 0
 
         Statistics.user_stats.to_csv('user_stats.csv')
 
@@ -112,7 +111,11 @@ class Statistics:
         Statistics.user_stats.to_csv('user_stats.csv')
 
     @staticmethod
-    def create_user(user_df):
-        Statistics.user_stats.append(user_df, ignore_index=True)
-        Statistics.user_stats.to_csv('user_stats.csv')
+    def create_user(user: UserProfile):
+        column_names = Statistics.user_stats.columns
 
+        user_df = pd.DataFrame(0, columns=column_names, index=[0])
+        user_df['user_name'] = user.user_name
+
+        Statistics.user_stats = Statistics.user_stats.append(user_df)
+        Statistics.user_stats.to_csv('user_stats.csv')

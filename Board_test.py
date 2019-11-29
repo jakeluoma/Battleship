@@ -1,6 +1,6 @@
 import pytest
 
-from Board import Board
+from board import Board
 from Coordinate import Coordinate
 import Ship
 import Tile

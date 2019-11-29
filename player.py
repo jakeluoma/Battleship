@@ -3,12 +3,11 @@ from typing import Tuple
 from enum import Enum
 import pandas as pd
 
-from Board import Board
+from board import Board
 from Coordinate import Coordinate
 from PlayerLogic import PlayerLogic
 from Ship import ShipBuilder, Ship, ShipType, ShipBuilder
 from Tile import Tile
-from Statistics import *
 
 
 class UserProfile:
@@ -19,20 +18,11 @@ class UserProfile:
     def get_user_name(self):
         return self.user_name
 
-    def create_stats(self):
-        dict = {}
-        dict['user_name'] = self.user_name
-        column_names = Statistics.user_stats.columns
-
-        for column in column_names:
-            if column != 'user_name':
-                dict[column] = 0
-
-        return pd.DataFrame(dict)
 
 class AIType(Enum):
     LEVEL_EASY = 0
     LEVEL_HARD = 1
+
 
 class Player:
     def __init__(self, user_profile: UserProfile, player_logic: PlayerLogic, fleet_board: Board, target_board: Board, ships_to_place: List[ShipType]):

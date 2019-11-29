@@ -2,7 +2,7 @@ from abc import ABC
 from enum import Enum
 from typing import List
 
-from Board import Board
+from board import Board
 from Ship import ShipType
 from player import Player, UserProfile
 from PlayerLogic import CommandLineInstruction, AI
