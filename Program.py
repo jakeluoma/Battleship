@@ -13,8 +13,8 @@ class Program:
             pass
         else:
             user = UserProfile(user_name)
-            user_df = user.set_stats_to_zero()
-            Statistics.update_csv(user_df)
+            user_df = user.create_stats()
+            Statistics.create_user(user_df)
 
     def show_user_stats(self, user: UserProfile):
         name = user.get_user_name()
