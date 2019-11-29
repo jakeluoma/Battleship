@@ -8,7 +8,7 @@ import pandas as pd
 # The way it's set up now almost requires Program to have a reference to Statistics and pass that reference down to Game, which passes
 # it down to Player, etc.  Not very clean.
 from player import UserProfile
-from view import center_format
+from canvas import center_format, StatsCanvas
 
 STATS_FILE = 'user_stats.csv'
 
@@ -16,6 +16,11 @@ STATS_FILE = 'user_stats.csv'
 class Statistics:
 
     user_stats = pd.read_csv(STATS_FILE)
+
+    @staticmethod
+    def get_user_stats(user: UserProfile) -> StatsCanvas:
+        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == user.get_user_name()].squeeze()
+        return StatsCanvas(user_row)
 
     @staticmethod
     def lifetime_stats_to_string(user: UserProfile):

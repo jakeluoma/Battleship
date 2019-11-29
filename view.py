@@ -4,68 +4,7 @@ from typing import Tuple, Optional
 
 from Coordinate import Coordinate
 from board import Direction
-
-center_format = "{0:^100}\n"
-
-
-class MenuOption(Enum):
-    STARTMENU = 0
-    LOGIN = 1
-    EXIT = 2
-    STARTGAME = 3
-    SHOWSTATS = 4
-
-
-class Canvas:
-    def __init__(self):
-        self.view_width = 100
-
-    def paint(self):
-        pass
-
-
-class LoginCanvas(Canvas):
-    def __init__(self):
-        super().__init__()
-        self.display_string = center_format.format("xxxxxx Login xxxxxx") + \
-            center_format.format("Please Enter your username")
-
-    def paint(self):
-        print(self.display_string)
-
-
-class MainMenuCanvas(Canvas):
-    def __init__(self):
-        super().__init__()
-        self.display_string = center_format.format("xxxxxx Main Menu xxxxxx") + \
-            center_format.format("1. Play new game") + \
-            center_format.format("2. Show User stats") + \
-            center_format.format("3. Exit") + \
-            center_format.format("Please select an option by typing one of the numbers above")
-
-    def paint(self):
-        print(self.display_string)
-
-
-class StartMenuCanvas(Canvas):
-    def __init__(self):
-        super().__init__()
-        self.display_string = center_format.format("xxxxxx Start Menu xxxxxx") + \
-            center_format.format("l: Login") + \
-            center_format.format("x: Exit") + \
-            center_format.format("Please select an option by typing one of the numbers above")
-
-    def paint(self):
-        print(self.display_string)
-
-class ExitCanvas(Canvas):
-    def __init__(self):
-        super().__init__()
-        self.display_string = center_format.format("xxxxxx Exit Screen xxxxxx") + \
-            center_format.format("You have exited the game. Goodbye!")
-
-    def paint(self):
-        print(self.display_string)
+from canvas import Canvas, MenuOption, valid_screen_transitions, canvas_to_option
 
 
 class InputParser:
@@ -107,9 +46,11 @@ class InputParser:
         elif any(inp.lower().startswith(k) for k in ["e", "x", "exit"]):
             return MenuOption.EXIT
         elif any(inp.lower().startswith(k) for k in ["g", "start", "game"]):
-            return MenuOption.STARTGAME
+            return MenuOption.NEWGAME
         elif any(inp.lower().startswith(k) for k in ["s", "stats", "show stats"]):
             return MenuOption.SHOWSTATS
+        elif any(inp.lower().startswith(k) for k in ["m", "menu", "main menu"]):
+            return MenuOption.MAINMENU
 
         raise Exception("Invalid Option")
 
@@ -130,7 +71,7 @@ class View:
 
     def update_display(self, canvas):
         self.clear_screen()
-        self.set_menu_option(canvas_option_map[canvas])
+        self.set_menu_option(canvas_to_option(canvas))
         canvas.paint()
 
     def get_username(self):
@@ -156,25 +97,3 @@ class View:
         return opt
 
 
-login_canvas = LoginCanvas()
-start_menu_canvas = StartMenuCanvas()
-exit_canvas = ExitCanvas()
-
-canvas_option_map = {
-    login_canvas: MenuOption.LOGIN,
-    exit_canvas: MenuOption.EXIT,
-    start_menu_canvas: MenuOption.STARTMENU,
-    # stats_canvas: MenuOption.SHOWSTATS
-}
-
-valid_screen_transitions = {
-    MenuOption.STARTMENU: [MenuOption.LOGIN, MenuOption.EXIT],
-}
-
-# option_
-
-if __name__ == "__main__":
-    # l = LoginCanvas()
-    # l.paint()
-    v = View()
-    v.display_canvas()
