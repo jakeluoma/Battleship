@@ -62,7 +62,7 @@ class ShipBuilder:
             if len(tiles) != self.get_ship_size():
                 print("Length of tiles given for ship placement doesn't match ship length!")
             self.finished = True
-            self.ship.setTiles(tiles)
+            self.ship.set_tiles(tiles)
             for tile in tiles:
                 tile.set_ship(self.ship)
 

@@ -32,7 +32,7 @@ def test_process_incoming_attack():
 
     tiles = []
     tiles.append(tile)
-    ship.setTiles(tiles)
+    ship.set_tiles(tiles)
 
     hit = Coordinate(0, 0)
     miss = Coordinate(0, 1)

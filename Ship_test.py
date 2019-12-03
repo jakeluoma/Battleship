@@ -4,7 +4,7 @@ from Coordinate import Coordinate
 import Ship
 import Tile
 
-def test_ship_init_and_isSunk():
+def test_ship_init_and_is_sunk():
     ship = Ship.Ship("test", 1)
     coordinate = Coordinate(0, 0)
     tile = Tile.Tile(coordinate)
@@ -13,7 +13,7 @@ def test_ship_init_and_isSunk():
 
     tiles = []
     tiles.append(tile)
-    ship.setTiles(tiles)
+    ship.set_tiles(tiles)
 
     assert ship.get_size() == 1
     assert ship.is_sunk() == False
