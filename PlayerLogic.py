@@ -28,7 +28,7 @@ class PlayerLogic(ABC):
 
 class CommandLineInstruction(PlayerLogic):
     def __init__(self):
-        super()
+        PlayerLogic.__init__(self)
         self.num_ships_placed = 0
     
     def place_ship(self, board: Board, ship_type: ShipType) -> Ship:
@@ -47,7 +47,7 @@ class CommandLineInstruction(PlayerLogic):
 
         calculate the list of desired coordinates and convert into a list of tiles using board.getTile()
         board.validShipPlacement(tiles)
-        if valid, self.ship_builder.placeShip(tiles) and return self.ship_builder.returnCompeltedShip()
+        if valid, self.ship_builder.placeShip(tiles) and return self.ship_builder.returnCompletedShip()
         else loop back to prompting for coordinate and direction.
         """
         self.ship_builder.start_ship(ship_type)
@@ -84,7 +84,7 @@ class CommandLineInstruction(PlayerLogic):
 """ AI Control """
 class AI(PlayerLogic):
     def __init__(self):
-        super()
+        PlayerLogic.__init__(self)
         self.num_ships_placed = 0
 
     # Places a ship onto the board
