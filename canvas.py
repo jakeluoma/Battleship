@@ -94,6 +94,27 @@ class ExitCanvas(Canvas):
         print(self.display_string)
 
 
+class BoardCanvas(Canvas):
+    def __init__(self):
+        super().__init__()
+        self.display_string = center_format.format("xxxxxx Your Board xxxxxx") + \
+            center_format.format("\n\n") + \
+            center_format.format("_|0|1|2|3|4|5|6|7|8|9|") + \
+            center_format.format("0|_|_|_|_|_|_|_|_|_|_|") + \
+            center_format.format("1|_|_|_|_|_|_|_|_|_|_|") + \
+            center_format.format("2|_|_|_|_|_|_|_|_|_|_|") + \
+            center_format.format("3|_|_|_|_|_|_|_|_|_|_|") + \
+            center_format.format("4|_|_|_|_|_|_|_|_|_|_|") + \
+            center_format.format("5|_|_|_|_|_|_|_|_|_|_|") + \
+            center_format.format("6|_|_|_|_|_|_|_|_|_|_|") + \
+            center_format.format("7|_|_|_|_|_|_|_|_|_|_|") + \
+            center_format.format("8|_|_|_|_|_|_|_|_|_|_|") + \
+            center_format.format("9|_|_|_|_|_|_|_|_|_|_|")
+
+    def paint(self):
+        print(self.display_string)
+
+
 login_canvas = LoginCanvas()
 start_menu_canvas = StartMenuCanvas()
 main_menu_canvas = MainMenuCanvas()

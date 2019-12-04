@@ -10,7 +10,7 @@ from player import Player, UserProfile
 from PlayerLogic import CommandLineInstruction, AI
 
 
-class GameMode():
+class GameMode:
     def __init__(self):
         self.board_dimension = 10
         self.ship_types: List[ShipType] = [ShipType.BATTLESHIP, ShipType.CARRIER, ShipType.DESTROYER, ShipType.PATROL_BOAT, ShipType.SUBMARINE]
@@ -20,6 +20,7 @@ class GameMode():
 
     def get_ship_types(self) -> List[ShipType]:
         return self.ship_types
+
 
 class Game:
     def __init__(self, user_profile: UserProfile, game_mode: GameMode):
