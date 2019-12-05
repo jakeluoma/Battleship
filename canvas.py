@@ -1,4 +1,8 @@
 from enum import Enum
+from typing import List
+
+from Coordinate import Coordinate
+from settings import Settings
 
 center_format = "{0:^100}\n"
 
@@ -110,20 +114,47 @@ class NewGameCanvas(Canvas):
 
 class BoardCanvas(Canvas):
     def __init__(self):
+        self.board_coordinates_dict = {k: {} for k in range(10)}
+        for key in self.board_coordinates_dict:
+            self.board_coordinates_dict[key] = {k: Settings.empty_cell for k in range(10)}
+
         super().__init__()
-        self.display_string = center_format.format("xxxxxx Your Board xxxxxx") + \
+        self.display_string = self.update_display(self.board_coordinates_dict)
+
+    def update_display(self, board_coordinates) -> str:
+        return center_format.format("xxxxxx Your Board xxxxxx") + \
             center_format.format("\n\n") + \
             center_format.format("_|0|1|2|3|4|5|6|7|8|9|") + \
-            center_format.format("0|_|_|_|_|_|_|_|_|_|_|") + \
-            center_format.format("1|_|_|_|_|_|_|_|_|_|_|") + \
-            center_format.format("2|_|_|_|_|_|_|_|_|_|_|") + \
-            center_format.format("3|_|_|_|_|_|_|_|_|_|_|") + \
-            center_format.format("4|_|_|_|_|_|_|_|_|_|_|") + \
-            center_format.format("5|_|_|_|_|_|_|_|_|_|_|") + \
-            center_format.format("6|_|_|_|_|_|_|_|_|_|_|") + \
-            center_format.format("7|_|_|_|_|_|_|_|_|_|_|") + \
-            center_format.format("8|_|_|_|_|_|_|_|_|_|_|") + \
-            center_format.format("9|_|_|_|_|_|_|_|_|_|_|")
+            center_format.format("0|{}|{}|{}|{}|{}|{}|{}|{}|{}}|{}|".format(*board_coordinates[0].values())) + \
+            center_format.format("1|{}|{}|{}|{}|{}|{}|{}|{}|{}}|{}|".format(*board_coordinates[1].values())) + \
+            center_format.format("2|{}|{}|{}|{}|{}|{}|{}|{}|{}}|{}|".format(*board_coordinates[2].values())) + \
+            center_format.format("3|{}|{}|{}|{}|{}|{}|{}|{}|{}}|{}|".format(*board_coordinates[3].values())) + \
+            center_format.format("4|{}|{}|{}|{}|{}|{}|{}|{}|{}}|{}|".format(*board_coordinates[4].values())) + \
+            center_format.format("5|{}|{}|{}|{}|{}|{}|{}|{}|{}}|{}|".format(*board_coordinates[5].values())) + \
+            center_format.format("6|{}|{}|{}|{}|{}|{}|{}|{}|{}}|{}|".format(*board_coordinates[6].values())) + \
+            center_format.format("7|{}|{}|{}|{}|{}|{}|{}|{}|{}}|{}|".format(*board_coordinates[7].values())) + \
+            center_format.format("8|{}|{}|{}|{}|{}|{}|{}|{}|{}}|{}|".format(*board_coordinates[8].values())) + \
+            center_format.format("9|{}|{}|{}|{}|{}|{}|{}|{}|{}}|{}|".format(*board_coordinates[9].values()))
+
+    def update_hits(self, hits: List[Coordinate]) -> str:
+        for row, col in hits:
+            self.board_coordinates_dict[row][col] = Settings.hit_cell
+        return self.update_display(self.board_coordinates_dict)
+
+    def update_misses(self, misses: List[Coordinate]) -> str:
+        for row, col in misses:
+            self.board_coordinates_dict[row][col] = Settings.missed_cell
+        return self.update_display(self.board_coordinates_dict)
+
+    def update_ship_cells(self, ship_cells: List[Coordinate]) -> str:
+        for row, col in ship_cells:
+            self.board_coordinates_dict[row][col] = Settings.ship_cell
+        return self.update_display(self.board_coordinates_dict)
+
+    def update_empty_cells(self, empty_cells: List[Coordinate]) -> str:
+        for row, col in empty_cells:
+            self.board_coordinates_dict[row][col] = Settings.empty_cell
+        return self.update_display(self.board_coordinates_dict)
 
     def paint(self):
         print(self.display_string)

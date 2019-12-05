@@ -44,8 +44,8 @@ class Player:
             fleet.append(self.player_logic.place_ship(self.fleet_board, ship))
         return fleet
 
-    # Set reference to opponent. Since both Players can't be initialized and have their reference to each other set at the same time,
-    # a setOpponent() method is required to complete initialization.
+    # Set reference to opponent. Since both Players can't be initialized and have their reference to each other set
+    # at the same time, a setOpponent() method is required to complete initialization.
     def setOpponent(self, opponent: 'Player'):
         self.opponent = opponent
 

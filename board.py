@@ -74,8 +74,7 @@ class Board:
         hits: List[Coordinate] = []
         misses: List[Coordinate] = []
         for coordinate in coordinates:
-            row, col = coordinate.get_row_and_column()
-            tile = self.get_tile(row, col)
+            tile = self.get_tile(*coordinate.get_row_and_column())
             if tile is None:
                 continue
             if tile.get_ship() is not None:
