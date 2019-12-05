@@ -1,3 +1,8 @@
+from canvas import empty_cell_change_request_canvas, not_hit_cell_change_request_canvas, \
+hit_cell_change_request_canvas, miss_cell_change_request_canvas, empty_cell_changed_canvas, \
+not_hit_cell_changed_canvas, hit_cell_changed_canvas, miss_cell_changed_canvas, \
+character_entry_request_canvas, enter_again_request_canvas
+
 class Settings:
 
     empty_cell = '_'
@@ -15,58 +20,64 @@ class Settings:
 
     @staticmethod
     def change_empty_cell():
-        yes_no = input("1. Do you want to change the representation of empty cell ? (Y|N): ")
-        if yes_no == 'Y' or yes_no == 'y' or yes_no == 'YES' or yes_no == 'Yes' or yes_no == 'yes':
-            Settings.empty_cell = input(" - Please enter character of your choice: ")
-            print("===Empty cell representation updated successfully===")
+        empty_cell_change_request_canvas.display_string()
+        yes_no = input()
+        if yes_no in ['Y', 'y', 'YES', 'Yes', 'yes']:
+            character_entry_request_canvas.display_string()
+            Settings.empty_cell = input()
+            empty_cell_changed_canvas.display_string()
         return
 
     @staticmethod
     def change_ship_cell():
-        yes_no = input("2. Do you want to change the representation of ship cell (not hit) ? (Y|N): ")
+        not_hit_cell_change_request_canvas.display_string()
+        yes_no = input()
 
-        if yes_no == 'Y' or yes_no == 'y' or yes_no == 'YES' or yes_no == 'Yes' or yes_no == 'yes':
-            Settings.ship_cell = input(" - Please enter character of your choice: ")
+        if yes_no in ['Y', 'y', 'YES', 'Yes', 'yes']:
+            character_entry_request_canvas.display_string()
+            Settings.ship_cell = input()
             while(True):
                 if Settings.ship_cell == Settings.empty_cell:
-                    Settings.ship_cell = input(" - Please enter again: ")
+                    enter_again_request_canvas.display_string()
+                    Settings.ship_cell = input()
                     continue
                 else:
                     break
-
-            print("===Ship cell (not hit) representation updated successfully===")
+            not_hit_cell_changed_canvas.display_string()
         return
 
     @staticmethod
     def change_hit_cell():
-        yes_no = input("3. Do you want to change the representation of hit cell ? (Y|N): ")
+        hit_cell_change_request_canvas.display_string()
+        yes_no = input()
 
-        if yes_no == 'Y' or yes_no == 'y' or yes_no == 'YES' or yes_no == 'Yes' or yes_no == 'yes':
-            Settings.empty_cell = input(" - Please enter character of your choice: ")
+        if yes_no in ['Y', 'y', 'YES', 'Yes', 'yes']:
+            character_entry_request_canvas.display_string()
+            Settings.empty_cell = input()
             while (True):
                 if Settings.hit_cell == Settings.empty_cell or Settings.hit_cell == Settings.ship_cell:
-                    Settings.hit_cell = input(" - Please enter again: ")
+                    enter_again_request_canvas.display_string()
+                    Settings.ship_cell = input()
                     continue
                 else:
                     break
-
-            print("===Hit cell representation updated successfully===")
+            hit_cell_changed_canvas.display_string()
         return
 
     @staticmethod
     def change_missed_cell():
-        yes_no = input("4. Do you want to change the representation of missed cell ? (Y|N): ")
+        miss_cell_change_request_canvas.display_string()
+        yes_no = input()
 
-        if yes_no == 'Y' or yes_no == 'y' or yes_no == 'YES' or yes_no == 'Yes' or yes_no == 'yes':
-            Settings.missed_cell = input(" - Please enter character of your choice: ")
+        if yes_no in ['Y', 'y', 'YES', 'Yes', 'yes']:
+            character_entry_request_canvas.display_string()
+            Settings.empty_cell = input()
             while (True):
-                if Settings.missed_cell == Settings.empty_cell or Settings.missed_cell == Settings.ship_cell \
-                        or Settings.missed_cell == Settings.hit_cell:
-                    Settings.ship_cell = input(" - Please enter again: ")
+                if Settings.missed_cell in [Settings.empty_cell, Settings.ship_cell, Settings.hit_cell]:
+                    enter_again_request_canvas.display_string()
+                    Settings.ship_cell = input()
                     continue
                 else:
                     break
-
-
-            print("===Missed cell representation updated successfully===")
+            miss_cell_changed_canvas.display_string()
         return

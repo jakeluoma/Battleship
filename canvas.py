@@ -8,7 +8,6 @@ from settings import Settings
 
 center_format = "{0:^100}\n"
 
-
 class MenuOption(Enum):
     STARTMENU = 0
     LOGIN = 1
@@ -251,12 +250,117 @@ class FinishedPlacingShipsCanvas(Canvas):
     def paint(self):
         print(self.display_string)
 
+class EmptyCellChangeRequestCanvas(Canvas):
+    def __init__(self):
+        super().__init__()
+        self.display_string = center_format.format(
+            "1. Do you want to change the representation of empty cell ? (Y|N): ")
+
+    def paint(self):
+        print(self.display_string)
+
+
+class NotHitCellChangeRequestCanvas(Canvas):
+    def __init__(self):
+        super().__init__()
+        self.display_string = center_format.format(
+            "2. Do you want to change the representation of ship cell (not hit) ? (Y|N): ")
+
+    def paint(self):
+        print(self.display_string)
+
+class HitCellChangeRequestCanvas(Canvas):
+    def __init__(self):
+        super().__init__()
+        self.display_string = center_format.format(
+            "3. Do you want to change the representation of hit cell ? (Y|N): ")
+
+    def paint(self):
+        print(self.display_string)
+
+class MissCellChangeRequestCanvas(Canvas):
+    def __init__(self):
+        super().__init__()
+        self.display_string = center_format.format(
+            "4. Do you want to change the representation of missed cell ? (Y|N): ")
+
+    def paint(self):
+        print(self.display_string)
+
+
+class EmptyCellChangedCanvas(Canvas):
+    def __init__(self):
+        super().__init__()
+        self.display_string = center_format.format(
+            "===Empty cell representation updated successfully===")
+
+    def paint(self):
+        print(self.display_string)
+
+
+class NotHitCellChangedCanvas(Canvas):
+    def __init__(self):
+        super().__init__()
+        self.display_string = center_format.format(
+            "===Ship cell (not hit) representation updated successfully===")
+
+    def paint(self):
+        print(self.display_string)
+
+
+class HitCellChangedCanvas(Canvas):
+    def __init__(self):
+        super().__init__()
+        self.display_string = center_format.format(
+            "===Hit cell representation updated successfully===")
+
+    def paint(self):
+        print(self.display_string)
+
+
+class MissCellChangedCanvas(Canvas):
+    def __init__(self):
+        super().__init__()
+        self.display_string = center_format.format(
+            "===Missed cell representation updated successfully===")
+
+    def paint(self):
+        print(self.display_string)
+
+class CharacterEntryRequestCanvas(Canvas):
+    def __init__(self):
+        super().__init__()
+        self.display_string = center_format.format(
+            " - Please enter character of your choice: ")
+
+        def paint(self):
+            print(self.display_string)
+
+class EnterAgainRequestCanvas(Canvas):
+    def __init__(self):
+        super().__init__()
+        self.display_string = center_format.format(
+            " - Please enter again: ")
+
+        def paint(self):
+            print(self.display_string)
 
 login_canvas = LoginCanvas()
 start_menu_canvas = StartMenuCanvas()
 main_menu_canvas = MainMenuCanvas()
 exit_canvas = ExitCanvas()
 new_game_canvas = NewGameCanvas()
+
+empty_cell_change_request_canvas = EmptyCellChangeRequestCanvas()
+not_hit_cell_change_request_canvas = NotHitCellChangeRequestCanvas()
+hit_cell_change_request_canvas = HitCellChangeRequestCanvas()
+miss_cell_change_request_canvas = MissCellChangeRequestCanvas()
+empty_cell_changed_canvas = EmptyCellChangedCanvas()
+not_hit_cell_changed_canvas = NotHitCellChangedCanvas()
+hit_cell_changed_canvas = HitCellChangedCanvas()
+miss_cell_changed_canvas = MissCellChangedCanvas()
+character_entry_request_canvas = CharacterEntryRequestCanvas()
+enter_again_request_canvas = EnterAgainRequestCanvas()
 
 
 def canvas_to_option(canvas: Canvas):
