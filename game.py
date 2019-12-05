@@ -23,7 +23,7 @@ class GameMode:
 
 
 class Game:
-    def __init__(self, user_profile: UserProfile, game_mode: GameMode):
+    def __init__(self, user_profile: UserProfile, game_mode: GameMode = GameMode()):
         # initialize human player
         fleet_board = Board(game_mode.get_dimension())
         target_board = Board(game_mode.get_dimension())
