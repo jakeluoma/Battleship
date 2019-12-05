@@ -110,9 +110,9 @@ class BoardHelper:
     # Note that runs are always ordered left to right or up to down.
     @staticmethod
     def get_run_of_tiles_length_n(board: Board, n: int, row: int, col: int, direction: Direction) -> List[Tile]:
-        run = []
+        run: List[Tile] = []
         if direction == direction.right:
-            possibleRun = []
+            possibleRun: List[Tile] = []
             for i in range(n):
                 colIndex = col + i
                 tile = board.get_tile(row, colIndex)
@@ -121,7 +121,7 @@ class BoardHelper:
                 possibleRun.append(tile)
             run = possibleRun
         elif direction == direction.left:
-            possibleRun = []
+            possibleRun: List[Tile] = []
             for i in range(n):
                 colIndex = col - i
                 tile = board.get_tile(row, colIndex)
@@ -130,7 +130,7 @@ class BoardHelper:
                 possibleRun.insert(0, tile)
             run = possibleRun
         elif direction == direction.down:
-            possibleRun = []
+            possibleRun: List[Tile] = []
             for i in range(n):
                 rowIndex = row + i
                 tile = board.get_tile(rowIndex, col)
@@ -139,7 +139,7 @@ class BoardHelper:
                 possibleRun.append(tile)
             run = possibleRun
         elif direction == direction.up:
-            possibleRun = []
+            possibleRun: List[Tile] = []
             for i in range(n):
                 rowIndex = row - i
                 tile = board.get_tile(rowIndex, col)
@@ -153,12 +153,9 @@ class BoardHelper:
     @staticmethod
     def get_run_of_tiles_length_n_with_no_ship(board: Board, n: int, row: int, col: int,
                                                direction: Direction) -> List[Tile]:
-        run = BoardHelper.get_run_of_tiles_length_n(board, n, row, col,
+        run: List[Tile] = BoardHelper.get_run_of_tiles_length_n(board, n, row, col,
                                                     direction)
-        if not run:
-            print("Selection running out of board")
         if board.ship_in_run(run):
-            print("Selection intersecting with existing ship")
             run = []
 
         return run
@@ -167,7 +164,7 @@ class BoardHelper:
     # are within the board.
     @staticmethod
     def get_adjacent_tiles(board: Board, tile: Tile) -> List[Tile]:
-        ret = List[Tile]
+        ret: List[Tile] = []
         locations = List[Tuple[int, int]]
         row, col = tile.getRowAndColumn()
         locations.append((row + 1, col))
@@ -188,7 +185,7 @@ class BoardHelper:
     # the list contains both horizontal and vertical runs.
     @staticmethod
     def get_runs_of_tiles_with_no_ship_length_n(board: Board, n: int) -> List[List[Tile]]:
-        ret = List[List[Tile]]
+        ret: List[List[Tile]] = []
 
         # check for horizontal runs
         for row in range(board.get_dimension()):
@@ -214,7 +211,7 @@ class BoardHelper:
     @staticmethod
     def get_runs_of_tiles_with_no_ship_length_n_next_to_ship(board: Board, n: int) -> List[List[Tile]]:
         # find tiles that already have ships
-        tilesWithShips = List[Tile]
+        tilesWithShips: List[Tile] = []
         for row in range(board.get_dimension()):
             for col in range(board.get_dimension()):
                 tile = board.get_tile(row, col)
@@ -224,7 +221,7 @@ class BoardHelper:
                     tilesWithShips.append(tile)
 
         # starting tiles are tiles without ships adjacent to the tiles that have ships
-        startingTiles = List[Tile]
+        startingTiles: List[Tile] = []
         for tile in tilesWithShips:
             adjacentTiles = BoardHelper.get_adjacent_tiles(board, tile)
             for adjacentTile in adjacentTiles:
@@ -233,7 +230,7 @@ class BoardHelper:
         list(set(startingTiles))  # get rid of duplicate tiles
 
         # from each starting tile, try to get a run of length N in each direction
-        ret = List[List[Tile]]
+        ret: List[List[Tile]] = []
         for tile in startingTiles:
             row, col = tile.get_coordinate().get_row_and_column()
 
@@ -255,7 +252,7 @@ class BoardHelper:
 
         # only want unique runs
         # https://stackoverflow.com/questions/3724551/python-uniqueness-for-list-of-lists
-        ret = [list(x) for x in set(tuple(x) for x in ret)]
+        ret: List[List[Tile]] = [list(x) for x in set(tuple(x) for x in ret)]
 
         return ret
 
@@ -265,7 +262,7 @@ class BoardHelper:
     # of the tiles in a given run have been attacked yet.
     @staticmethod
     def get_runs_of_tiles_with_no_attack_length_n(board: Board, n: int) -> List[List[Tile]]:
-        ret = List[List[Tile]]
+        ret: List[List[Tile]] = []
 
         # check for horizontal runs
         for row in range(board.get_dimension()):
@@ -291,7 +288,7 @@ class BoardHelper:
     @staticmethod
     def get_tiles_with_no_attack_adjacent_to_hits(board: Board) -> List[Tile]:
         # find tiles that have been hit
-        tilesWithHits = List[Tile]
+        tilesWithHits: List[Tile] = []
         for row in range(board.get_dimension()):
             for col in range(board.get_dimension()):
                 tile = board.get_tile(row, col)
@@ -301,7 +298,7 @@ class BoardHelper:
                     tilesWithHits.append(tile)
 
         # get the tiles with TileHitStatus.EMPTY adjacent to the tiles that have been hit
-        tiles = List[Tile]
+        tiles: List[Tile] = []
         for tile in tilesWithHits:
             adjacentTiles = BoardHelper.get_adjacent_tiles(board, tile)
             for adjacentTile in adjacentTiles:
@@ -316,40 +313,40 @@ class BoardHelper:
     # and vertical runs are ordered top to bottom.
     @staticmethod
     def get_hit_runs(board: Board) -> Tuple[List[List[Tile]], List[List[Tile]]]:
-        horizontalHitRuns = List[List[Tile]]
-        verticalHitRuns = List[List[Tile]]
+        horizontalHitRuns: List[List[Tile]] = []
+        verticalHitRuns: List[List[Tile]] = []
 
         # find horizontal hit runs
         for row in range(board.get_dimension()):
-            potentialRun = List[Tile]
+            potentialRun: List[Tile] = []
             for col in range(board.get_dimension()):
                 tile = board.get_tile(row, col)
                 if tile is None:
                     if potentialRun:
                         horizontalHitRuns.append(potentialRun)
-                        potentialRun = List[Tile]
+                        potentialRun: List[Tile] = []
                     continue
                 if tile.get_hit_status() == TileHitStatus.HIT:
                     potentialRun.append(tile)
                 if tile.get_hit_status() != TileHitStatus.HIT and potentialRun:
                     horizontalHitRuns.append(potentialRun)
-                    potentialRun = List[Tile]
+                    potentialRun: List[Tile] = []
 
         # find vertical hit runs
         for col in range(board.get_dimension()):
-            potentialRun = List[Tile]
+            potentialRun: List[Tile] = []
             for row in range(board.get_dimension()):
                 tile = board.get_tile(row, col)
                 if tile is None:
                     if potentialRun:
                         verticalHitRuns.append(potentialRun)
-                        potentialRun = List[Tile]
+                        potentialRun: List[Tile] = []
                     continue
                 if tile.get_hit_status() == TileHitStatus.HIT:
                     potentialRun.append(tile)
                 if tile.get_hit_status() != TileHitStatus.HIT and potentialRun:
                     verticalHitRuns.append(potentialRun)
-                    potentialRun = List[Tile]
+                    potentialRun: List[Tile] = []
 
         # get rid of any runs < length 2
         if horizontalHitRuns:
@@ -367,7 +364,7 @@ class BoardHelper:
     # the ends of hit runs
     @staticmethod
     def get_tiles_with_no_attack_at_end_of_hit_runs(board: Board):
-        endTiles = List[Tile]
+        endTiles: List[Tile] = []
         horizontalHitRuns, verticalHitRuns = BoardHelper.get_hit_runs(board)
 
         for run in horizontalHitRuns:
