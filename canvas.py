@@ -3,6 +3,7 @@ from typing import List
 
 from Coordinate import Coordinate
 from Ship import ShipType, ship_size_map
+from Tile import Tile
 from settings import Settings
 
 center_format = "{0:^100}\n"
@@ -18,6 +19,8 @@ class MenuOption(Enum):
     PLACESHIPSMENU = 6
     VIEWCONFIG = 7
     PLACESHIPS = 8
+    FINISHEDPLACING = 9
+    STARTGAME = 10
 
 
 class Canvas:
@@ -165,34 +168,40 @@ class BoardCanvas(Canvas):
     def update_hits(self, hits: List[Coordinate]) -> str:
         for row, col in hits:
             self.board_coordinates_dict[row][col] = Settings.hit_cell
-        return self.update(self.board_coordinates_dict)
+        self.display_string = self.update(self.board_coordinates_dict)
+        return self.display_string
 
     def update_misses(self, misses: List[Coordinate]) -> str:
         for row, col in misses:
             self.board_coordinates_dict[row][col] = Settings.missed_cell
-        return self.update(self.board_coordinates_dict)
+        self.display_string = self.update(self.board_coordinates_dict)
+        return self.display_string
 
-    def update_ship_cells(self, ship_cells: List[Coordinate]) -> str:
-        for row, col in ship_cells:
-            self.board_coordinates_dict[row][col] = Settings.ship_cell
-        return self.update(self.board_coordinates_dict)
+    def update_ship_cells(self, ship_tiles: List[Tile]) -> str:
+        for ship_tile in ship_tiles:
+            coord = ship_tile.get_coordinate()
+            self.board_coordinates_dict[coord.row][coord.column] = Settings.ship_cell
+        self.display_string = self.update(self.board_coordinates_dict)
+        return self.display_string
 
     def update_empty_cells(self, empty_cells: List[Coordinate]) -> str:
         for row, col in empty_cells:
             self.board_coordinates_dict[row][col] = Settings.empty_cell
-        return self.update(self.board_coordinates_dict)
+        self.display_string = self.update(self.board_coordinates_dict)
+        return self.display_string
 
     def paint(self):
         print(self.display_string)
 
 
-class PlaceShipsMenuCanvas:
+class PlaceShipsMenuCanvas(Canvas):
     def __init__(self, board_canvas: BoardCanvas):
+        super().__init__()
         self.board_canvas = board_canvas
         self.display_string = self.board_canvas.get_display_string() + \
             center_format.format("\n\n") + \
             center_format.format("This is your current board.") + \
-            center_format.format("st: Start placing ships") + \
+            center_format.format("t: Start placing ships") + \
             center_format.format("g: Back to game menu") + \
             center_format.format("x: Exit")
 
@@ -203,8 +212,9 @@ class PlaceShipsMenuCanvas:
         print(self.display_string)
 
 
-class PlaceShipsCanvas:
+class PlaceShipsCanvas(Canvas):
     def __init__(self, board_canvas: BoardCanvas, ship_type: ShipType):
+        super().__init__()
         self.board_canvas = board_canvas
         self.display_string = self.update(ship_type)
 
@@ -213,8 +223,33 @@ class PlaceShipsCanvas:
 
     def update(self, ship: ShipType):
         return self.board_canvas.get_display_string() + center_format.format("\n\n") + \
-            center_format.format("Enter the coordinates and direction of your ship. "
-                                 "Ship specification - Ship name: {} Ship Size: {}".format(ship.name, ship_size_map[ship]))
+            center_format.format("Enter the coordinates and direction of your ship.") + \
+            center_format.format("Ship specification - "
+                                 "Ship name: {} Ship Size: {}".format(ship.name, ship_size_map[ship])) + \
+            center_format.format("Enter the coordinates on the first line, and the direction on the next") + \
+            center_format.format("Coordinates specified by comma-separated numbers") + \
+            center_format.format("Direction specified by the legend: w - up, a - left, d - right, s - down")
+
+    def paint(self):
+        print(self.display_string)
+
+
+class FinishedPlacingShipsCanvas(Canvas):
+    def __init__(self, board_canvas: BoardCanvas):
+        super().__init__()
+        self.board_canvas = board_canvas
+        self.display_string = self.board_canvas.get_display_string() + \
+            center_format.format("\n\n") + \
+            center_format.format("You have finished placing all your ships!") + \
+            center_format.format("n: Proceed to game") + \
+            center_format.format("g: Start new game") + \
+            center_format.format("x: Exit")
+
+    def get_display_string(self):
+        return self.display_string
+
+    def paint(self):
+        print(self.display_string)
 
 
 login_canvas = LoginCanvas()
@@ -239,6 +274,10 @@ def canvas_to_option(canvas: Canvas):
         return MenuOption.NEWGAMEMENU
     elif isinstance(canvas, PlaceShipsMenuCanvas):
         return MenuOption.PLACESHIPSMENU
+    elif isinstance(canvas, PlaceShipsCanvas):
+        return MenuOption.PLACESHIPS
+    elif isinstance(canvas, FinishedPlacingShipsCanvas):
+        return MenuOption.FINISHEDPLACING
 
     raise Exception("No option found for canvas")
 
@@ -248,5 +287,7 @@ valid_screen_transitions = {
     MenuOption.LOGIN: [MenuOption.MAINMENU],
     MenuOption.MAINMENU: [MenuOption.NEWGAMEMENU, MenuOption.SHOWSTATS, MenuOption.EXIT],
     MenuOption.SHOWSTATS: [MenuOption.MAINMENU],
-    MenuOption.NEWGAMEMENU: [MenuOption.PLACESHIPSMENU, MenuOption.VIEWCONFIG, MenuOption.MAINMENU, MenuOption.EXIT]
+    MenuOption.NEWGAMEMENU: [MenuOption.PLACESHIPSMENU, MenuOption.VIEWCONFIG, MenuOption.MAINMENU, MenuOption.EXIT],
+    MenuOption.PLACESHIPSMENU: [MenuOption.PLACESHIPS, MenuOption.NEWGAMEMENU, MenuOption.EXIT],
+    MenuOption.PLACESHIPS: [MenuOption.STARTGAME, MenuOption.NEWGAMEMENU, MenuOption.EXIT]
 }

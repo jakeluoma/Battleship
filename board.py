@@ -174,11 +174,12 @@ class BoardHelper:
     def get_adjacent_tiles(board: Board, tile: Tile) -> List[Tile]:
         ret: List[Tile] = []
         locations = List[Tuple[int, int]]
-        row, col = tile.getRowAndColumn()
-        locations.append((row + 1, col))
-        locations.append((row - 1, col))
-        locations.append((row, col + 1))
-        locations.append((row, col - 1))
+        locations = []
+        coord = tile.get_coordinate()
+        locations.append((coord.row + 1, coord.column))
+        locations.append((coord.row - 1, coord.column))
+        locations.append((coord.row, coord.column + 1))
+        locations.append((coord.row, coord.column - 1))
 
         for location in locations:
             tile = board.get_tile(*location)

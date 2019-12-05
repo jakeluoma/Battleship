@@ -46,6 +46,8 @@ class InputParser:
             return MenuOption.EXIT
         elif any(inp.lower().startswith(k) for k in ["g", "start", "game"]):
             return MenuOption.NEWGAMEMENU
+        elif any(inp.lower().startswith(k) for k in ["t", "start"]):
+            return MenuOption.PLACESHIPS
         elif any(inp.lower().startswith(k) for k in ["s", "stats", "show stats"]):
             return MenuOption.SHOWSTATS
         elif any(inp.lower().startswith(k) for k in ["m", "menu", "main menu"]):
@@ -54,8 +56,6 @@ class InputParser:
             return MenuOption.PLACESHIPSMENU
         elif any(inp.lower().startswith(k) for k in ["c", "config", "display"]):
             return MenuOption.VIEWCONFIG
-        elif any(inp.lower().startswith(k) for k in ["st", "start"]):
-            return MenuOption.PLACESHIPS
 
         raise Exception("Invalid Option")
 
@@ -77,7 +77,12 @@ class View:
     def update_display(self, canvas: Canvas):
         self.clear_screen()
         self.set_menu_option(canvas_to_option(canvas))
+        self.canvas = canvas
         canvas.paint()
+
+    def display_canvas(self):
+        # self.clear_screen()
+        self.canvas.paint()
 
     def update_canvas(self, *args):
         self.clear_screen()
@@ -104,7 +109,7 @@ class View:
         opt = InputParser.parse_next_view(inp)
 
         if opt not in valid_screen_transitions[self.menu_option]:
-            raise Exception("You cannot use this option in this screen")
+            raise Exception("You cannot use this option in this screen: {}".format(opt.name))
 
         return opt
 

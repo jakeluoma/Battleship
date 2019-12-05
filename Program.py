@@ -2,7 +2,7 @@ from game import Game
 from statistics import Statistics
 from player import UserProfile
 from canvas import login_canvas, start_menu_canvas, MenuOption, exit_canvas, main_menu_canvas, StatsCanvas, \
-    new_game_canvas, BoardCanvas, PlaceShipsMenuCanvas
+    new_game_canvas, BoardCanvas, PlaceShipsMenuCanvas, FinishedPlacingShipsCanvas
 from view import View
 
 
@@ -59,7 +59,7 @@ class ProgramAndViewCoordinator:
         MenuOption.SHOWSTATS: lambda program: program.show_user_stats(),
         MenuOption.NEWGAMEMENU: new_game_canvas,
         MenuOption.PLACESHIPSMENU: lambda program: program.get_player_ship_placement_menu_canvas(),
-
+        MenuOption.PLACESHIPS: None,
     }
 
     parameterized_with_program = [MenuOption.SHOWSTATS, MenuOption.PLACESHIPSMENU]
@@ -67,11 +67,12 @@ class ProgramAndViewCoordinator:
     option_program_method_map = {
         MenuOption.STARTMENU: 'noop',
         MenuOption.MAINMENU: 'noop',
+        MenuOption.PLACESHIPSMENU: 'noop',
         MenuOption.NEWGAMEMENU: 'create_new_game',
         MenuOption.LOGIN: 'login',
         MenuOption.SHOWSTATS: 'show_user_stats',
         MenuOption.EXIT: 'exit',
-        MenuOption.PLACESHIPSMENU: 'place_ships',
+        MenuOption.PLACESHIPS: 'place_ships'
     }
 
     def __init__(self, program: Program, view: View):
@@ -96,8 +97,9 @@ class ProgramAndViewCoordinator:
         if menu_option in self.parameterized_with_program:
             canvas = self.option_canvas_map[menu_option](self.program)
         else:
-            canvas = self.option_canvas_map[menu_option]
-        self.view.update_display(canvas)
+            canvas = self.option_canvas_map.get(menu_option)
+        if canvas:
+            self.view.update_display(canvas)
         next_menu = getattr(self.program, self.option_program_method_map[menu_option])()
         if not isinstance(next_menu, MenuOption):
             next_menu = self.view.get_next_view()

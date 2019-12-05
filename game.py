@@ -6,7 +6,7 @@ import pickle
 
 from board import Board
 from Ship import ShipType
-from canvas import PlaceShipsMenuCanvas
+from canvas import PlaceShipsMenuCanvas, PlaceShipsCanvas, FinishedPlacingShipsCanvas
 from player import Player, UserProfile
 from PlayerLogic import CommandLineInstruction, AI
 from view import View
@@ -97,12 +97,15 @@ class Game:
 
     def position_player_fleet(self, player: Player):
         for ship_type in player.ships_to_place:
+            if not player.is_ai:
+                self.view.update_display(PlaceShipsCanvas(player.fleet_board.canvas, ship_type))
             ship = player.position_ship(ship_type)
             if not player.is_ai:
-                pass
-                # player.fleet_board.canvas.update_ship_cells(ship.tiles)
-                # self.view.update_display()
+                player.fleet_board.canvas.update_ship_cells(ship.tiles)
+        if not player.is_ai:
+            self.view.update_display(FinishedPlacingShipsCanvas(player.fleet_board.canvas))
 
     def position_fleets(self):
-        self.position_player_fleet(self.player1)
         self.position_player_fleet(self.player2)
+        self.position_player_fleet(self.player1)
+

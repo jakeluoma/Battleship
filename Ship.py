@@ -60,7 +60,8 @@ class ShipBuilder:
     def place_ship(self, tiles: List[Tile.Tile]):
         if self.ship is not None:
             if len(tiles) != self.get_ship_size():
-                print("Length of tiles given for ship placement doesn't match ship length!")
+                print("Length of tiles given for ship placement doesn't match ship length!:"
+                      " Tiles {} Ship size: {}".format(len(tiles), self.ship.get_size()))
             self.finished = True
             self.ship.set_tiles(tiles)
             for tile in tiles:

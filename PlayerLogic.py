@@ -53,10 +53,10 @@ class CommandLineInstruction(PlayerLogic):
         self.ship_builder.start_ship(ship_type)
 
         # Get initial coordinate and direction from shell
-        row, col = self.view.get_coordinate()
+        coord = self.view.get_coordinate()
         direction = self.view.get_direction()
-        run = BoardHelper.get_run_of_tiles_length_n_with_no_ship(board, self.ship_builder.get_ship_size(), row, col,
-                                                                 direction)
+        run = BoardHelper.get_run_of_tiles_length_n_with_no_ship(board, self.ship_builder.get_ship_size(),
+                                                                 coord.row, coord.column, direction)
         if not run:
             print("Impossible to place ship " + ship_type.name)
             return None
