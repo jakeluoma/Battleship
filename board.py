@@ -4,6 +4,8 @@ from Coordinate import Coordinate
 from typing import List
 from typing import Tuple
 
+from canvas import BoardCanvas
+
 
 class Direction(Enum):
     up = 0
@@ -16,12 +18,15 @@ class Direction(Enum):
 # the Board's tiles, protected by the Board.  The 0,0 location is in the
 # upper left corner.
 class Board:
-    def __init__(self, board_dimension: int):
+    def __init__(self, board_dimension: int, is_target=False):
         self.board_dimension = board_dimension
         self.boardTiles: List[List[Tile]] = [[] for i in range(board_dimension)]
         for row in range(board_dimension):
             for col in range(board_dimension):
                 self.boardTiles[row].append(Tile(Coordinate(row, col)))
+
+        self.is_target = is_target
+        self.canvas = BoardCanvas(self.board_dimension, self.is_target)
 
     def get_dimension(self) -> int:
         return self.board_dimension
@@ -100,6 +105,9 @@ class Board:
             if tile is None:
                 continue
             tile.set_hit_status(TileHitStatus.MISS)
+
+
+
 
 
 class BoardHelper:

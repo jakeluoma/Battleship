@@ -6,8 +6,10 @@ import pickle
 
 from board import Board
 from Ship import ShipType
+from canvas import PlaceShipsMenuCanvas
 from player import Player, UserProfile
 from PlayerLogic import CommandLineInstruction, AI
+from view import View
 
 
 class GameMode:
@@ -23,17 +25,17 @@ class GameMode:
 
 
 class Game:
-    def __init__(self, user_profile: UserProfile, game_mode: GameMode = GameMode()):
+    def __init__(self, user_profile: UserProfile, view: View, game_mode: GameMode = GameMode()):
         # initialize human player
-        fleet_board = Board(game_mode.get_dimension())
-        target_board = Board(game_mode.get_dimension())
+        fleet_board = Board(game_mode.get_dimension(), is_target=False)
+        target_board = Board(game_mode.get_dimension(), is_target=True)
         self.player1 = Player(user_profile, CommandLineInstruction(), fleet_board, target_board,
-                              game_mode.get_ship_types())
+                              game_mode.get_ship_types(), is_ai=False)
 
         # initialize AI player
-        fleet_board = Board(game_mode.get_dimension())
-        target_board = Board(game_mode.get_dimension())
-        self.player2 = Player(user_profile, AI(), fleet_board, target_board, game_mode.get_ship_types())
+        fleet_board = Board(game_mode.get_dimension(), is_target=False)
+        target_board = Board(game_mode.get_dimension(), is_target=True)
+        self.player2 = Player(user_profile, AI(), fleet_board, target_board, game_mode.get_ship_types(), is_ai=True)
 
         # set each Player's opponent to finish Player initialization
         self.player1.setOpponent(self.player2)
@@ -41,6 +43,8 @@ class Game:
 
         # human player will start first
         self.current_player = self.player1
+
+        self.view = view
 
     # Switch the current player
     def switch_player(self):
@@ -84,3 +88,21 @@ class Game:
         except:
             print("Failed to load game")
             return None
+
+    def get_player_board_canvas(self):
+        return self.player1.fleet_board.canvas
+
+    def get_player_ship_placement_canvas(self):
+        return PlaceShipsMenuCanvas(self.player1.fleet_board.canvas)
+
+    def position_player_fleet(self, player: Player):
+        for ship_type in player.ships_to_place:
+            ship = player.position_ship(ship_type)
+            if not player.is_ai:
+                pass
+                # player.fleet_board.canvas.update_ship_cells(ship.tiles)
+                # self.view.update_display()
+
+    def position_fleets(self):
+        self.position_player_fleet(self.player1)
+        self.position_player_fleet(self.player2)

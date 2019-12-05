@@ -36,6 +36,16 @@ class ShipType(Enum):
     BATTLESHIP = 3
     CARRIER = 4
 
+
+ship_size_map = {
+    ShipType.PATROL_BOAT: 2,
+    ShipType.SUBMARINE: 3,
+    ShipType.DESTROYER: 3,
+    ShipType.BATTLESHIP: 4,
+    ShipType.CARRIER: 5
+}
+
+
 # Usage: call startShip(), then placeShip(), then returnCompletedShip() to get a Ship object.
 # Can call getShipSize() at any time
 class ShipBuilder:
@@ -45,17 +55,7 @@ class ShipBuilder:
 
     def start_ship(self, ship_type: ShipType):
         self.finished = False
-
-        if ship_type == ShipType.PATROL_BOAT:
-            self.ship = Ship(ship_type.name, 2)
-        if ship_type == ShipType.SUBMARINE:
-            self.ship = Ship(ship_type.name, 3)
-        if ship_type == ShipType.DESTROYER:
-            self.ship = Ship(ship_type.name, 3)
-        if ship_type == ShipType.BATTLESHIP:
-            self.ship = Ship(ship_type.name, 4)
-        if ship_type == ShipType.CARRIER:
-            self.ship = Ship(ship_type.name, 5)
+        self.ship = Ship(ship_type.name, ship_size_map[ship_type])
 
     def place_ship(self, tiles: List[Tile.Tile]):
         if self.ship is not None:

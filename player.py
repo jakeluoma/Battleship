@@ -1,13 +1,11 @@
+from enum import Enum
 from typing import List
 from typing import Tuple
-from enum import Enum
-import pandas as pd
 
-from board import Board
 from Coordinate import Coordinate
 from PlayerLogic import PlayerLogic
-from Ship import ShipBuilder, Ship, ShipType, ShipBuilder
-from Tile import Tile
+from Ship import Ship, ShipType
+from board import Board
 
 
 class UserProfile:
@@ -25,24 +23,33 @@ class AIType(Enum):
 
 
 class Player:
-    def __init__(self, user_profile: UserProfile, player_logic: PlayerLogic, fleet_board: Board, target_board: Board, ships_to_place: List[ShipType]):
+    def __init__(self, user_profile: UserProfile, player_logic: PlayerLogic, fleet_board: Board, target_board: Board,
+                 ships_to_place: List[ShipType], is_ai=False):
         self.user_profile = user_profile
         self.player_logic = player_logic
         self.fleet_board = fleet_board
         self.target_board = target_board
+        self.is_ai = is_ai
 
         self.enemy_ships_sunk = 0
-        self.num_enemy_ships = len(ships_to_place)
+        self.ships_to_place = ships_to_place
+        self.num_enemy_ships = len(self.ships_to_place)
 
-        self.player_fleet = self.position_fleet(ships_to_place)
+        # self.player_fleet = self.position_fleet(ships_to_place)
         self.player_ships_lost = List[Ship]
+        self.fleet = []
+
+    def position_ship(self, ship_type):
+        ship = self.player_logic.place_ship(self.fleet_board, ship_type)
+
+        self.fleet.append(ship)
+        return ship
 
     # Place the ships
-    def position_fleet(self, ships_to_place: List[ShipType]) -> List[Ship]:
-        fleet = List[Ship]
-        for ship in ships_to_place:
-            fleet.append(self.player_logic.place_ship(self.fleet_board, ship))
-        return fleet
+    def position_fleet(self) -> List[Ship]:
+        for ship in self.ships_to_place:
+            self.position_ship(ship)
+        return self.fleet
 
     # Set reference to opponent. Since both Players can't be initialized and have their reference to each other set
     # at the same time, a setOpponent() method is required to complete initialization.

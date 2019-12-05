@@ -1,5 +1,4 @@
 import os
-from enum import Enum
 from typing import Tuple, Optional
 
 from Coordinate import Coordinate
@@ -52,9 +51,11 @@ class InputParser:
         elif any(inp.lower().startswith(k) for k in ["m", "menu", "main menu"]):
             return MenuOption.MAINMENU
         elif any(inp.lower().startswith(k) for k in ["p", "place", "ship"]):
-            return MenuOption.PLACESHIPS
+            return MenuOption.PLACESHIPSMENU
         elif any(inp.lower().startswith(k) for k in ["c", "config", "display"]):
             return MenuOption.VIEWCONFIG
+        elif any(inp.lower().startswith(k) for k in ["st", "start"]):
+            return MenuOption.PLACESHIPS
 
         raise Exception("Invalid Option")
 
@@ -73,10 +74,17 @@ class View:
     def clear_screen(self):
         os.system("cls")
 
-    def update_display(self, canvas):
+    def update_display(self, canvas: Canvas):
         self.clear_screen()
         self.set_menu_option(canvas_to_option(canvas))
         canvas.paint()
+
+    def update_canvas(self, *args):
+        self.clear_screen()
+        try:
+            self.canvas.update(*args)
+        except NotImplementedError:
+            pass
 
     def get_username(self):
         inp = input()

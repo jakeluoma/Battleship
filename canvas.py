@@ -2,6 +2,7 @@ from enum import Enum
 from typing import List
 
 from Coordinate import Coordinate
+from Ship import ShipType, ship_size_map
 from settings import Settings
 
 center_format = "{0:^100}\n"
@@ -14,13 +15,17 @@ class MenuOption(Enum):
     MAINMENU = 3
     NEWGAMEMENU = 4
     SHOWSTATS = 5
-    PLACESHIPS = 6
+    PLACESHIPSMENU = 6
     VIEWCONFIG = 7
+    PLACESHIPS = 8
 
 
 class Canvas:
     def __init__(self):
         self.view_width = 100
+
+    def get_display_string(self):
+        pass
 
     def paint(self):
         pass
@@ -32,6 +37,9 @@ class LoginCanvas(Canvas):
         self.display_string = center_format.format("xxxxxx Login xxxxxx") + \
             center_format.format("Please Enter your username")
 
+    def get_display_string(self):
+        return self.display_string
+
     def paint(self):
         print(self.display_string)
 
@@ -40,10 +48,14 @@ class MainMenuCanvas(Canvas):
     def __init__(self):
         super().__init__()
         self.display_string = center_format.format("xxxxxx Main Menu xxxxxx") + \
-            center_format.format("g. Play new game") + \
-            center_format.format("s. Show User stats") + \
-            center_format.format("x. Exit") + \
+            center_format.format("g: Play new game") + \
+            center_format.format("s: Show User stats") + \
+            center_format.format("lo: Logout") + \
+            center_format.format("x: Exit") + \
             center_format.format("Please select an option by typing one of the characters above")
+
+    def get_display_string(self):
+        return self.display_string
 
     def paint(self):
         print(self.display_string)
@@ -56,6 +68,9 @@ class StartMenuCanvas(Canvas):
             center_format.format("l: Login") + \
             center_format.format("x: Exit") + \
             center_format.format("Please select an option by typing one of the characters above")
+
+    def get_display_string(self):
+        return self.display_string
 
     def paint(self):
         print(self.display_string)
@@ -86,6 +101,9 @@ class StatsCanvas(Canvas):
             center_format.format("\n") + \
             center_format.format("m: Back to main menu")
 
+    def get_display_string(self):
+        return self.display_string
+
     def paint(self):
         print(self.display_string)
 
@@ -95,6 +113,9 @@ class ExitCanvas(Canvas):
         super().__init__()
         self.display_string = center_format.format("xxxxxx Exit Screen xxxxxx") + \
             center_format.format("You have exited the game. Goodbye!")
+
+    def get_display_string(self):
+        return self.display_string
 
     def paint(self):
         print(self.display_string)
@@ -106,59 +127,94 @@ class NewGameCanvas(Canvas):
         self.display_string = center_format.format("xxxxx Game Menu xxxxxx") + \
             center_format.format("p. Place ships") + \
             center_format.format("c. Configure display") + \
-            center_format.format("x. Exit")
+            center_format.format("m: Back to main menu") + \
+            center_format.format("x. Exit") + \
+            center_format.format("Please select an option by typing one of the characters above")
+
+    def get_display_string(self):
+        return self.display_string
 
     def paint(self):
         print(self.display_string)
 
 
 class BoardCanvas(Canvas):
-    def __init__(self, is_target):
+    def __init__(self, board_dimension, is_target):
+        self.board_dimension = board_dimension
         self.is_target = is_target
-        self.board_coordinates_dict = {k: {} for k in range(10)}
+        self.board_coordinates_dict = {k: {} for k in range(self.board_dimension)}
         for key in self.board_coordinates_dict:
-            self.board_coordinates_dict[key] = {k: Settings.empty_cell for k in range(10)}
+            self.board_coordinates_dict[key] = {k: Settings.empty_cell for k in range(self.board_dimension)}
 
         super().__init__()
-        self.display_string = self.update_display(self.board_coordinates_dict)
+        self.display_string = self.update(self.board_coordinates_dict)
 
-    def update_display(self, board_coordinates) -> str:
-        return center_format.format("xxxxxx {} Board xxxxxx".format("Opponent" if self.is_target else "Your")) + \
+    def get_display_string(self):
+        return self.display_string
+
+    def update(self, board_coordinates) -> str:
+        display_string = center_format.format("xxxxxx {} Board xxxxxx".format("Opponent" if
+                                                                              self.is_target else "Your")) + \
             center_format.format("\n\n") + \
-            center_format.format("_|0|1|2|3|4|5|6|7|8|9|") + \
-            center_format.format("0|{}|{}|{}|{}|{}|{}|{}|{}|{}}|{}|".format(*board_coordinates[0].values())) + \
-            center_format.format("1|{}|{}|{}|{}|{}|{}|{}|{}|{}}|{}|".format(*board_coordinates[1].values())) + \
-            center_format.format("2|{}|{}|{}|{}|{}|{}|{}|{}|{}}|{}|".format(*board_coordinates[2].values())) + \
-            center_format.format("3|{}|{}|{}|{}|{}|{}|{}|{}|{}}|{}|".format(*board_coordinates[3].values())) + \
-            center_format.format("4|{}|{}|{}|{}|{}|{}|{}|{}|{}}|{}|".format(*board_coordinates[4].values())) + \
-            center_format.format("5|{}|{}|{}|{}|{}|{}|{}|{}|{}}|{}|".format(*board_coordinates[5].values())) + \
-            center_format.format("6|{}|{}|{}|{}|{}|{}|{}|{}|{}}|{}|".format(*board_coordinates[6].values())) + \
-            center_format.format("7|{}|{}|{}|{}|{}|{}|{}|{}|{}}|{}|".format(*board_coordinates[7].values())) + \
-            center_format.format("8|{}|{}|{}|{}|{}|{}|{}|{}|{}}|{}|".format(*board_coordinates[8].values())) + \
-            center_format.format("9|{}|{}|{}|{}|{}|{}|{}|{}|{}}|{}|".format(*board_coordinates[9].values()))
+            center_format.format("_|" + ("{}|"*self.board_dimension).format(*range(self.board_dimension)))
+        for k in range(self.board_dimension):
+            display_string += center_format.format("{}|".format(k) +
+                                                   ("{}|"*self.board_dimension).format(*board_coordinates[k].values()))
+        return display_string
 
     def update_hits(self, hits: List[Coordinate]) -> str:
         for row, col in hits:
             self.board_coordinates_dict[row][col] = Settings.hit_cell
-        return self.update_display(self.board_coordinates_dict)
+        return self.update(self.board_coordinates_dict)
 
     def update_misses(self, misses: List[Coordinate]) -> str:
         for row, col in misses:
             self.board_coordinates_dict[row][col] = Settings.missed_cell
-        return self.update_display(self.board_coordinates_dict)
+        return self.update(self.board_coordinates_dict)
 
     def update_ship_cells(self, ship_cells: List[Coordinate]) -> str:
         for row, col in ship_cells:
             self.board_coordinates_dict[row][col] = Settings.ship_cell
-        return self.update_display(self.board_coordinates_dict)
+        return self.update(self.board_coordinates_dict)
 
     def update_empty_cells(self, empty_cells: List[Coordinate]) -> str:
         for row, col in empty_cells:
             self.board_coordinates_dict[row][col] = Settings.empty_cell
-        return self.update_display(self.board_coordinates_dict)
+        return self.update(self.board_coordinates_dict)
 
     def paint(self):
         print(self.display_string)
+
+
+class PlaceShipsMenuCanvas:
+    def __init__(self, board_canvas: BoardCanvas):
+        self.board_canvas = board_canvas
+        self.display_string = self.board_canvas.get_display_string() + \
+            center_format.format("\n\n") + \
+            center_format.format("This is your current board.") + \
+            center_format.format("st: Start placing ships") + \
+            center_format.format("g: Back to game menu") + \
+            center_format.format("x: Exit")
+
+    def get_display_string(self):
+        return self.display_string
+
+    def paint(self):
+        print(self.display_string)
+
+
+class PlaceShipsCanvas:
+    def __init__(self, board_canvas: BoardCanvas, ship_type: ShipType):
+        self.board_canvas = board_canvas
+        self.display_string = self.update(ship_type)
+
+    def get_display_string(self):
+        return self.display_string
+
+    def update(self, ship: ShipType):
+        return self.board_canvas.get_display_string() + center_format.format("\n\n") + \
+            center_format.format("Enter the coordinates and direction of your ship. "
+                                 "Ship specification - Ship name: {} Ship Size: {}".format(ship.name, ship_size_map[ship]))
 
 
 login_canvas = LoginCanvas()
@@ -181,6 +237,8 @@ def canvas_to_option(canvas: Canvas):
         return MenuOption.SHOWSTATS
     elif isinstance(canvas, NewGameCanvas):
         return MenuOption.NEWGAMEMENU
+    elif isinstance(canvas, PlaceShipsMenuCanvas):
+        return MenuOption.PLACESHIPSMENU
 
     raise Exception("No option found for canvas")
 
@@ -190,5 +248,5 @@ valid_screen_transitions = {
     MenuOption.LOGIN: [MenuOption.MAINMENU],
     MenuOption.MAINMENU: [MenuOption.NEWGAMEMENU, MenuOption.SHOWSTATS, MenuOption.EXIT],
     MenuOption.SHOWSTATS: [MenuOption.MAINMENU],
-    MenuOption.NEWGAMEMENU: [MenuOption.PLACESHIPS, MenuOption.VIEWCONFIG, MenuOption.EXIT]
+    MenuOption.NEWGAMEMENU: [MenuOption.PLACESHIPSMENU, MenuOption.VIEWCONFIG, MenuOption.MAINMENU, MenuOption.EXIT]
 }

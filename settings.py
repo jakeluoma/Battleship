@@ -1,6 +1,6 @@
 class Settings:
 
-    empty_cell = ' '
+    empty_cell = '_'
     ship_cell = '1'
     hit_cell = 'X'
     missed_cell = 'O'
