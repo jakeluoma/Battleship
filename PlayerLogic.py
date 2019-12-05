@@ -91,7 +91,7 @@ class AI(PlayerLogic):
     def place_ship(self, board: Board, ship_type: ShipType) -> Ship:
         self.ship_builder.start_ship(ship_type)
 
-        runs = List[List[Tile]]
+        runs: List[List[Tile]] = []
         if self.num_ships_placed == 0: # place ship anywhere
             runs = BoardHelper.get_runs_of_tiles_with_no_ship_length_n(board, self.ship_builder.get_ship_size())
         elif randrange(0, 3) == 0: # maybe place ship next to an already placed ship
@@ -110,10 +110,8 @@ class AI(PlayerLogic):
 
     # choose where to attack and return that Coordinate
     def select_attack(self, target_board: Board) -> Coordinate:
-        potentialTargetTiles = List[Tile]
-
         # always attack ends of hit runs if there are any
-        potentialTargetTiles = BoardHelper.get_tiles_with_no_attack_at_end_of_hit_runs(target_board)
+        potentialTargetTiles: List[Tile] = BoardHelper.get_tiles_with_no_attack_at_end_of_hit_runs(target_board)
         if potentialTargetTiles:
             index = randrange(0, len(potentialTargetTiles))
             return potentialTargetTiles[index].get_coordinate()
