@@ -100,4 +100,12 @@ class View:
 
         return opt
 
+    def get_yes_no(self):
+        inp = input()
+        return inp
+
+    def get_char_choice(self):
+        inp = input()
+        return inp[0]
+
 
