@@ -8,8 +8,10 @@ class MenuOption(Enum):
     LOGIN = 1
     EXIT = 2
     MAINMENU = 3
-    NEWGAME = 4
+    NEWGAMEMENU = 4
     SHOWSTATS = 5
+    PLACESHIPS = 6
+    VIEWCONFIG = 7
 
 
 class Canvas:
@@ -58,7 +60,7 @@ class StartMenuCanvas(Canvas):
 class StatsCanvas(Canvas):
     def __init__(self, user_row: 'pandas.Dataframe'):
         super().__init__()
-        self.display_string = center_format.format('YOUR OVERALL STATISTICS:') + \
+        self.display_string = center_format.format('xxxxxx YOUR OVERALL STATISTICS xxxxxx') + \
             center_format.format('==========================') + \
             center_format.format('Number of Wins: {}'.format(user_row.lifetime_wins)) + \
             center_format.format('Number of Losses: {}'.format(user_row.lifetime_losses)) + \
@@ -94,10 +96,44 @@ class ExitCanvas(Canvas):
         print(self.display_string)
 
 
+class NewGameCanvas(Canvas):
+    def __init__(self):
+        super().__init__()
+        self.display_string = center_format.format("xxxxx Game Menu xxxxxx") + \
+            center_format.format("p. Place ships") + \
+            center_format.format("c. Configure display") + \
+            center_format.format("x. Exit")
+
+    def paint(self):
+        print(self.display_string)
+
+
+class BoardCanvas(Canvas):
+    def __init__(self):
+        super().__init__()
+        self.display_string = center_format.format("xxxxxx Your Board xxxxxx") + \
+            center_format.format("\n\n") + \
+            center_format.format("_|0|1|2|3|4|5|6|7|8|9|") + \
+            center_format.format("0|_|_|_|_|_|_|_|_|_|_|") + \
+            center_format.format("1|_|_|_|_|_|_|_|_|_|_|") + \
+            center_format.format("2|_|_|_|_|_|_|_|_|_|_|") + \
+            center_format.format("3|_|_|_|_|_|_|_|_|_|_|") + \
+            center_format.format("4|_|_|_|_|_|_|_|_|_|_|") + \
+            center_format.format("5|_|_|_|_|_|_|_|_|_|_|") + \
+            center_format.format("6|_|_|_|_|_|_|_|_|_|_|") + \
+            center_format.format("7|_|_|_|_|_|_|_|_|_|_|") + \
+            center_format.format("8|_|_|_|_|_|_|_|_|_|_|") + \
+            center_format.format("9|_|_|_|_|_|_|_|_|_|_|")
+
+    def paint(self):
+        print(self.display_string)
+
+
 login_canvas = LoginCanvas()
 start_menu_canvas = StartMenuCanvas()
 main_menu_canvas = MainMenuCanvas()
 exit_canvas = ExitCanvas()
+new_game_canvas = NewGameCanvas()
 
 
 def canvas_to_option(canvas: Canvas):
@@ -111,6 +147,8 @@ def canvas_to_option(canvas: Canvas):
         return MenuOption.MAINMENU
     elif isinstance(canvas, StatsCanvas):
         return MenuOption.SHOWSTATS
+    elif isinstance(canvas, NewGameCanvas):
+        return MenuOption.NEWGAMEMENU
 
     raise Exception("No option found for canvas")
 
@@ -118,6 +156,7 @@ def canvas_to_option(canvas: Canvas):
 valid_screen_transitions = {
     MenuOption.STARTMENU: [MenuOption.LOGIN, MenuOption.EXIT],
     MenuOption.LOGIN: [MenuOption.MAINMENU],
-    MenuOption.MAINMENU: [MenuOption.NEWGAME, MenuOption.SHOWSTATS, MenuOption.EXIT],
-    MenuOption.SHOWSTATS: [MenuOption.MAINMENU]
+    MenuOption.MAINMENU: [MenuOption.NEWGAMEMENU, MenuOption.SHOWSTATS, MenuOption.EXIT],
+    MenuOption.SHOWSTATS: [MenuOption.MAINMENU],
+    MenuOption.NEWGAMEMENU: [MenuOption.PLACESHIPS, MenuOption.VIEWCONFIG, MenuOption.EXIT]
 }

@@ -46,11 +46,15 @@ class InputParser:
         elif any(inp.lower().startswith(k) for k in ["e", "x", "exit"]):
             return MenuOption.EXIT
         elif any(inp.lower().startswith(k) for k in ["g", "start", "game"]):
-            return MenuOption.NEWGAME
+            return MenuOption.NEWGAMEMENU
         elif any(inp.lower().startswith(k) for k in ["s", "stats", "show stats"]):
             return MenuOption.SHOWSTATS
         elif any(inp.lower().startswith(k) for k in ["m", "menu", "main menu"]):
             return MenuOption.MAINMENU
+        elif any(inp.lower().startswith(k) for k in ["p", "place", "ship"]):
+            return MenuOption.PLACESHIPS
+        elif any(inp.lower().startswith(k) for k in ["c", "config", "display"]):
+            return MenuOption.VIEWCONFIG
 
         raise Exception("Invalid Option")
 

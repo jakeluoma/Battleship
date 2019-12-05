@@ -1,6 +1,7 @@
 from statistics import Statistics
 from player import UserProfile
-from canvas import login_canvas, start_menu_canvas, MenuOption, exit_canvas, main_menu_canvas, StatsCanvas
+from canvas import login_canvas, start_menu_canvas, MenuOption, exit_canvas, main_menu_canvas, StatsCanvas, \
+    new_game_canvas
 from view import View
 
 
@@ -45,7 +46,8 @@ class ProgramAndViewCoordinator:
         MenuOption.EXIT: exit_canvas,
         MenuOption.STARTMENU: start_menu_canvas,
         MenuOption.MAINMENU: main_menu_canvas,
-        MenuOption.SHOWSTATS: lambda program: program.show_user_stats()
+        MenuOption.SHOWSTATS: lambda program: program.show_user_stats(),
+        MenuOption.NEWGAMEMENU: new_game_canvas,
     }
 
     parameterized_with_program = [MenuOption.SHOWSTATS]
@@ -53,6 +55,7 @@ class ProgramAndViewCoordinator:
     option_program_method_map = {
         MenuOption.STARTMENU: 'noop',
         MenuOption.MAINMENU: 'noop',
+        MenuOption.NEWGAMEMENU: 'noop',
         MenuOption.LOGIN: 'login',
         MenuOption.SHOWSTATS: 'show_user_stats',
         MenuOption.EXIT: 'exit',
