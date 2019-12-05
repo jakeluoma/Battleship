@@ -1,12 +1,5 @@
 import pandas as pd
 
-
-# note from Jake: it would be a lot cleaner if UserProfile had a reference to Statistics instead of Statistics to UserProfile.
-# on init of statistics, it would make sense to generate an object that only contains the statistics relevant to that UserProfile.
-# UserProfile would initialize Statistics during its own initialization.  Then it would be easy to update statistics during a Game
-# by simply having UserProfile pass the update call to Statistics each turn.
-# The way it's set up now almost requires Program to have a reference to Statistics and pass that reference down to Game, which passes
-# it down to Player, etc.  Not very clean.
 from player import UserProfile
 from canvas import center_format, StatsCanvas
 

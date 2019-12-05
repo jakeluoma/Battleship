@@ -4,7 +4,10 @@ from typing import List
 from Coordinate import Coordinate
 from Ship import ShipType, ship_size_map
 from Tile import Tile
-from settings import Settings
+
+import settings
+
+# have to do "import settings" due to circular import with settings
 
 center_format = "{0:^100}\n"
 
@@ -146,7 +149,7 @@ class BoardCanvas(Canvas):
         self.is_target = is_target
         self.board_coordinates_dict = {k: {} for k in range(self.board_dimension)}
         for key in self.board_coordinates_dict:
-            self.board_coordinates_dict[key] = {k: Settings.empty_cell for k in range(self.board_dimension)}
+            self.board_coordinates_dict[key] = {k: settings.Settings.empty_cell for k in range(self.board_dimension)}
 
         super().__init__()
         self.display_string = self.update(self.board_coordinates_dict)
@@ -166,26 +169,26 @@ class BoardCanvas(Canvas):
 
     def update_hits(self, hits: List[Coordinate]) -> str:
         for row, col in hits:
-            self.board_coordinates_dict[row][col] = Settings.hit_cell
+            self.board_coordinates_dict[row][col] = settings.Settings.hit_cell
         self.display_string = self.update(self.board_coordinates_dict)
         return self.display_string
 
     def update_misses(self, misses: List[Coordinate]) -> str:
         for row, col in misses:
-            self.board_coordinates_dict[row][col] = Settings.missed_cell
+            self.board_coordinates_dict[row][col] = settings.Settings.missed_cell
         self.display_string = self.update(self.board_coordinates_dict)
         return self.display_string
 
     def update_ship_cells(self, ship_tiles: List[Tile]) -> str:
         for ship_tile in ship_tiles:
             coord = ship_tile.get_coordinate()
-            self.board_coordinates_dict[coord.row][coord.column] = Settings.ship_cell
+            self.board_coordinates_dict[coord.row][coord.column] = settings.Settings.ship_cell
         self.display_string = self.update(self.board_coordinates_dict)
         return self.display_string
 
     def update_empty_cells(self, empty_cells: List[Coordinate]) -> str:
         for row, col in empty_cells:
-            self.board_coordinates_dict[row][col] = Settings.empty_cell
+            self.board_coordinates_dict[row][col] = settings.Settings.empty_cell
         self.display_string = self.update(self.board_coordinates_dict)
         return self.display_string
 

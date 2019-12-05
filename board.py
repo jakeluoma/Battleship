@@ -125,6 +125,7 @@ class BoardHelper:
                 colIndex = col + i
                 tile = board.get_tile(row, colIndex)
                 if tile is None:
+                    possibleRun: List[Tile] = []
                     break
                 possibleRun.append(tile)
             run = possibleRun
@@ -134,6 +135,7 @@ class BoardHelper:
                 colIndex = col - i
                 tile = board.get_tile(row, colIndex)
                 if tile is None:
+                    possibleRun: List[Tile] = []
                     break
                 possibleRun.insert(0, tile)
             run = possibleRun
@@ -143,6 +145,7 @@ class BoardHelper:
                 rowIndex = row + i
                 tile = board.get_tile(rowIndex, col)
                 if tile is None:
+                    possibleRun: List[Tile] = []
                     break
                 possibleRun.append(tile)
             run = possibleRun
@@ -152,6 +155,7 @@ class BoardHelper:
                 rowIndex = row - i
                 tile = board.get_tile(rowIndex, col)
                 if tile is None:
+                    possibleRun: List[Tile] = []
                     break
                 possibleRun.insert(0, tile)
             run = possibleRun
@@ -164,7 +168,7 @@ class BoardHelper:
         run: List[Tile] = BoardHelper.get_run_of_tiles_length_n(board, n, row, col,
                                                     direction)
         if board.ship_in_run(run):
-            run = []
+            run: List[Tile] = []
 
         return run
 
@@ -173,8 +177,7 @@ class BoardHelper:
     @staticmethod
     def get_adjacent_tiles(board: Board, tile: Tile) -> List[Tile]:
         ret: List[Tile] = []
-        locations = List[Tuple[int, int]]
-        locations = []
+        locations: List[Tuple[int, int]] = []
         coord = tile.get_coordinate()
         locations.append((coord.row + 1, coord.column))
         locations.append((coord.row - 1, coord.column))
