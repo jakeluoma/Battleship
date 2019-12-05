@@ -113,7 +113,8 @@ class NewGameCanvas(Canvas):
 
 
 class BoardCanvas(Canvas):
-    def __init__(self):
+    def __init__(self, is_target):
+        self.is_target = is_target
         self.board_coordinates_dict = {k: {} for k in range(10)}
         for key in self.board_coordinates_dict:
             self.board_coordinates_dict[key] = {k: Settings.empty_cell for k in range(10)}
@@ -122,7 +123,7 @@ class BoardCanvas(Canvas):
         self.display_string = self.update_display(self.board_coordinates_dict)
 
     def update_display(self, board_coordinates) -> str:
-        return center_format.format("xxxxxx Your Board xxxxxx") + \
+        return center_format.format("xxxxxx {} Board xxxxxx".format("Opponent" if self.is_target else "Your")) + \
             center_format.format("\n\n") + \
             center_format.format("_|0|1|2|3|4|5|6|7|8|9|") + \
             center_format.format("0|{}|{}|{}|{}|{}|{}|{}|{}|{}}|{}|".format(*board_coordinates[0].values())) + \
