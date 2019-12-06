@@ -72,28 +72,18 @@ class Game:
                 self.player1.target_board.canvas.update_hits(hits)
                 self.player1.target_board.canvas.update_misses(misses)
                 if hits:
-                    if len(hits):
-                        hit_coords = "{}".format([(hits[0].row, hits[0].column)])
-                    else:
-                        hit_coords = ("{} " * len(hits)).format([(h.row, h.column) for h in hits])
                     message += center_format.format("Your attack on the coordinates: "
-                                                    "{} resulted in successful hits\n".format(hit_coords))
+                                                    "{} resulted in successful hits\n".format
+                                                    ([(h.row, h.column) for h in hits]))
                 if misses:
-                    if len(misses):
-                        miss_coords = "{}".format([(misses[0].row, misses[0].column)])
-                    else:
-                        miss_coords = ("{} " * len(misses)).format([(m.row, m.column) for m in misses])
                     message += center_format.format("Your attack on the coordinates: "
-                                                    "{} unfortunately missed the target\n".format(miss_coords))
+                                                    "{} unfortunately missed the target\n".format
+                                                    ([(m.row, m.column) for m in misses]))
 
                 if ships_lost:
-                    if len(ships_lost) == 1:
-                        ship = ships_lost[0]
-                        lost_ships = "{}".format(ship.name, ship.get_size())
-                    else:
-                        lost_ships = ("{},"*len(ships_lost)).format([(ship.name, ship.get_size()) for ship in ships_lost])
-                    message += center_format.format("You just sunk these ships!: {}".format(lost_ships)) + \
-                        center_format.format("Your opponent has the following ships remaining: ".format
+                    message += center_format.format("You just sunk these ships!: {}".format
+                                                    (([(ship.name, ship.get_size()) for ship in ships_lost]))) + \
+                        center_format.format("Your opponent has the following ships remaining: {}".format
                                              ([(ship.name, ship.get_size()) for ship in self.player2.fleet]))
 
                 opponent_turn = True
@@ -101,29 +91,18 @@ class Game:
                 self.player1.fleet_board.canvas.update_hits(hits)
                 self.player1.fleet_board.canvas.update_misses(misses)
                 if hits:
-                    if len(hits):
-                        hit_coords = "{}".format([(hits[0].row, hits[0].column)])
-                    else:
-                        hit_coords = ("{} " * len(hits)).format([(h.row, h.column) for h in hits])
                     message += center_format.format("Your opponent's attack on the coordinates: "
-                                                    "{} resulted in successful hits\n".format(hit_coords))
+                                                    "{} resulted in successful hits\n".format
+                                                    ([(h.row, h.column) for h in hits]))
                 if misses:
-                    if len(misses):
-                        miss_coords = "{}".format([(misses[0].row, misses[0].column)])
-                    else:
-                        miss_coords = ("{} " * len(misses)).format([(m.row, m.column) for m in misses])
                     message += center_format.format("Your opponent's attack on the coordinates: "
-                                                    "{} missed the target\n".format(miss_coords))
+                                                    "{} missed the target\n".format
+                                                    ([(m.row, m.column) for m in misses]))
                 if ships_lost:
-                    if len(ships_lost) == 1:
-                        ship = ships_lost[0]
-                        lost_ships = "{}".format((ship.name, ship.get_size()))
-                    else:
-                        lost_ships = ("{} {},"*len(ships_lost)).format([(ship.name, ship.get_size()) for ship in ships_lost])
-
-                    message += center_format.format("Your opponent just sunk these ships!: {}".format(lost_ships)) + \
-                        center_format.format("You have the following ships remaining: ".format
-                                             ([(ship.name, ship.get_size()) for ship in self.player2.fleet]))
+                    message += center_format.format("Your opponent just sunk these ships!: {}".format
+                                                    ([(ship.name, ship.get_size()) for ship in ships_lost])) + \
+                        center_format.format("You have the following ships remaining: {}".format
+                                             ([(ship.name, ship.get_size()) for ship in self.player1.fleet]))
                 opponent_turn = False
 
             sleep(2)
