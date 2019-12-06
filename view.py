@@ -44,7 +44,7 @@ class InputParser:
             return MenuOption.LOGIN
         elif any(inp.lower().startswith(k) for k in ["e", "x", "exit"]):
             return MenuOption.EXIT
-        elif any(inp.lower().startswith(k) for k in ["g", "start", "game"]):
+        elif any(inp.lower().startswith(k) for k in ["g", "game"]):
             return MenuOption.NEWGAMEMENU
         elif any(inp.lower().startswith(k) for k in ["t", "start"]):
             return MenuOption.PLACESHIPS
@@ -56,6 +56,8 @@ class InputParser:
             return MenuOption.PLACESHIPSMENU
         elif any(inp.lower().startswith(k) for k in ["c", "config", "display"]):
             return MenuOption.VIEWCONFIG
+        elif any(inp.lower().startswith(k) for k in ["n", "new", "a"]):
+            return MenuOption.STARTGAME
 
         raise Exception("Invalid Option")
 
@@ -84,12 +86,13 @@ class View:
         # self.clear_screen()
         self.canvas.paint()
 
-    def update_canvas(self, *args):
-        self.clear_screen()
-        try:
-            self.canvas.update(*args)
-        except NotImplementedError:
-            pass
+    # def update_canvas(self, *args):
+    #     self.clear_screen()
+    #     try:
+    #         self.canvas.update(*args)
+    #         self.canvas.paint()
+    #     except NotImplementedError:
+    #         pass
 
     def get_username(self):
         inp = input()
@@ -109,7 +112,7 @@ class View:
         opt = InputParser.parse_next_view(inp)
 
         if opt not in valid_screen_transitions[self.menu_option]:
-            raise Exception("You cannot use this option in this screen: {}".format(opt.name))
+            raise Exception("You cannot use this option {} from this screen {}".format(opt.name, self.menu_option))
 
         return opt
 

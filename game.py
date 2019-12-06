@@ -1,12 +1,14 @@
 from abc import ABC
 from enum import Enum
+from time import sleep
 from typing import List
 
 import pickle
 
 from board import Board
 from Ship import ShipType
-from canvas import PlaceShipsMenuCanvas, PlaceShipsCanvas, FinishedPlacingShipsCanvas
+from canvas import PlaceShipsMenuCanvas, PlaceShipsCanvas, FinishedPlacingShipsCanvas, TakeTurnCanvas, center_format, \
+    GameOverScreenCanvas
 from player import Player, UserProfile
 from PlayerLogic import CommandLineInstruction, AI
 from view import View
@@ -42,7 +44,7 @@ class Game:
         self.player2.setOpponent(self.player1)
 
         # human player will start first
-        self.current_player = self.player1
+        self.current_player = self.player2
 
         self.view = view
 
@@ -54,20 +56,89 @@ class Game:
             self.current_player = self.player1
 
     # Alternates between players' turns. Continues loop as long as no player has achieved victory
-    def run_game(self):
+    def run_game(self, dry_run=False):
         """ somewhere in here is where you'd probably want to display the canvas asking whether the player wants
             to attack or save and exit.  If saving and exiting, should call save_game() and then return"""
-        while not self.current_player.take_turn():
+        if dry_run:
+            self.player2.victory = True
+            self.end_game()
+            return
+
+        while not self.current_player.is_victorious():
             self.switch_player()
+            hits, misses, ships_lost = self.current_player.take_turn()
+            message = ""
+            if self.current_player == self.player1:
+                self.player1.target_board.canvas.update_hits(hits)
+                self.player1.target_board.canvas.update_misses(misses)
+                if hits:
+                    if len(hits):
+                        hit_coords = "{}".format([(hits[0].row, hits[0].column)])
+                    else:
+                        hit_coords = ("{} " * len(hits)).format([(h.row, h.column) for h in hits])
+                    message += center_format.format("Your attack on the coordinates: "
+                                                    "{} resulted in successful hits\n".format(hit_coords))
+                if misses:
+                    if len(misses):
+                        miss_coords = "{}".format([(misses[0].row, misses[0].column)])
+                    else:
+                        miss_coords = ("{} " * len(misses)).format([(m.row, m.column) for m in misses])
+                    message += center_format.format("Your attack on the coordinates: "
+                                                    "{} unfortunately missed the target\n".format(miss_coords))
+
+                if ships_lost:
+                    if len(ships_lost) == 1:
+                        ship = ships_lost[0]
+                        lost_ships = "{}".format(ship.name, ship.get_size())
+                    else:
+                        lost_ships = ("{},"*len(ships_lost)).format([(ship.name, ship.get_size()) for ship in ships_lost])
+                    message += center_format.format("You just sunk these ships!: {}".format(lost_ships)) + \
+                        center_format.format("Your opponent has the following ships remaining: ".format
+                                             ([(ship.name, ship.get_size()) for ship in self.player2.fleet]))
+
+                opponent_turn = True
+            else:
+                self.player1.fleet_board.canvas.update_hits(hits)
+                self.player1.fleet_board.canvas.update_misses(misses)
+                if hits:
+                    if len(hits):
+                        hit_coords = "{}".format([(hits[0].row, hits[0].column)])
+                    else:
+                        hit_coords = ("{} " * len(hits)).format([(h.row, h.column) for h in hits])
+                    message += center_format.format("Your opponent's attack on the coordinates: "
+                                                    "{} resulted in successful hits\n".format(hit_coords))
+                if misses:
+                    if len(misses):
+                        miss_coords = "{}".format([(misses[0].row, misses[0].column)])
+                    else:
+                        miss_coords = ("{} " * len(misses)).format([(m.row, m.column) for m in misses])
+                    message += center_format.format("Your opponent's attack on the coordinates: "
+                                                    "{} missed the target\n".format(miss_coords))
+                if ships_lost:
+                    if len(ships_lost) == 1:
+                        ship = ships_lost[0]
+                        lost_ships = "{}".format((ship.name, ship.get_size()))
+                    else:
+                        lost_ships = ("{} {},"*len(ships_lost)).format([(ship.name, ship.get_size()) for ship in ships_lost])
+
+                    message += center_format.format("Your opponent just sunk these ships!: {}".format(lost_ships)) + \
+                        center_format.format("You have the following ships remaining: ".format
+                                             ([(ship.name, ship.get_size()) for ship in self.player2.fleet]))
+                opponent_turn = False
+
+            sleep(2)
+            self.view.update_display(TakeTurnCanvas(self.player1.fleet_board.canvas,
+                                                    self.player1.target_board.canvas, message, opponent_turn))
+            sleep(3)
+
         self.end_game()
 
     # Prints Victory or Loss screen and ends game
     def end_game(self):
-        if self.current_player == self.player1:
-            pass # victory screen
-        else:
-            pass # loss screen
-        pass
+        user_won = False
+        if self.player1.is_victorious():
+            user_won = True
+        self.view.update_display(GameOverScreenCanvas(user_won=user_won))
 
     # saves game to pickle, which gets written to file
     def save_game(self):
@@ -95,6 +166,9 @@ class Game:
     def get_player_ship_placement_canvas(self):
         return PlaceShipsMenuCanvas(self.player1.fleet_board.canvas)
 
+    def get_take_turn_canvas(self):
+        return TakeTurnCanvas(self.player1.fleet_board.canvas, self.player1.target_board.canvas)
+
     def position_player_fleet(self, player: Player):
         for ship_type in player.ships_to_place:
             if not player.is_ai:
@@ -105,7 +179,8 @@ class Game:
         if not player.is_ai:
             self.view.update_display(FinishedPlacingShipsCanvas(player.fleet_board.canvas))
 
-    def position_fleets(self):
+    def position_fleets(self, dry_run=False):
+
         self.position_player_fleet(self.player2)
         self.position_player_fleet(self.player1)
 

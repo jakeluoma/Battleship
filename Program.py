@@ -2,7 +2,7 @@ from game import Game
 from statistics import Statistics
 from player import UserProfile
 from canvas import login_canvas, start_menu_canvas, MenuOption, exit_canvas, main_menu_canvas, StatsCanvas, \
-    new_game_canvas, BoardCanvas, PlaceShipsMenuCanvas, FinishedPlacingShipsCanvas
+    new_game_canvas, BoardCanvas, PlaceShipsMenuCanvas, FinishedPlacingShipsCanvas, TakeTurnCanvas
 from view import View
 
 
@@ -10,12 +10,11 @@ class Program:
     def __init__(self):
         self.known_users = list(Statistics.user_stats.user_name)
         self.ai_types = [0, 1]
-        self.view = View()
         self.user = None
         # self.game = None
 
-    def login(self) -> MenuOption:
-        user_name = self.view.get_username()
+    def login(self, view) -> MenuOption:
+        user_name = view.get_username()
         user = UserProfile(user_name)
         self.user = user
         if user_name in self.known_users:
@@ -29,19 +28,22 @@ class Program:
     def show_user_stats(self) -> StatsCanvas:
         return Statistics.get_user_stats(self.user)
 
-    def create_new_game(self):
-        self.game = Game(self.user, self.view)
+    def create_new_game(self, view):
+        self.game = Game(self.user, view)
 
     def noop(self):
         # This currently functions as a dummy function for program coordinator to call in it's run screen method when
         # there is no logic to be run by the program class. This currently happens for menu screens.
         pass
 
-    def get_player_board_canvas(self) -> BoardCanvas:
-        return self.game.get_player_board_canvas()
+    def start_game(self):
+        self.game.run_game()
 
     def get_player_ship_placement_menu_canvas(self) -> PlaceShipsMenuCanvas:
         return self.game.get_player_ship_placement_canvas()
+
+    def get_take_turn_canvas(self) -> TakeTurnCanvas:
+        return self.game.get_take_turn_canvas()
 
     def place_ships(self):
         self.game.position_fleets()
@@ -60,9 +62,12 @@ class ProgramAndViewCoordinator:
         MenuOption.NEWGAMEMENU: new_game_canvas,
         MenuOption.PLACESHIPSMENU: lambda program: program.get_player_ship_placement_menu_canvas(),
         MenuOption.PLACESHIPS: None,
+        MenuOption.STARTGAME: lambda program: program.get_take_turn_canvas()
     }
 
-    parameterized_with_program = [MenuOption.SHOWSTATS, MenuOption.PLACESHIPSMENU]
+    parameterized_with_program = [MenuOption.SHOWSTATS, MenuOption.PLACESHIPSMENU, MenuOption.STARTGAME]
+
+    takes_view_argument = [MenuOption.LOGIN, MenuOption.NEWGAMEMENU]
 
     option_program_method_map = {
         MenuOption.STARTMENU: 'noop',
@@ -72,7 +77,8 @@ class ProgramAndViewCoordinator:
         MenuOption.LOGIN: 'login',
         MenuOption.SHOWSTATS: 'show_user_stats',
         MenuOption.EXIT: 'exit',
-        MenuOption.PLACESHIPS: 'place_ships'
+        MenuOption.PLACESHIPS: 'place_ships',
+        MenuOption.STARTGAME: 'start_game'
     }
 
     def __init__(self, program: Program, view: View):
@@ -97,10 +103,11 @@ class ProgramAndViewCoordinator:
         if menu_option in self.parameterized_with_program:
             canvas = self.option_canvas_map[menu_option](self.program)
         else:
-            canvas = self.option_canvas_map.get(menu_option)
+            canvas = self.option_canvas_map[menu_option]
         if canvas:
             self.view.update_display(canvas)
-        next_menu = getattr(self.program, self.option_program_method_map[menu_option])()
+        args = [self.view] if menu_option in self.takes_view_argument else []
+        next_menu = getattr(self.program, self.option_program_method_map[menu_option])(*args)
         if not isinstance(next_menu, MenuOption):
             next_menu = self.view.get_next_view()
         self.run_screen(next_menu)

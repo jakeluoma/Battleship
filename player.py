@@ -35,11 +35,12 @@ class Player:
         self.ships_to_place = ships_to_place
         self.num_enemy_ships = len(self.ships_to_place)
 
-        # self.player_fleet = self.position_fleet(ships_to_place)
         self.player_ships_lost = List[Ship]
+        self.player_ships_lost = []
         self.fleet = []
+        self.victory = False
 
-    def position_ship(self, ship_type):
+    def position_ship(self, ship_type: ShipType):
         ship = self.player_logic.place_ship(self.fleet_board, ship_type)
 
         self.fleet.append(ship)
@@ -47,8 +48,8 @@ class Player:
 
     # Place the ships
     def position_fleet(self) -> List[Ship]:
-        for ship in self.ships_to_place:
-            self.position_ship(ship)
+        for ship_type in self.ships_to_place:
+            self.position_ship(ship_type)
         return self.fleet
 
     # Set reference to opponent. Since both Players can't be initialized and have their reference to each other set
@@ -58,30 +59,35 @@ class Player:
 
     # Takes a turn in the game - involving making a guess and striking the opponent's board.
     # Returns whether the move results in victory
-    def take_turn(self) -> bool:
-        hits, misses, num_ships_sunk = self.opponent.receive_attack([self.player_logic.select_attack(self.target_board)])
+    def take_turn(self) -> Tuple[List[Coordinate], List[Coordinate], List[Ship]]:
+        hits, misses, ships_lost = self.opponent.receive_attack([self.player_logic.select_attack(self.target_board)])
         self.target_board.update_hits_and_misses(hits, misses)
         # should update statistics here
         
-        victory = False
-        self.enemy_ships_sunk += num_ships_sunk
+        self.enemy_ships_sunk += len(ships_lost)
         if self.enemy_ships_sunk >= self.num_enemy_ships:
-            victory = True
-        return victory
+            self.victory = True
+
+        return hits, misses, ships_lost
+
+    def is_victorious(self) -> bool:
+        return self.victory
 
     # returns a list of hit coordinates, a list of miss coordinates, and the number of ships sunk by the attack
-    def receive_attack(self, coordinates: List[Coordinate]) -> Tuple[List[Coordinate], List[Coordinate], int]:
+    def receive_attack(self, coordinates: List[Coordinate]) -> Tuple[List[Coordinate], List[Coordinate], List[Ship]]:
         hits, misses = self.fleet_board.process_incoming_attack(coordinates)
         # should update statistics here
 
-        for ship in self.player_fleet:
+        ships_lost = []
+        for ship in self.fleet:
             if ship.is_sunk():
-                self.player_ships_lost.append(ship)
+                ships_lost.append(ship)
+        self.player_ships_lost.extend(ships_lost)
 
         num_ships_sunk_this_turn = 0
-        for ship in self.player_ships_lost:
-            if ship in self.player_fleet:
-                self.player_fleet.remove(ship)
+        for ship in ships_lost:
+            if ship in self.fleet:
+                self.fleet.remove(ship)
                 num_ships_sunk_this_turn += 1
 
-        return hits, misses, num_ships_sunk_this_turn
+        return hits, misses, ships_lost

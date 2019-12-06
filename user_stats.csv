@@ -1,4 +1,6 @@
-,Unnamed: 0,Unnamed: 0.1,user_name,lifetime_wins,lifetime_losses,lifetime_hits,lifetime_hits_received,lifetime_misses,lifetime_misses_received,lifetime_ships_sunk,lifetime_ships_lost,most_recent_game_hits,most_recent_game_hits_received,most_recent_game_misses,most_recent_game_misses_received,most_recent_game_ships_sunk,most_recent_game_ships_lost
-0,0,0,nikhil,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-1,0,0,jake,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-0,0,0,n,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+,Unnamed: 0,Unnamed: 0.1,Unnamed: 0.1.1,Unnamed: 0.1.1.1,user_name,lifetime_wins,lifetime_losses,lifetime_hits,lifetime_hits_received,lifetime_misses,lifetime_misses_received,lifetime_ships_sunk,lifetime_ships_lost,most_recent_game_hits,most_recent_game_hits_received,most_recent_game_misses,most_recent_game_misses_received,most_recent_game_ships_sunk,most_recent_game_ships_lost
+0,0,0,0,0,nikhil,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+1,1,1,0,0,jake,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2,2,0,0,0,n,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+3,0,0,0,0,x,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,b,0,0,0,0,0,0,0,0,0,0,0,0,0,0

@@ -1,3 +1,4 @@
+from abc import ABC
 from enum import Enum
 from typing import List
 
@@ -11,6 +12,7 @@ import settings
 
 center_format = "{0:^100}\n"
 
+
 class MenuOption(Enum):
     STARTMENU = 0
     LOGIN = 1
@@ -23,9 +25,10 @@ class MenuOption(Enum):
     PLACESHIPS = 8
     FINISHEDPLACING = 9
     STARTGAME = 10
+    GAMEOVER = 11
 
 
-class Canvas:
+class Canvas(ABC):
     def __init__(self):
         self.view_width = 100
 
@@ -126,6 +129,21 @@ class ExitCanvas(Canvas):
         print(self.display_string)
 
 
+class GameOverScreenCanvas(Canvas):
+    def __init__(self, user_won=False):
+        super().__init__()
+        self.display_string = center_format.format("xxxxxx Game Over xxxxxx") + \
+            center_format.format("You won the game!!" if user_won else "Oh no! You lost the game :(") + \
+            center_format.format("m: Back to main menu") + \
+            center_format.format("x. Exit")
+
+    def get_display_string(self):
+        return self.display_string
+
+    def paint(self):
+        print(self.display_string)
+
+
 class NewGameCanvas(Canvas):
     def __init__(self):
         super().__init__()
@@ -168,14 +186,14 @@ class BoardCanvas(Canvas):
         return display_string
 
     def update_hits(self, hits: List[Coordinate]) -> str:
-        for row, col in hits:
-            self.board_coordinates_dict[row][col] = settings.Settings.hit_cell
+        for coord in hits:
+            self.board_coordinates_dict[coord.row][coord.column] = settings.Settings.hit_cell
         self.display_string = self.update(self.board_coordinates_dict)
         return self.display_string
 
     def update_misses(self, misses: List[Coordinate]) -> str:
-        for row, col in misses:
-            self.board_coordinates_dict[row][col] = settings.Settings.missed_cell
+        for coord in misses:
+            self.board_coordinates_dict[coord.row][coord.column] = settings.Settings.missed_cell
         self.display_string = self.update(self.board_coordinates_dict)
         return self.display_string
 
@@ -187,8 +205,8 @@ class BoardCanvas(Canvas):
         return self.display_string
 
     def update_empty_cells(self, empty_cells: List[Coordinate]) -> str:
-        for row, col in empty_cells:
-            self.board_coordinates_dict[row][col] = settings.Settings.empty_cell
+        for coord in empty_cells:
+            self.board_coordinates_dict[coord.row][coord.column] = settings.Settings.empty_cell
         self.display_string = self.update(self.board_coordinates_dict)
         return self.display_string
 
@@ -253,6 +271,41 @@ class FinishedPlacingShipsCanvas(Canvas):
     def paint(self):
         print(self.display_string)
 
+
+class TakeTurnCanvas(Canvas):
+    def __init__(self, board_canvas: BoardCanvas, target_board_canvas: BoardCanvas, message=None, opponent_turn=False):
+        super().__init__()
+        self.board_canvas = board_canvas
+        self.target_board_canvas = target_board_canvas
+        self.opponent_turn = opponent_turn
+        self.message = message
+        self.display_string = self.update()
+
+    def update(self) -> str:
+        display_string = self.board_canvas.display_string + center_format.format("\n\n") + \
+            self.target_board_canvas.display_string + \
+            center_format.format("\n\n")
+
+        if self.message:
+            display_string += self.message + center_format.format("\n\n")
+
+        if not self.opponent_turn:
+            display_string += center_format.format("xxxxxx Play a move xxxxxx") + \
+                center_format.format("q: quit game") + \
+                center_format.format("Select a target for attack. ") + \
+                center_format.format("Enter a coordinate - a row and column value separated by a comma like: 1,2")
+        else:
+            display_string += center_format.format("Waiting for Opponent's turn...")
+
+        return display_string
+
+    def get_display_string(self):
+        return self.display_string
+
+    def paint(self):
+        print(self.display_string)
+
+
 class EmptyCellChangeRequestCanvas(Canvas):
     def __init__(self):
         super().__init__()
@@ -272,6 +325,7 @@ class NotHitCellChangeRequestCanvas(Canvas):
     def paint(self):
         print(self.display_string)
 
+
 class HitCellChangeRequestCanvas(Canvas):
     def __init__(self):
         super().__init__()
@@ -280,6 +334,7 @@ class HitCellChangeRequestCanvas(Canvas):
 
     def paint(self):
         print(self.display_string)
+
 
 class MissCellChangeRequestCanvas(Canvas):
     def __init__(self):
@@ -330,14 +385,16 @@ class MissCellChangedCanvas(Canvas):
     def paint(self):
         print(self.display_string)
 
+
 class CharacterEntryRequestCanvas(Canvas):
     def __init__(self):
         super().__init__()
         self.display_string = center_format.format(
             " - Please enter character of your choice: ")
 
-        def paint(self):
-            print(self.display_string)
+    def paint(self):
+        print(self.display_string)
+
 
 class EnterAgainRequestCanvas(Canvas):
     def __init__(self):
@@ -345,8 +402,9 @@ class EnterAgainRequestCanvas(Canvas):
         self.display_string = center_format.format(
             " - Please enter again: ")
 
-        def paint(self):
-            print(self.display_string)
+    def paint(self):
+        print(self.display_string)
+
 
 login_canvas = LoginCanvas()
 start_menu_canvas = StartMenuCanvas()
@@ -385,6 +443,10 @@ def canvas_to_option(canvas: Canvas):
         return MenuOption.PLACESHIPS
     elif isinstance(canvas, FinishedPlacingShipsCanvas):
         return MenuOption.FINISHEDPLACING
+    elif isinstance(canvas, TakeTurnCanvas):
+        return MenuOption.STARTGAME
+    elif isinstance(canvas, GameOverScreenCanvas):
+        return MenuOption.GAMEOVER
 
     raise Exception("No option found for canvas")
 
@@ -395,6 +457,8 @@ valid_screen_transitions = {
     MenuOption.MAINMENU: [MenuOption.NEWGAMEMENU, MenuOption.SHOWSTATS, MenuOption.EXIT],
     MenuOption.SHOWSTATS: [MenuOption.MAINMENU],
     MenuOption.NEWGAMEMENU: [MenuOption.PLACESHIPSMENU, MenuOption.VIEWCONFIG, MenuOption.MAINMENU, MenuOption.EXIT],
-    MenuOption.PLACESHIPSMENU: [MenuOption.PLACESHIPS, MenuOption.NEWGAMEMENU, MenuOption.EXIT],
-    MenuOption.PLACESHIPS: [MenuOption.STARTGAME, MenuOption.NEWGAMEMENU, MenuOption.EXIT]
+    MenuOption.PLACESHIPSMENU: [MenuOption.PLACESHIPS, MenuOption.STARTGAME, MenuOption.NEWGAMEMENU, MenuOption.EXIT],
+    MenuOption.PLACESHIPS: [MenuOption.STARTGAME, MenuOption.NEWGAMEMENU, MenuOption.EXIT],
+    MenuOption.FINISHEDPLACING: [MenuOption.STARTGAME, MenuOption.NEWGAMEMENU, MenuOption.EXIT],
+    MenuOption.GAMEOVER: [MenuOption.MAINMENU, MenuOption.EXIT]
 }

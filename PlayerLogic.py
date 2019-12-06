@@ -71,9 +71,9 @@ class CommandLineInstruction(PlayerLogic):
         check with board via board.getTile(coordinate) that it's a valid coordinate before returning it.
         """
         # Get attack coordinate from shell
-        row, col = self.view.get_coordinate()
+        coord = self.view.get_coordinate()
 
-        tile = target_board.get_tile(row, col)
+        tile = target_board.get_tile(coord.row, coord.column)
         if target_board.attack_in_run([tile]):
            print("This tile has already been hit")
            return None
