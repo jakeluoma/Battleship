@@ -1,6 +1,6 @@
 import pytest
 
-from board import Board
+from board import Board, BoardHelper
 from Coordinate import Coordinate
 import Ship
 import Tile
@@ -73,3 +73,39 @@ def test_update_hits_and_misses():
     assert board.get_tile(1, 0).get_hit_status() == Tile.TileHitStatus.HIT
     assert board.get_tile(0, 1).get_hit_status() == Tile.TileHitStatus.MISS
     assert board.get_tile(1, 1).get_hit_status() == Tile.TileHitStatus.EMPTY
+
+def test_get_hit_runs():
+    dimension = 3
+    board = Board(dimension)
+    
+    board.get_tile(0,0).set_hit_status(Tile.TileHitStatus.HIT)
+    board.get_tile(0,1).set_hit_status(Tile.TileHitStatus.HIT)
+    board.get_tile(1,0).set_hit_status(Tile.TileHitStatus.HIT)
+
+    horizontal, vertical = BoardHelper.get_hit_runs(board)
+
+    assert len(horizontal) == 1
+    assert len(vertical) == 1
+
+    horizontal_run = horizontal[0]
+    assert len(horizontal_run) == 2
+    assert horizontal_run[0] == board.get_tile(0,0)
+    assert horizontal_run[1] == board.get_tile(0,1)
+
+    vertical_run = vertical[0]
+    assert len(vertical_run) == 2
+    assert vertical_run[0] == board.get_tile(0,0)
+    assert vertical_run[1] == board.get_tile(1,0)
+
+def test_get_tiles_with_no_attack_at_end_of_hit_runs():
+    dimension = 3
+    board = Board(dimension)
+    
+    board.get_tile(0,0).set_hit_status(Tile.TileHitStatus.HIT)
+    board.get_tile(0,1).set_hit_status(Tile.TileHitStatus.HIT)
+    board.get_tile(1,0).set_hit_status(Tile.TileHitStatus.HIT)
+
+    tiles = BoardHelper.get_tiles_with_no_attack_at_end_of_hit_runs(board)
+    assert len(tiles) == 2
+    assert board.get_tile(0,2) in tiles
+    assert board.get_tile(2,0) in tiles

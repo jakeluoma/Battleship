@@ -16,8 +16,10 @@ from view import View
 
 class GameMode:
     def __init__(self):
-        self.board_dimension = 10
-        self.ship_types: List[ShipType] = [ShipType.BATTLESHIP, ShipType.CARRIER, ShipType.DESTROYER, ShipType.PATROL_BOAT, ShipType.SUBMARINE]
+        #self.board_dimension = 10
+        #self.ship_types: List[ShipType] = [ShipType.BATTLESHIP, ShipType.CARRIER, ShipType.DESTROYER, ShipType.PATROL_BOAT, ShipType.SUBMARINE]
+        self.board_dimension = 5
+        self.ship_types: List[ShipType] = [ShipType.SUBMARINE, ShipType.SUBMARINE, ShipType.SUBMARINE]
 
     def get_dimension(self) -> int:
         return self.board_dimension
@@ -105,10 +107,9 @@ class Game:
                                              ([(ship.name, ship.get_size()) for ship in self.player1.fleet]))
                 opponent_turn = False
 
-            sleep(2)
             self.view.update_display(TakeTurnCanvas(self.player1.fleet_board.canvas,
                                                     self.player1.target_board.canvas, message, opponent_turn))
-            sleep(3)
+            sleep(2)
 
         self.end_game()
 

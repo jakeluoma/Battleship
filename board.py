@@ -49,6 +49,8 @@ class Board:
     # returns true.  Else returns false.
     def ship_in_run(self, run: List[Tile]) -> bool:
         ship = False
+        if not run:
+            return ship
         for tile in run:
             if tile.get_ship() is not None:
                 ship = True
@@ -59,6 +61,8 @@ class Board:
     # returns true.  Else returns false.
     def attack_in_run(self, run: List[Tile]) -> bool:
         attack = False
+        if not run:
+            return attack
         for tile in run:
             if tile.get_hit_status() != TileHitStatus.EMPTY:
                 attack = True
@@ -67,6 +71,8 @@ class Board:
 
     # returns true if a ship can be placed on the given Tiles, else returns false
     def valid_ship_placement(self, tiles: List[Tile]) -> bool:
+        if not tiles:
+            return False
         for tile in tiles:
             if self.tile_contains_ship(tile):
                 return False
@@ -191,7 +197,7 @@ class BoardHelper:
 
         return ret
 
-    """ Ship Placement Helper Functions """
+    """ Ship Placement Helper Functions For AI"""
 
     # returns a list of runs of tiles of length n.  No tile in a run contains a ship.
     # the list contains both horizontal and vertical runs.
@@ -268,7 +274,7 @@ class BoardHelper:
 
         return ret
 
-    """ Attack Selection Helper Functions """
+    """ Attack Selection Helper Functions For AI"""
 
     # returns a list of runs of tiles of length n.  None
     # of the tiles in a given run have been attacked yet.
@@ -293,6 +299,27 @@ class BoardHelper:
                     break
                 if not board.attack_in_run(possibleRun):
                     ret.append(possibleRun)
+
+        return ret
+
+    # returns a list of Tiles with TileHitStatus.EMPTY in an optimal pattern for finding ships
+    # (diagonal search pattern with a spacing of n between diagonal lines)
+    @staticmethod
+    def get_ideally_spaced_attack_tiles(board: Board, n: int) -> List[Tile]:
+        ret: List[Tile] = []
+
+        col = board.get_dimension() % n
+        for row in range(board.get_dimension()):
+            tile = board.get_tile(row, col)
+            if tile.get_hit_status() == TileHitStatus.EMPTY:
+                ret.append(board.get_tile(row, col))
+            col += n
+            while col < board.get_dimension():
+                tile = board.get_tile(row, col)
+                if tile.get_hit_status() == TileHitStatus.EMPTY:
+                    ret.append(board.get_tile(row, col))
+                col += n
+            col = col % board.get_dimension()
 
         return ret
 
@@ -329,46 +356,29 @@ class BoardHelper:
         verticalHitRuns: List[List[Tile]] = []
 
         # find horizontal hit runs
+        potentialRun: List[Tile] = []
         for row in range(board.get_dimension()):
-            potentialRun: List[Tile] = []
             for col in range(board.get_dimension()):
                 tile = board.get_tile(row, col)
-                if tile is None:
-                    if potentialRun:
+                if tile.get_hit_status() == TileHitStatus.HIT:
+                    potentialRun.append(tile)
+                else:
+                    if potentialRun and len(potentialRun) > 1:
                         horizontalHitRuns.append(potentialRun)
                         potentialRun: List[Tile] = []
-                    continue
-                if tile.get_hit_status() == TileHitStatus.HIT:
-                    potentialRun.append(tile)
-                if tile.get_hit_status() != TileHitStatus.HIT and potentialRun:
-                    horizontalHitRuns.append(potentialRun)
-                    potentialRun: List[Tile] = []
-
+        
         # find vertical hit runs
+        row = 0
+        potentialRun: List[Tile] = []
         for col in range(board.get_dimension()):
-            potentialRun: List[Tile] = []
             for row in range(board.get_dimension()):
                 tile = board.get_tile(row, col)
-                if tile is None:
-                    if potentialRun:
-                        verticalHitRuns.append(potentialRun)
-                        potentialRun: List[Tile] = []
-                    continue
                 if tile.get_hit_status() == TileHitStatus.HIT:
                     potentialRun.append(tile)
-                if tile.get_hit_status() != TileHitStatus.HIT and potentialRun:
-                    verticalHitRuns.append(potentialRun)
-                    potentialRun: List[Tile] = []
-
-        # get rid of any runs < length 2
-        if horizontalHitRuns:
-            for run in horizontalHitRuns:
-                if len(run) < 2:
-                    horizontalHitRuns.remove(run)
-        if verticalHitRuns:
-            for run in verticalHitRuns:
-                if len(run) < 2:
-                    verticalHitRuns.remove(run)
+                else:
+                    if potentialRun and len(potentialRun) > 1:
+                        verticalHitRuns.append(potentialRun)
+                        potentialRun: List[Tile] = []
 
         return horizontalHitRuns, verticalHitRuns
 
@@ -378,31 +388,34 @@ class BoardHelper:
     def get_tiles_with_no_attack_at_end_of_hit_runs(board: Board):
         endTiles: List[Tile] = []
         horizontalHitRuns, verticalHitRuns = BoardHelper.get_hit_runs(board)
-
         for run in horizontalHitRuns:
             first = run[0]
             row, col = first.get_coordinate().get_row_and_column()
             tile = board.get_tile(row, col - 1)
             if tile:
-                endTiles.append(tile)
+                if tile.get_hit_status() == TileHitStatus.EMPTY:
+                    endTiles.append(tile)
 
             last = run[-1]
-            row, col = first.get_coordinate().get_row_and_column()
+            row, col = last.get_coordinate().get_row_and_column()
             tile = board.get_tile(row, col + 1)
             if tile:
-                endTiles.append(tile)
+                if tile.get_hit_status() == TileHitStatus.EMPTY:
+                    endTiles.append(tile)
 
         for run in verticalHitRuns:
             first = run[0]
             row, col = first.get_coordinate().get_row_and_column()
             tile = board.get_tile(row - 1, col)
             if tile:
-                endTiles.append(tile)
+                if tile.get_hit_status() == TileHitStatus.EMPTY:
+                    endTiles.append(tile)
 
             last = run[-1]
-            row, col = first.get_coordinate().get_row_and_column()
+            row, col = last.get_coordinate().get_row_and_column()
             tile = board.get_tile(row + 1, col)
             if tile:
-                endTiles.append(tile)
+                if tile.get_hit_status() == TileHitStatus.EMPTY:
+                    endTiles.append(tile)
 
         return endTiles
