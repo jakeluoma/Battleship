@@ -9,6 +9,7 @@ STATS_FILE = 'user_stats.csv'
 class Statistics:
 
     user_stats = pd.read_csv(STATS_FILE)
+    user_stats = user_stats.loc[:, ~user_stats.columns.str.contains('^Unnamed')]
 
     @staticmethod
     def get_user_stats(user: UserProfile) -> StatsCanvas:
@@ -72,6 +73,7 @@ class Statistics:
         user_row.most_recent_game_ships_sunk = 0
         user_row.most_recent_game_ships_lost = 0
 
+        Statistics.user_stats = Statistics.user_stats.loc[:, ~Statistics.user_stats.columns.str.contains('^Unnamed')]
         Statistics.user_stats.to_csv('user_stats.csv')
 
     # updates the statistics for a single shot
@@ -110,6 +112,7 @@ class Statistics:
             user_row.most_recent_game_misses_received += 1
             user_row.lifetime_misses_received += 1
 
+        Statistics.user_stats = Statistics.user_stats.loc[:, ~Statistics.user_stats.columns.str.contains('^Unnamed')]
         Statistics.user_stats.to_csv('user_stats.csv')
 
     @staticmethod
@@ -120,4 +123,6 @@ class Statistics:
         user_df['user_name'] = user.user_name
 
         Statistics.user_stats = Statistics.user_stats.append(user_df)
+
+        Statistics.user_stats = Statistics.user_stats.loc[:, ~Statistics.user_stats.columns.str.contains('^Unnamed')]
         Statistics.user_stats.to_csv('user_stats.csv')
