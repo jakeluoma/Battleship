@@ -1,5 +1,4 @@
 import canvas
-
 # have to do "import canvas" due to circular import with canvas
 
 class Settings:

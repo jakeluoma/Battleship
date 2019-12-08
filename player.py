@@ -65,7 +65,9 @@ class Player:
     def take_turn(self) -> Tuple[List[Coordinate], List[Coordinate], List[Ship]]:
         hits, misses, ships_lost = self.opponent.receive_attack([self.player_logic.select_attack(self.target_board)])
         self.target_board.update_hits_and_misses(hits, misses)
-        statistics.Statistics.update_stats(self.user_profile.get_user_name(), len(hits), len(misses), len(ships_lost), True)
+        
+        if self.user_profile is not None:
+            statistics.Statistics.update_stats(self.user_profile.get_user_name(), len(hits), len(misses), len(ships_lost), True)
         
         self.enemy_ships_sunk += len(ships_lost)
         if self.enemy_ships_sunk >= self.num_enemy_ships:
@@ -89,6 +91,7 @@ class Player:
         for ship in ships_lost:
             self.fleet.remove(ship)
 
-        statistics.Statistics.update_stats(self.user_profile.get_user_name(), len(hits), len(misses), len(ships_lost), False)
+        if self.user_profile is not None:
+            statistics.Statistics.update_stats(self.user_profile.get_user_name(), len(hits), len(misses), len(ships_lost), False)
 
         return hits, misses, ships_lost

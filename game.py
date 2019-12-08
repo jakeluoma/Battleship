@@ -12,6 +12,7 @@ from canvas import PlaceShipsMenuCanvas, PlaceShipsCanvas, FinishedPlacingShipsC
 from player import Player, UserProfile
 from PlayerLogic import CommandLineInstruction, AI
 from view import View
+import statistics
 
 
 class GameMode:
@@ -35,11 +36,12 @@ class Game:
         target_board = Board(game_mode.get_dimension(), is_target=True)
         self.player1 = Player(user_profile, CommandLineInstruction(), fleet_board, target_board,
                               game_mode.get_ship_types(), is_ai=False)
+        statistics.Statistics.set_most_recent_game_stats_to_zero(self.player1.user_profile.get_user_name())
 
         # initialize AI player
         fleet_board = Board(game_mode.get_dimension(), is_target=False)
         target_board = Board(game_mode.get_dimension(), is_target=True)
-        self.player2 = Player(user_profile, AI(), fleet_board, target_board, game_mode.get_ship_types(), is_ai=True)
+        self.player2 = Player(None, AI(), fleet_board, target_board, game_mode.get_ship_types(), is_ai=True)
 
         # set each Player's opponent to finish Player initialization
         self.player1.setOpponent(self.player2)
@@ -118,6 +120,7 @@ class Game:
         user_won = False
         if self.player1.is_victorious():
             user_won = True
+        statistics.Statistics.update_win_loss_stats(self.player1.user_profile.get_user_name(), user_won)
         self.view.update_display(GameOverScreenCanvas(user_won=user_won))
 
     # saves game to pickle, which gets written to file

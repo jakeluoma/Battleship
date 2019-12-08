@@ -5,10 +5,8 @@ from enum import Enum
 from typing import List
 
 import Tile
-
 # need to do "import Tile" since it has a circular import with Ship
 
-# for now, no special attacks.  Let's just get the program working first.
 class Ship:
     def __init__(self, name: str, size: int):
         self.name = name

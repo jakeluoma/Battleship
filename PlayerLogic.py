@@ -1,7 +1,6 @@
 from abc import ABC
 from enum import Enum
-from typing import List, Optional
-from typing import Tuple
+from typing import List, Optional, Tuple
 from random import randrange
 
 from Coordinate import Coordinate

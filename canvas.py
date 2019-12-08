@@ -7,7 +7,6 @@ from Ship import ShipType, ship_size_map
 from Tile import Tile
 
 import settings
-
 # have to do "import settings" due to circular import with settings
 
 center_format = "{0:^100}\n"
