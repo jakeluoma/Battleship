@@ -13,7 +13,7 @@ class Statistics:
 
     @staticmethod
     def get_user_stats(user: UserProfile) -> StatsCanvas:
-        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == user.get_user_name()].squeeze()
+        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == user.get_user_name()]
         return StatsCanvas(user_row)
 
     @staticmethod
@@ -61,7 +61,7 @@ class Statistics:
     @staticmethod
     def set_most_recent_game_stats_to_zero(name: str):
 
-        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == name].squeeze()
+        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == name]
 
         if user_row.empty:
             return
@@ -74,13 +74,14 @@ class Statistics:
         user_row.most_recent_game_ships_lost = 0
 
         Statistics.user_stats = Statistics.user_stats.loc[:, ~Statistics.user_stats.columns.str.contains('^Unnamed')]
+        Statistics.user_stats.loc[Statistics.user_stats.user_name == name] = user_row
         Statistics.user_stats.to_csv('user_stats.csv')
 
     # updates the statistics for a single shot
     @staticmethod
     def update_stats(name: str, hit: bool, outgoing: bool, sunk: bool):
 
-        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == name].squeeze()
+        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == name]
 
         if user_row.empty:
             return
@@ -113,6 +114,8 @@ class Statistics:
             user_row.lifetime_misses_received += 1
 
         Statistics.user_stats = Statistics.user_stats.loc[:, ~Statistics.user_stats.columns.str.contains('^Unnamed')]
+
+        Statistics.user_stats.loc[Statistics.user_stats.user_name == name] = user_row
         Statistics.user_stats.to_csv('user_stats.csv')
 
     @staticmethod
