@@ -15,12 +15,12 @@ class Statistics:
 
     @staticmethod
     def get_user_stats(user: 'player.UserProfile') -> StatsCanvas:
-        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == user.get_user_name()]
+        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == user.get_user_name()].squeeze()
         return StatsCanvas(user_row)
 
     @staticmethod
     def lifetime_stats_to_string(user: 'player.UserProfile'):
-        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == user.get_user_name()]
+        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == user.get_user_name()].squeeze()
 
         # Move this to StatsView
         stats_string = center_format.format('YOUR OVERALL STATISTICS:') + \
@@ -38,7 +38,7 @@ class Statistics:
 
     @staticmethod
     def most_recent_game_stats_to_string(user: 'player.UserProfile'):
-        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == user.get_user_name()]
+        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == user.get_user_name()].squeeze()
 
         # Move this to StatsView
         stats_string = center_format.format('YOUR RECENT GAME STATISTICS:') + \
@@ -122,5 +122,5 @@ class Statistics:
         Statistics.user_stats = Statistics.user_stats.append(user_df)
 
         Statistics.user_stats = Statistics.user_stats.loc[:, ~Statistics.user_stats.columns.str.contains('^Unnamed')]
-        Statistics.user_stats.loc[Statistics.user_stats.user_name == name] = user_row
+        # Statistics.user_stats.loc[Statistics.user_stats.user_name == name] = user_row
         Statistics.user_stats.to_csv('user_stats.csv')
