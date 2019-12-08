@@ -2,28 +2,31 @@ import os
 from typing import Tuple, Optional
 
 from Coordinate import Coordinate
-from board import Direction
+from board import Board, Direction
 from canvas import Canvas, MenuOption, valid_screen_transitions, canvas_to_option
 
 
 class InputParser:
     @staticmethod
-    def parse_coordinate(inp) -> Optional[Tuple[int, int]]:
-        x, y = None, None
+    def parse_coordinate(inp: str, board: Board) -> Optional[Tuple[int, int]]:
+        row, col = None, None
         if len(inp) == 2:
-            x, y = inp[0], inp[1]
+            row, col = inp[0], inp[1]
         else:
             split = inp.split(",")
             if len(split) >= 2:
-                x, y = split[0], split[1]
+                row, col = split[0], split[1]
             else:
                 split = inp.split(" ")
                 if len(split) >= 2:
-                    x, y = split[0], split[1]
+                    row, col = split[0], split[1]
         try:
-            return int(x), int(y)
-        except Exception:
-            raise Exception("Invalid coordinates")
+            row, col = int(row), int(col)
+            if row < 0 or col < 0 or row >= board.get_dimension() or col >= board.get_dimension():
+                raise ValueError
+            return row, col
+        except:
+            raise TypeError
 
     @staticmethod
     def parse_direction(inp) -> Direction:
@@ -36,7 +39,7 @@ class InputParser:
         elif any(inp.lower().startswith(k) for k in ["right", "go right", "d"]):
             return Direction.right
 
-        raise Exception("Invalid Direction")
+        raise Exception("Invalid direction.  Try again.")
 
     @staticmethod
     def parse_next_view(inp) -> MenuOption:
@@ -59,7 +62,7 @@ class InputParser:
         elif any(inp.lower().startswith(k) for k in ["n", "new", "a"]):
             return MenuOption.STARTGAME
 
-        raise Exception("Invalid Option")
+        raise Exception("Invalid selection.  Try again.")
 
 
 class View:
@@ -98,23 +101,39 @@ class View:
         inp = input()
         return inp
 
-    def get_coordinate(self) -> Coordinate:
-        inp = input()
-        x, y = InputParser.parse_coordinate(inp)
-        return Coordinate(x, y)
+    def get_coordinate(self, board: Board) -> Coordinate:
+        while True:
+            inp = input()
+            try:
+                x, y = InputParser.parse_coordinate(inp, board)
+                return Coordinate(x, y)
+            except ValueError:
+                print("Invalid coordinate given.  Try again.")
+            except TypeError:
+                print("You must enter a coordinate (ie. 1,2).  Try again.")
 
     def get_direction(self) -> Direction:
-        inp = input()
-        return InputParser.parse_direction(inp)
+        while True:
+            inp = input()
+            try:
+                return InputParser.parse_direction(inp)
+            except Exception as e:
+                print(e.args[0])
 
     def get_next_view(self) -> MenuOption:
-        inp = input()
-        opt = InputParser.parse_next_view(inp)
+        while True:
+            inp = input()
+            try:
+                opt = InputParser.parse_next_view(inp)
+            except Exception as e:
+                print(e.args[0])
+                continue
 
-        if opt not in valid_screen_transitions[self.menu_option]:
-            raise Exception("You cannot use this option {} from this screen {}".format(opt.name, self.menu_option))
+            if opt not in valid_screen_transitions[self.menu_option]:
+                print("You cannot use this option {} from this screen {}".format(opt.name, self.menu_option))
+                continue
 
-        return opt
+            return opt
 
     def get_yes_no(self):
         inp = input()

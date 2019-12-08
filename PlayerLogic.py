@@ -33,7 +33,7 @@ class CommandLineInstruction(PlayerLogic):
 
         # get a valid ship placement from the user
         while True:
-            row, col = self.view.get_coordinate().get_row_and_column()
+            row, col = self.view.get_coordinate(board).get_row_and_column()
             direction = self.view.get_direction()
             run = BoardHelper.get_run_of_tiles_length_n(board, self.ship_builder.get_ship_size(), row, col, direction)
             if not board.valid_ship_placement(run):
@@ -47,7 +47,7 @@ class CommandLineInstruction(PlayerLogic):
     def select_attack(self, target_board: Board) -> Coordinate:
         # Get attack coordinate from the user
         while True:
-            row, col = self.view.get_coordinate().get_row_and_column()
+            row, col = self.view.get_coordinate(target_board).get_row_and_column()
             tile = target_board.get_tile(row, col)
             if not Tile:
                 print("Invalid coordinate.  Try again.")
