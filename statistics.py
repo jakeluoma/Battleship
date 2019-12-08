@@ -61,7 +61,7 @@ class Statistics:
     @staticmethod
     def set_most_recent_game_stats_to_zero(name: str):
 
-        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == name].squeeze()
+        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == name]
 
         if user_row.empty:
             return
@@ -81,7 +81,7 @@ class Statistics:
     @staticmethod
     def update_stats(name: str, hit: bool, outgoing: bool, sunk: bool):
 
-        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == name].squeeze()
+        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == name]
 
         if user_row.empty:
             return
