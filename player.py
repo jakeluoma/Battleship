@@ -7,6 +7,8 @@ from PlayerLogic import PlayerLogic
 from Ship import Ship, ShipType
 from board import Board
 
+import statistics
+
 
 class UserProfile:
     # should really have a reference to Statistics
@@ -62,7 +64,7 @@ class Player:
     def take_turn(self) -> Tuple[List[Coordinate], List[Coordinate], List[Ship]]:
         hits, misses, ships_lost = self.opponent.receive_attack([self.player_logic.select_attack(self.target_board)])
         self.target_board.update_hits_and_misses(hits, misses)
-        # should update statistics here
+        statistics.Statistics.update_stats(self.user_profile.get_user_name(), len(hits), len(misses), len(ships_lost), True)
         
         self.enemy_ships_sunk += len(ships_lost)
         if self.enemy_ships_sunk >= self.num_enemy_ships:
@@ -76,7 +78,6 @@ class Player:
     # returns a list of hit coordinates, a list of miss coordinates, and the number of ships sunk by the attack
     def receive_attack(self, coordinates: List[Coordinate]) -> Tuple[List[Coordinate], List[Coordinate], List[Ship]]:
         hits, misses = self.fleet_board.process_incoming_attack(coordinates)
-        # should update statistics here
 
         ships_lost = []
         for ship in self.fleet:
@@ -84,10 +85,9 @@ class Player:
                 ships_lost.append(ship)
         self.player_ships_lost.extend(ships_lost)
 
-        num_ships_sunk_this_turn = 0
         for ship in ships_lost:
-            if ship in self.fleet:
-                self.fleet.remove(ship)
-                num_ships_sunk_this_turn += 1
+            self.fleet.remove(ship)
+
+        statistics.Statistics.update_stats(self.user_profile.get_user_name(), len(hits), len(misses), len(ships_lost), False)
 
         return hits, misses, ships_lost

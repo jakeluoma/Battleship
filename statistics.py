@@ -1,7 +1,7 @@
 import pandas as pd
 
-from player import UserProfile
 from canvas import center_format, StatsCanvas
+import player
 
 STATS_FILE = 'user_stats.csv'
 
@@ -12,12 +12,12 @@ class Statistics:
     user_stats = user_stats.loc[:, ~user_stats.columns.str.contains('^Unnamed')]
 
     @staticmethod
-    def get_user_stats(user: UserProfile) -> StatsCanvas:
+    def get_user_stats(user: 'player.UserProfile') -> StatsCanvas:
         user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == user.get_user_name()].squeeze()
         return StatsCanvas(user_row)
 
     @staticmethod
-    def lifetime_stats_to_string(user: UserProfile):
+    def lifetime_stats_to_string(user: 'player.UserProfile'):
         user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == user.get_user_name()].squeeze()
 
         # Move this to StatsView
@@ -35,7 +35,7 @@ class Statistics:
         return stats_string
 
     @staticmethod
-    def most_recent_game_stats_to_string(user: UserProfile):
+    def most_recent_game_stats_to_string(user: 'player.UserProfile'):
         user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == user.get_user_name()].squeeze()
 
         # Move this to StatsView
@@ -76,9 +76,9 @@ class Statistics:
         Statistics.user_stats = Statistics.user_stats.loc[:, ~Statistics.user_stats.columns.str.contains('^Unnamed')]
         Statistics.user_stats.to_csv('user_stats.csv')
 
-    # updates the statistics for a single shot
+    # updates the statistics after an attack has been processed
     @staticmethod
-    def update_stats(name: str, hit: bool, outgoing: bool, sunk: bool):
+    def update_stats(name: str, num_hits: int, num_misses: int, num_sunk: int, outgoing: bool):
 
         user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == name].squeeze()
 
@@ -90,33 +90,26 @@ class Statistics:
         if index == -1:
             return
 
-        if hit and outgoing:
-            user_row.most_recent_game_hits += 1
-            user_row.lifetime_hits += 1
-            if sunk:
-                user_row.most_recent_game_ships_sunk += 1
-                user_row.lifetime_ships_sunk += 1
-
-        elif hit and not outgoing:
-            user_row.most_recent_game_hits_received += 1
-            user_row.lifetime_hits_received += 1
-            if sunk:
-                user_row.most_recent_game_ships_lost += 1
-                user_row.lifetime_ships_lost += 1
-
-        elif not hit and outgoing:
-            user_row.most_recent_game_misses += 1
-            user_row.lifetime_misses += 1
-
-        elif not hit and not outgoing:
-            user_row.most_recent_game_misses_received += 1
-            user_row.lifetime_misses_received += 1
+        if outgoing:
+            user_row.most_recent_game_hits += num_hits
+            user_row.lifetime_hits += num_hits
+            user_row.most_recent_game_misses += num_misses
+            user_row.lifetime_misses += num_misses
+            user_row.most_recent_game_ships_sunk += num_sunk
+            user_row.lifetime_ships_sunk += num_sunk
+        elif not outgoing:
+            user_row.most_recent_game_hits_received += num_hits
+            user_row.lifetime_hits_received += num_hits
+            user_row.most_recent_game_misses_received += num_misses
+            user_row.lifetime_misses_received += num_misses
+            user_row.most_recent_game_ships_lost += num_sunk
+            user_row.lifetime_ships_lost += num_sunk        
 
         Statistics.user_stats = Statistics.user_stats.loc[:, ~Statistics.user_stats.columns.str.contains('^Unnamed')]
         Statistics.user_stats.to_csv('user_stats.csv')
 
     @staticmethod
-    def create_user(user: UserProfile):
+    def create_user(user: 'player.UserProfile'):
         column_names = Statistics.user_stats.columns
 
         user_df = pd.DataFrame(0, columns=column_names, index=[0])
