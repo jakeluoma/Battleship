@@ -57,6 +57,7 @@ class MainMenuCanvas(Canvas):
     def __init__(self):
         super().__init__()
         self.display_string = center_format.format("xxxxxx Main Menu xxxxxx") + \
+            center_format.format("lg: Load saved game") + \
             center_format.format("g: Play new game") + \
             center_format.format("s: Show User stats") + \
             center_format.format("lo: Logout") + \
