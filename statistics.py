@@ -18,7 +18,7 @@ class Statistics:
 
     @staticmethod
     def lifetime_stats_to_string(user: UserProfile):
-        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == user.get_user_name()].squeeze()
+        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == user.get_user_name()]
 
         # Move this to StatsView
         stats_string = center_format.format('YOUR OVERALL STATISTICS:') + \
@@ -36,7 +36,7 @@ class Statistics:
 
     @staticmethod
     def most_recent_game_stats_to_string(user: UserProfile):
-        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == user.get_user_name()].squeeze()
+        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == user.get_user_name()]
 
         # Move this to StatsView
         stats_string = center_format.format('YOUR RECENT GAME STATISTICS:') + \
@@ -61,7 +61,7 @@ class Statistics:
     @staticmethod
     def set_most_recent_game_stats_to_zero(name: str):
 
-        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == name]
+        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == name].squeeze()
 
         if user_row.empty:
             return
@@ -81,7 +81,7 @@ class Statistics:
     @staticmethod
     def update_stats(name: str, hit: bool, outgoing: bool, sunk: bool):
 
-        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == name]
+        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == name].squeeze()
 
         if user_row.empty:
             return
@@ -114,7 +114,6 @@ class Statistics:
             user_row.lifetime_misses_received += 1
 
         Statistics.user_stats = Statistics.user_stats.loc[:, ~Statistics.user_stats.columns.str.contains('^Unnamed')]
-
         Statistics.user_stats.loc[Statistics.user_stats.user_name == name] = user_row
         Statistics.user_stats.to_csv('user_stats.csv')
 
@@ -128,4 +127,5 @@ class Statistics:
         Statistics.user_stats = Statistics.user_stats.append(user_df)
 
         Statistics.user_stats = Statistics.user_stats.loc[:, ~Statistics.user_stats.columns.str.contains('^Unnamed')]
+        Statistics.user_stats.loc[Statistics.user_stats.user_name == name] = user_row
         Statistics.user_stats.to_csv('user_stats.csv')
