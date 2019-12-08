@@ -290,7 +290,7 @@ class TakeTurnCanvas(Canvas):
             display_string += self.message + center_format.format("\n\n")
 
         if not self.opponent_turn:
-            display_string += center_format.format("xxxxxx Play a move xxxxxx") + \
+            display_string += center_format.format("xxxxxx Make a move xxxxxx") + \
                 center_format.format("q: quit game") + \
                 center_format.format("Select a target for attack. ") + \
                 center_format.format("Enter a coordinate - a row and column value separated by a comma like: 1,2")

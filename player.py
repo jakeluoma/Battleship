@@ -8,6 +8,7 @@ from Ship import Ship, ShipType
 from board import Board
 
 import statistics
+# need to do import statistics due to circular import with statistics
 
 
 class UserProfile:
