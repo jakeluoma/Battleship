@@ -25,6 +25,8 @@ class MenuOption(Enum):
     FINISHEDPLACING = 9
     STARTGAME = 10
     GAMEOVER = 11
+    LOGOUT = 12
+    LOADGAME = 13
 
 
 class Canvas(ABC):
@@ -404,7 +406,6 @@ class EnterAgainRequestCanvas(Canvas):
     def paint(self):
         print(self.display_string)
 
-
 login_canvas = LoginCanvas()
 start_menu_canvas = StartMenuCanvas()
 main_menu_canvas = MainMenuCanvas()
@@ -453,7 +454,9 @@ def canvas_to_option(canvas: Canvas):
 valid_screen_transitions = {
     MenuOption.STARTMENU: [MenuOption.LOGIN, MenuOption.EXIT],
     MenuOption.LOGIN: [MenuOption.MAINMENU],
-    MenuOption.MAINMENU: [MenuOption.NEWGAMEMENU, MenuOption.SHOWSTATS, MenuOption.EXIT],
+    MenuOption.LOGOUT: [MenuOption.STARTMENU],
+    MenuOption.MAINMENU: [MenuOption.LOADGAME, MenuOption.NEWGAMEMENU, MenuOption.SHOWSTATS, MenuOption.LOGOUT, MenuOption.EXIT],
+    MenuOption.LOADGAME: [MenuOption.STARTGAME],
     MenuOption.SHOWSTATS: [MenuOption.MAINMENU],
     MenuOption.NEWGAMEMENU: [MenuOption.PLACESHIPSMENU, MenuOption.VIEWCONFIG, MenuOption.MAINMENU, MenuOption.EXIT],
     MenuOption.PLACESHIPSMENU: [MenuOption.PLACESHIPS, MenuOption.STARTGAME, MenuOption.NEWGAMEMENU, MenuOption.EXIT],

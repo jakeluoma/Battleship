@@ -61,14 +61,13 @@ class Game:
 
     # Alternates between players' turns. Continues loop as long as no player has achieved victory
     def run_game(self, dry_run=False):
-        """ somewhere in here is where you'd probably want to display the canvas asking whether the player wants
-            to attack or save and exit.  If saving and exiting, should call save_game() and then return"""
         if dry_run:
             self.player2.victory = True
             self.end_game()
             return
-
+        
         while not self.current_player.is_victorious():
+            self.save_game() # the game is saved after every turn
             self.switch_player()
             hits, misses, ships_lost = self.current_player.take_turn()
             message = ""
@@ -137,11 +136,13 @@ class Game:
     @staticmethod
     def load_saved_game(user: UserProfile):
         file_name = user.get_user_name() + "_saved_game.p"
+        ret: Game = None
         try:
-            return pickle.load(open(file_name, "rb"))
+            ret = pickle.load(open(file_name, "rb"))
+            return ret
         except:
             print("Failed to load game")
-            return None
+            return ret
 
     def get_player_board_canvas(self):
         return self.player1.fleet_board.canvas

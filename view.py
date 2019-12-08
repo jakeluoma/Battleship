@@ -43,7 +43,11 @@ class InputParser:
 
     @staticmethod
     def parse_next_view(inp) -> MenuOption:
-        if any(inp.lower().startswith(k) for k in ["l", "login"]):
+        if any(inp.lower().startswith(k) for k in ["lo", "logout"]):
+            return MenuOption.LOGOUT
+        elif any(inp.lower().startswith(k) for k in ["lg", "load game"]):
+            return MenuOption.LOADGAME
+        elif any(inp.lower().startswith(k) for k in ["l", "login"]):
             return MenuOption.LOGIN
         elif any(inp.lower().startswith(k) for k in ["e", "x", "exit"]):
             return MenuOption.EXIT

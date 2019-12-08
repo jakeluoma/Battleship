@@ -4,7 +4,7 @@ from player import UserProfile
 from canvas import login_canvas, start_menu_canvas, MenuOption, exit_canvas, main_menu_canvas, StatsCanvas, \
     new_game_canvas, BoardCanvas, PlaceShipsMenuCanvas, FinishedPlacingShipsCanvas, TakeTurnCanvas
 from view import View
-
+import warnings
 
 class Program:
     def __init__(self):
@@ -25,6 +25,10 @@ class Program:
         # returns next screen after logging in
         return MenuOption.MAINMENU
 
+    def logout(self) -> MenuOption:
+        self.user = None
+        return MenuOption.STARTMENU
+
     def show_user_stats(self) -> StatsCanvas:
         return Statistics.get_user_stats(self.user)
 
@@ -38,6 +42,13 @@ class Program:
 
     def start_game(self):
         self.game.run_game()
+
+    def load_game(self):
+        try:
+            game = Game.load_saved_game(self.user)
+            game.run_game()
+        except:
+            return
 
     def get_player_ship_placement_menu_canvas(self) -> PlaceShipsMenuCanvas:
         return self.game.get_player_ship_placement_canvas()
@@ -55,6 +66,7 @@ class Program:
 class ProgramAndViewCoordinator:
     option_canvas_map = {
         MenuOption.LOGIN: login_canvas,
+        MenuOption.LOGOUT: start_menu_canvas,
         MenuOption.EXIT: exit_canvas,
         MenuOption.STARTMENU: start_menu_canvas,
         MenuOption.MAINMENU: main_menu_canvas,
@@ -62,7 +74,8 @@ class ProgramAndViewCoordinator:
         MenuOption.NEWGAMEMENU: new_game_canvas,
         MenuOption.PLACESHIPSMENU: lambda program: program.get_player_ship_placement_menu_canvas(),
         MenuOption.PLACESHIPS: None,
-        MenuOption.STARTGAME: lambda program: program.get_take_turn_canvas()
+        MenuOption.STARTGAME: lambda program: program.get_take_turn_canvas(),
+        MenuOption.LOADGAME: TakeTurnCanvas
     }
 
     parameterized_with_program = [MenuOption.SHOWSTATS, MenuOption.PLACESHIPSMENU, MenuOption.STARTGAME]
@@ -75,10 +88,12 @@ class ProgramAndViewCoordinator:
         MenuOption.PLACESHIPSMENU: 'noop',
         MenuOption.NEWGAMEMENU: 'create_new_game',
         MenuOption.LOGIN: 'login',
+        MenuOption.LOGOUT: 'logout',
         MenuOption.SHOWSTATS: 'show_user_stats',
         MenuOption.EXIT: 'exit',
         MenuOption.PLACESHIPS: 'place_ships',
-        MenuOption.STARTGAME: 'start_game'
+        MenuOption.STARTGAME: 'start_game',
+        MenuOption.LOADGAME: 'load_game'
     }
 
     def __init__(self, program: Program, view: View):
@@ -114,6 +129,7 @@ class ProgramAndViewCoordinator:
 
 
 if __name__ == '__main__':
+    warnings.filterwarnings("ignore")
     p, v = Program(), View()
     pc = ProgramAndViewCoordinator(p, v)
     pc.run_screen(MenuOption.STARTMENU)
