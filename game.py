@@ -1,19 +1,17 @@
-from abc import ABC
-from enum import Enum
+from time import sleep
+import os
+import pickle
 from time import sleep
 from typing import List, Optional
 
-import os
-import pickle
-
-from board import Board
+import statistics
+from PlayerLogic import CommandLineInstruction, AI
 from Ship import ShipType
+from board import Board
 from canvas import PlaceShipsMenuCanvas, PlaceShipsCanvas, FinishedPlacingShipsCanvas, TakeTurnCanvas, center_format, \
     GameOverScreenCanvas, MenuOption
 from player import Player, UserProfile
-from PlayerLogic import CommandLineInstruction, AI
 from view import View
-import statistics
 
 
 class GameMode:

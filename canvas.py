@@ -3,8 +3,7 @@ from enum import Enum
 from typing import List
 
 from Coordinate import Coordinate
-from Ship import ShipType, ship_size_map
-from Tile import Tile
+from Ship import ShipType, ship_size_map, Tile
 
 import settings
 # have to do "import settings" due to circular import with settings

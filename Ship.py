@@ -1,11 +1,11 @@
 from __future__ import annotations
-from abc import ABC
-from enum import Enum
 
+from enum import Enum
 from typing import List
 
-import Tile
 # need to do "import Tile" since it has a circular import with Ship
+from Coordinate import Coordinate
+
 
 class Ship:
     def __init__(self, name: str, size: int):
@@ -77,3 +77,31 @@ class ShipBuilder:
             return self.ship.get_size()
         else:
             return 0
+
+
+class TileHitStatus(Enum):
+    EMPTY = 1
+    HIT = 2
+    MISS = 3
+
+
+class Tile:
+    def __init__(self, coordinate: Coordinate):
+        self.coordinate = coordinate
+        self.ship = None
+        self.hitStatus = TileHitStatus.EMPTY
+
+    def get_coordinate(self) -> Coordinate:
+        return self.coordinate
+
+    def get_ship(self) -> Ship.Ship:
+        return self.ship
+
+    def get_hit_status(self) -> TileHitStatus:
+        return self.hitStatus
+
+    def set_ship(self, ship: Ship.Ship):
+        self.ship = ship
+
+    def set_hit_status(self, hitStatus: TileHitStatus):
+        self.hitStatus = hitStatus
