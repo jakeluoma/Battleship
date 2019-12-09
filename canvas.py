@@ -7,7 +7,6 @@ from Ship import ShipType, ship_size_map
 from Tile import Tile
 
 import settings
-
 # have to do "import settings" due to circular import with settings
 
 center_format = "{0:^100}\n"
@@ -26,6 +25,8 @@ class MenuOption(Enum):
     FINISHEDPLACING = 9
     STARTGAME = 10
     GAMEOVER = 11
+    LOGOUT = 12
+    LOADGAME = 13
 
 
 class Canvas(ABC):
@@ -56,6 +57,7 @@ class MainMenuCanvas(Canvas):
     def __init__(self):
         super().__init__()
         self.display_string = center_format.format("xxxxxx Main Menu xxxxxx") + \
+            center_format.format("lg: Load saved game") + \
             center_format.format("g: Play new game") + \
             center_format.format("s: Show User stats") + \
             center_format.format("lo: Logout") + \
@@ -415,7 +417,6 @@ class EnterAgainRequestCanvas(Canvas):
     def paint(self):
         print(self.display_string)
 
-
 login_canvas = LoginCanvas()
 start_menu_canvas = StartMenuCanvas()
 main_menu_canvas = MainMenuCanvas()
@@ -461,17 +462,20 @@ def canvas_to_option(canvas: Canvas):
     elif isinstance(canvas, GameOverScreenCanvas):
         return MenuOption.GAMEOVER
 
-    raise Exception("No option found for canvas")
+    raise Exception("No option found for canvas: ", canvas.__class__.__name__)
 
 
 valid_screen_transitions = {
     MenuOption.STARTMENU: [MenuOption.LOGIN, MenuOption.EXIT],
     MenuOption.LOGIN: [MenuOption.MAINMENU],
-    MenuOption.MAINMENU: [MenuOption.NEWGAMEMENU, MenuOption.SHOWSTATS, MenuOption.EXIT],
+    MenuOption.LOGOUT: [MenuOption.STARTMENU],
+    MenuOption.MAINMENU: [MenuOption.LOADGAME, MenuOption.NEWGAMEMENU, MenuOption.SHOWSTATS, MenuOption.LOGOUT, MenuOption.EXIT],
+    MenuOption.LOADGAME: [MenuOption.STARTGAME],
     MenuOption.SHOWSTATS: [MenuOption.MAINMENU],
     MenuOption.NEWGAMEMENU: [MenuOption.PLACESHIPSMENU, MenuOption.VIEWCONFIG, MenuOption.MAINMENU, MenuOption.EXIT],
     MenuOption.PLACESHIPSMENU: [MenuOption.PLACESHIPS, MenuOption.STARTGAME, MenuOption.NEWGAMEMENU, MenuOption.EXIT],
     MenuOption.PLACESHIPS: [MenuOption.STARTGAME, MenuOption.NEWGAMEMENU, MenuOption.EXIT],
     MenuOption.FINISHEDPLACING: [MenuOption.STARTGAME, MenuOption.NEWGAMEMENU, MenuOption.EXIT],
-    MenuOption.GAMEOVER: [MenuOption.MAINMENU, MenuOption.EXIT]
+    MenuOption.GAMEOVER: [MenuOption.MAINMENU, MenuOption.EXIT],
+    MenuOption.STARTGAME: [MenuOption.MAINMENU, MenuOption.EXIT]
 }

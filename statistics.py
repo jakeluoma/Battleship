@@ -22,7 +22,6 @@ class Statistics:
     def lifetime_stats_to_string(user: 'player.UserProfile'):
         user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == user.get_user_name()].squeeze()
 
-        # Move this to StatsView
         stats_string = center_format.format('YOUR OVERALL STATISTICS:') + \
             center_format.format('==========================') + \
             center_format.format('Number of Wins: {}'.format(user_row.lifetime_wins)) + \
@@ -40,14 +39,13 @@ class Statistics:
     def most_recent_game_stats_to_string(user: 'player.UserProfile'):
         user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == user.get_user_name()].squeeze()
 
-        # Move this to StatsView
         stats_string = center_format.format('YOUR RECENT GAME STATISTICS:') + \
             center_format.format('============================') + \
             center_format.format('Number of Hits: {}'.format(user_row.most_recent_game_hits)) + \
             center_format.format('Number of Hits Received: {}'.format(user_row.most_recent_game_hits_received)) + \
+            center_format.format('Number of Misses: {}'.format(user_row.most_recent_game_misses)) + \
             center_format.format('Number of Misses Received: {}'.format(user_row.most_recent_game_misses_received)) + \
             center_format.format('Number of Ships Sunk: {}'.format(user_row.most_recent_game_ships_sunk)) + \
-            center_format.format('Number of Misses: {}'.format(user_row.most_recent_game_misses)) + \
             center_format.format('Number of Ships Lost: {}'.format(user_row.most_recent_game_ships_lost))
 
         return stats_string
@@ -79,7 +77,6 @@ class Statistics:
         Statistics.user_stats.loc[Statistics.user_stats.user_name == name] = user_row
         Statistics.user_stats.to_csv('user_stats.csv')
 
-    # updates the statistics for a single shot
     @staticmethod
     def update_stats(name: str, num_hits: int, num_misses: int, num_sunk: int, outgoing: bool):
 
@@ -89,7 +86,6 @@ class Statistics:
             return
 
         index = Statistics.get_row_index(name)
-
         if index == -1:
             return
 
@@ -107,6 +103,26 @@ class Statistics:
             user_row.lifetime_misses_received += num_misses
             user_row.most_recent_game_ships_lost += num_sunk
             user_row.lifetime_ships_lost += num_sunk   
+
+        Statistics.user_stats = Statistics.user_stats.loc[:, ~Statistics.user_stats.columns.str.contains('^Unnamed')]
+        Statistics.user_stats.loc[Statistics.user_stats.user_name == name] = user_row
+        Statistics.user_stats.to_csv('user_stats.csv')
+
+    @staticmethod
+    def update_win_loss_stats(name: str, won: bool):
+        user_row = Statistics.user_stats.loc[Statistics.user_stats.user_name == name]
+
+        if user_row.empty:
+            return
+
+        index = Statistics.get_row_index(name)
+        if index == -1:
+            return
+
+        if won == True:
+            user_row.lifetime_wins += 1
+        else:
+            user_row.lifetime_losses += 1
 
         Statistics.user_stats = Statistics.user_stats.loc[:, ~Statistics.user_stats.columns.str.contains('^Unnamed')]
         Statistics.user_stats.loc[Statistics.user_stats.user_name == name] = user_row

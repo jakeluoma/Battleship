@@ -1,5 +1,5 @@
 import os
-from typing import Tuple, Optional
+from typing import Tuple, Optional, Union
 
 from Coordinate import Coordinate
 from board import Board, Direction
@@ -42,8 +42,12 @@ class InputParser:
         raise Exception("Invalid direction.  Try again.")
 
     @staticmethod
-    def parse_next_view(inp) -> MenuOption:
-        if any(inp.lower().startswith(k) for k in ["l", "login"]):
+    def parse_next_view(inp, do_not_raise=False) -> Optional[MenuOption]:
+        if any(inp.lower().startswith(k) for k in ["lo", "logout"]):
+            return MenuOption.LOGOUT
+        elif any(inp.lower().startswith(k) for k in ["lg", "load game"]):
+            return MenuOption.LOADGAME
+        elif any(inp.lower().startswith(k) for k in ["l", "login"]):
             return MenuOption.LOGIN
         elif any(inp.lower().startswith(k) for k in ["e", "x", "exit"]):
             return MenuOption.EXIT
@@ -53,7 +57,7 @@ class InputParser:
             return MenuOption.PLACESHIPS
         elif any(inp.lower().startswith(k) for k in ["s", "stats", "show stats"]):
             return MenuOption.SHOWSTATS
-        elif any(inp.lower().startswith(k) for k in ["m", "menu", "main menu"]):
+        elif any(inp.lower().startswith(k) for k in ["q", "m", "menu", "main menu"]):
             return MenuOption.MAINMENU
         elif any(inp.lower().startswith(k) for k in ["p", "place", "ship"]):
             return MenuOption.PLACESHIPSMENU
@@ -61,6 +65,9 @@ class InputParser:
             return MenuOption.VIEWCONFIG
         elif any(inp.lower().startswith(k) for k in ["n", "new", "a"]):
             return MenuOption.STARTGAME
+
+        if do_not_raise:
+            return
 
         raise Exception("Invalid selection.  Try again.")
 
@@ -101,16 +108,22 @@ class View:
         inp = input()
         return inp
 
-    def get_coordinate(self, board: Board) -> Coordinate:
+    def get_coordinate_or_quit(self, board: Board) -> Union[Coordinate, MenuOption]:
         while True:
             inp = input()
             try:
-                x, y = InputParser.parse_coordinate(inp, board)
-                return Coordinate(x, y)
+                opt = InputParser.parse_next_view(inp, do_not_raise=True)
+                if not opt:
+                    raise ValueError
+                return opt
             except ValueError:
-                print("Invalid coordinate given.  Try again.")
-            except TypeError:
-                print("You must enter a coordinate (ie. 1,2).  Try again.")
+                try:
+                    x, y = InputParser.parse_coordinate(inp, board)
+                    return Coordinate(x, y)
+                except ValueError:
+                    print("Invalid coordinate given.  Try again.")
+                except TypeError:
+                    print("You must enter a coordinate (ie. 1,2).  Try again.")
 
     def get_direction(self) -> Direction:
         while True:

@@ -1,11 +1,8 @@
 from Tile import *
 from Coordinate import Coordinate
-
-from typing import List
-from typing import Tuple
-
 from canvas import BoardCanvas
 
+from typing import List, Tuple
 
 class Direction(Enum):
     up = 0

@@ -1,17 +1,18 @@
 from abc import ABC
 from enum import Enum
 from time import sleep
-from typing import List
+from typing import List, Optional
 
 import pickle
 
 from board import Board
 from Ship import ShipType
 from canvas import PlaceShipsMenuCanvas, PlaceShipsCanvas, FinishedPlacingShipsCanvas, TakeTurnCanvas, center_format, \
-    GameOverScreenCanvas
+    GameOverScreenCanvas, MenuOption
 from player import Player, UserProfile
 from PlayerLogic import CommandLineInstruction, AI
 from view import View
+import statistics
 
 
 class GameMode:
@@ -35,11 +36,12 @@ class Game:
         target_board = Board(game_mode.get_dimension(), is_target=True)
         self.player1 = Player(user_profile, CommandLineInstruction(), fleet_board, target_board,
                               game_mode.get_ship_types(), is_ai=False)
+        statistics.Statistics.set_most_recent_game_stats_to_zero(self.player1.user_profile.get_user_name())
 
         # initialize AI player
         fleet_board = Board(game_mode.get_dimension(), is_target=False)
         target_board = Board(game_mode.get_dimension(), is_target=True)
-        self.player2 = Player(user_profile, AI(), fleet_board, target_board, game_mode.get_ship_types(), is_ai=True)
+        self.player2 = Player(None, AI(), fleet_board, target_board, game_mode.get_ship_types(), is_ai=True)
 
         # set each Player's opponent to finish Player initialization
         self.player1.setOpponent(self.player2)
@@ -58,17 +60,21 @@ class Game:
             self.current_player = self.player1
 
     # Alternates between players' turns. Continues loop as long as no player has achieved victory
-    def run_game(self, dry_run=False):
-        """ somewhere in here is where you'd probably want to display the canvas asking whether the player wants
-            to attack or save and exit.  If saving and exiting, should call save_game() and then return"""
+    def run_game(self, dry_run=False) -> Optional[MenuOption]:
+        # dry_run=True
         if dry_run:
             self.player2.victory = True
             self.end_game()
             return
-
+        
         while not self.current_player.is_victorious():
+            self.save_game() # the game is saved after every turn
             self.switch_player()
-            hits, misses, ships_lost = self.current_player.take_turn()
+            ret = self.current_player.take_turn()
+            if isinstance(ret, MenuOption):
+                return ret
+            hits, misses, ships_lost = ret
+
             message = ""
             if self.current_player == self.player1:
                 self.player1.target_board.canvas.update_hits(hits)
@@ -118,6 +124,7 @@ class Game:
         user_won = False
         if self.player1.is_victorious():
             user_won = True
+        statistics.Statistics.update_win_loss_stats(self.player1.user_profile.get_user_name(), user_won)
         self.view.update_display(GameOverScreenCanvas(user_won=user_won))
 
     # saves game to pickle, which gets written to file
@@ -134,11 +141,13 @@ class Game:
     @staticmethod
     def load_saved_game(user: UserProfile):
         file_name = user.get_user_name() + "_saved_game.p"
+        ret: Game = None
         try:
-            return pickle.load(open(file_name, "rb"))
+            ret = pickle.load(open(file_name, "rb"))
+            return ret
         except:
             print("Failed to load game")
-            return None
+            return ret
 
     def get_player_board_canvas(self):
         return self.player1.fleet_board.canvas

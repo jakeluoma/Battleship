@@ -37,5 +37,3 @@ def test_place_ships_2():
     for row in range(board.get_dimension()):
         for col in range(board.get_dimension()):
             assert board.get_tile(row, col).get_ship() is not None
-
-""" Testing attack selection """

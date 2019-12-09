@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List
+from typing import List, Union
 from typing import Tuple
 
 from Coordinate import Coordinate
@@ -9,6 +9,7 @@ from board import Board
 
 import statistics
 # need to do import statistics due to circular import with statistics
+from canvas import MenuOption
 
 
 class UserProfile:
@@ -62,10 +63,15 @@ class Player:
 
     # Takes a turn in the game - involving making a guess and striking the opponent's board.
     # Returns whether the move results in victory
-    def take_turn(self) -> Tuple[List[Coordinate], List[Coordinate], List[Ship]]:
-        hits, misses, ships_lost = self.opponent.receive_attack([self.player_logic.select_attack(self.target_board)])
+    def take_turn(self) -> Union[MenuOption, Tuple[List[Coordinate], List[Coordinate], List[Ship]]]:
+        ret = self.player_logic.select_attack(self.target_board)
+        if isinstance(ret, MenuOption):
+            return ret
+        hits, misses, ships_lost = self.opponent.receive_attack([ret])
         self.target_board.update_hits_and_misses(hits, misses)
-        statistics.Statistics.update_stats(self.user_profile.get_user_name(), len(hits), len(misses), len(ships_lost), True)
+        
+        if self.user_profile is not None:
+            statistics.Statistics.update_stats(self.user_profile.get_user_name(), len(hits), len(misses), len(ships_lost), True)
         
         self.enemy_ships_sunk += len(ships_lost)
         if self.enemy_ships_sunk >= self.num_enemy_ships:
@@ -89,6 +95,7 @@ class Player:
         for ship in ships_lost:
             self.fleet.remove(ship)
 
-        statistics.Statistics.update_stats(self.user_profile.get_user_name(), len(hits), len(misses), len(ships_lost), False)
+        if self.user_profile is not None:
+            statistics.Statistics.update_stats(self.user_profile.get_user_name(), len(hits), len(misses), len(ships_lost), False)
 
         return hits, misses, ships_lost

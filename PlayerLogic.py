@@ -1,13 +1,13 @@
 from abc import ABC
 from enum import Enum
-from typing import List, Optional
-from typing import Tuple
+from typing import List, Optional, Tuple, Union
 from random import randrange
 
 from Coordinate import Coordinate
 from Ship import ShipBuilder, Ship, ShipType
 from Tile import Tile, TileHitStatus
 from board import Board, BoardHelper
+from canvas import MenuOption
 from view import View
 
 class PlayerLogic(ABC):
@@ -33,7 +33,7 @@ class CommandLineInstruction(PlayerLogic):
 
         # get a valid ship placement from the user
         while True:
-            row, col = self.view.get_coordinate(board).get_row_and_column()
+            row, col = self.view.get_coordinate_or_quit(board).get_row_and_column()
             direction = self.view.get_direction()
             run = BoardHelper.get_run_of_tiles_length_n(board, self.ship_builder.get_ship_size(), row, col, direction)
             if not board.valid_ship_placement(run):
@@ -44,10 +44,13 @@ class CommandLineInstruction(PlayerLogic):
                 self.num_ships_placed += 1
                 return self.ship_builder.return_completed_ship()
 
-    def select_attack(self, target_board: Board) -> Coordinate:
+    def select_attack(self, target_board: Board) -> Union[Coordinate, MenuOption]:
         # Get attack coordinate from the user
         while True:
-            row, col = self.view.get_coordinate(target_board).get_row_and_column()
+            ret = self.view.get_coordinate_or_quit(target_board)
+            if isinstance(ret, MenuOption):
+                return ret
+            row, col = ret.get_row_and_column()
             tile = target_board.get_tile(row, col)
             if not Tile:
                 print("Invalid coordinate.  Try again.")
