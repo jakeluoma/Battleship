@@ -10,7 +10,8 @@ class Settings:
 
     @staticmethod
     def configure_settings():
-        Settings.change_empty_cell()
+        canvas.configure_display_start_canvas.display_string()
+        # Settings.change_empty_cell()
         Settings.change_ship_cell()
         Settings.change_hit_cell()
         Settings.change_missed_cell()

@@ -308,6 +308,16 @@ class TakeTurnCanvas(Canvas):
         print(self.display_string)
 
 
+class ConfigureDisplayStartCanvas(Canvas):
+    def __init__(self):
+        super().__init__()
+        self.display_string = center_format.format(
+            "Now you can configure display in the order: ship cell, hit cell, missed cell!!!")
+
+    def paint(self):
+        print(self.display_string)
+
+
 class EmptyCellChangeRequestCanvas(Canvas):
     def __init__(self):
         super().__init__()
@@ -413,6 +423,7 @@ main_menu_canvas = MainMenuCanvas()
 exit_canvas = ExitCanvas()
 new_game_canvas = NewGameCanvas()
 
+configure_display_start_canvas = ConfigureDisplayStartCanvas()
 empty_cell_change_request_canvas = EmptyCellChangeRequestCanvas()
 not_hit_cell_change_request_canvas = NotHitCellChangeRequestCanvas()
 hit_cell_change_request_canvas = HitCellChangeRequestCanvas()
@@ -436,6 +447,8 @@ def canvas_to_option(canvas: Canvas):
         return MenuOption.MAINMENU
     elif isinstance(canvas, StatsCanvas):
         return MenuOption.SHOWSTATS
+    elif isinstance(canvas, ConfigureDisplayStartCanvas):
+        return MenuOption.VIEWCONFIG
     elif isinstance(canvas, NewGameCanvas):
         return MenuOption.NEWGAMEMENU
     elif isinstance(canvas, PlaceShipsMenuCanvas):

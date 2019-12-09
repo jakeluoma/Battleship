@@ -4,9 +4,12 @@ from game import Game
 from statistics import Statistics
 from player import UserProfile
 from canvas import login_canvas, start_menu_canvas, MenuOption, exit_canvas, main_menu_canvas, StatsCanvas, \
-    new_game_canvas, BoardCanvas, PlaceShipsMenuCanvas, FinishedPlacingShipsCanvas, TakeTurnCanvas
+    new_game_canvas, BoardCanvas, PlaceShipsMenuCanvas, FinishedPlacingShipsCanvas, TakeTurnCanvas, \
+    configure_display_start_canvas
 from view import View
+from settings import Settings
 import warnings
+
 
 class Program:
     def __init__(self):
@@ -55,6 +58,10 @@ class Program:
     def get_player_ship_placement_menu_canvas(self) -> PlaceShipsMenuCanvas:
         return self.game.get_player_ship_placement_canvas()
 
+    def configure_display(self) -> MenuOption:
+        Settings.configure_settings()
+        return MenuOption.MAINMENU
+
     def get_take_turn_canvas(self) -> TakeTurnCanvas:
         return self.game.get_take_turn_canvas()
 
@@ -74,6 +81,7 @@ class ProgramAndViewCoordinator:
         MenuOption.MAINMENU: main_menu_canvas,
         MenuOption.SHOWSTATS: lambda program: program.show_user_stats(),
         MenuOption.NEWGAMEMENU: new_game_canvas,
+        MenuOption.VIEWCONFIG: configure_display_start_canvas,
         MenuOption.PLACESHIPSMENU: lambda program: program.get_player_ship_placement_menu_canvas(),
         MenuOption.PLACESHIPS: None,
         MenuOption.STARTGAME: lambda program: program.get_take_turn_canvas(),
@@ -93,6 +101,7 @@ class ProgramAndViewCoordinator:
         MenuOption.LOGOUT: 'logout',
         MenuOption.SHOWSTATS: 'show_user_stats',
         MenuOption.EXIT: 'exit',
+        MenuOption.VIEWCONFIG: 'configure_display',
         MenuOption.PLACESHIPS: 'place_ships',
         MenuOption.STARTGAME: 'start_game',
         MenuOption.LOADGAME: 'load_game'
