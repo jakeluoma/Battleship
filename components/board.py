@@ -1,9 +1,9 @@
 from enum import Enum
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
-from coordinate import Coordinate
-from ship import Tile, TileHitStatus
-from canvas import BoardCanvas
+from components.tile import Coordinate
+from components.ship import Tile, TileHitStatus
+from view.canvas import BoardCanvas
 
 
 class Direction(Enum):
@@ -30,7 +30,7 @@ class Board:
     def get_dimension(self) -> int:
         return self.board_dimension
 
-    def get_tile(self, row: int, column: int) -> Tile:
+    def get_tile(self, row: int, column: int) -> Optional[Tile]:
         if row >= self.board_dimension or column >= self.board_dimension:
             return None
         if row < 0 or column < 0:

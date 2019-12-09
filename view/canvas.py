@@ -1,9 +1,9 @@
 from abc import ABC
 from typing import List
 
-from coordinate import Coordinate
-from options import MenuOption, CellConfig
-from ship import ShipType, ship_size_map, Tile
+from components.tile import Coordinate
+from view.options import MenuOption, CellConfig
+from components.ship import ShipType, ship_size_map, Tile
 
 # have to do "import settings" due to circular import with settings
 

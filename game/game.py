@@ -1,17 +1,17 @@
-from time import sleep
 import os
 import pickle
 from time import sleep
 from typing import List, Optional
 
-import statistics
-from player_logic import CommandLineInstruction, AI
-from ship import ShipType
-from board import Board
-from canvas import PlaceShipsMenuCanvas, PlaceShipsCanvas, FinishedPlacingShipsCanvas, TakeTurnCanvas, center_format, \
-    GameOverScreenCanvas, MenuOption
-from player import Player, UserProfile
-from view import View
+from stats import statistics
+from view.options import MenuOption
+from game.player_logic import CommandLineInstruction, AI
+from components.ship import ShipType
+from components.board import Board
+from view.canvas import PlaceShipsMenuCanvas, PlaceShipsCanvas, FinishedPlacingShipsCanvas, TakeTurnCanvas, center_format, \
+    GameOverScreenCanvas
+from game.player import Player, UserProfile
+from view.view import View
 
 
 class GameMode:

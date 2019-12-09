@@ -1,15 +1,16 @@
 import warnings
 from typing import Optional
 
-from canvas import login_canvas, start_menu_canvas, MenuOption, exit_canvas, main_menu_canvas, StatsCanvas, \
+from view.canvas import login_canvas, start_menu_canvas, exit_canvas, main_menu_canvas, StatsCanvas, \
     new_game_canvas, PlaceShipsMenuCanvas, TakeTurnCanvas, \
     configure_display_start_canvas, not_hit_cell_change_request_canvas, hit_cell_change_request_canvas, \
     miss_cell_change_request_canvas, ship_cell_changed_canvas, hit_cell_changed_canvas, miss_cell_changed_canvas
-from game import Game
-from player import UserProfile
-from settings import Settings
-from statistics import Statistics
-from view import View
+from game.game import Game
+from game.player import UserProfile
+from view.options import MenuOption
+from view.settings import Settings
+from stats.statistics import Statistics
+from view.view import View
 
 
 class Program:

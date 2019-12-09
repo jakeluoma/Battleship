@@ -1,8 +1,8 @@
 # have to do "import canvas" due to circular import with canvas
-from canvas import empty_cell_change_request_canvas, character_entry_request_canvas, empty_cell_changed_canvas, \
+from view.canvas import empty_cell_change_request_canvas, character_entry_request_canvas, empty_cell_changed_canvas, \
     ship_cell_changed_canvas, enter_again_request_canvas, miss_cell_changed_canvas, hit_cell_changed_canvas
-from options import CellConfig, SettingsOption, MenuOption
-from view import InputParser, View
+from view.options import CellConfig, SettingsOption, MenuOption
+from view.view import View, InputParser
 
 
 class Settings:

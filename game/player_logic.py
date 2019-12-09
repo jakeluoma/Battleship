@@ -1,13 +1,12 @@
 from abc import ABC
-from enum import Enum
-from typing import List, Optional, Tuple, Union
+from typing import List, Union
 from random import randrange
 
-from coordinate import Coordinate
-from ship import ShipBuilder, Ship, ShipType, Tile, TileHitStatus
-from board import Board, BoardHelper
-from canvas import MenuOption
-from view import View
+from components.tile import Coordinate
+from components.ship import ShipBuilder, Ship, ShipType, Tile, TileHitStatus
+from components.board import Board, BoardHelper
+from view.options import MenuOption
+from view.view import View
 
 
 class PlayerLogic(ABC):

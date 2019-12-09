@@ -1,10 +1,10 @@
 import os
 from typing import Tuple, Optional, Union
 
-from coordinate import Coordinate
-from board import Board, Direction
-from canvas import Canvas, MenuOption, valid_screen_transitions, canvas_to_option
-from options import SettingsOption
+from components.tile import Coordinate
+from components.board import Board, Direction
+from view.canvas import Canvas, valid_screen_transitions, canvas_to_option
+from view.options import SettingsOption, MenuOption
 
 
 class InputParser:
@@ -89,6 +89,7 @@ class InputParser:
         else:
             return SettingsOption.NEW_GAME
 
+
 # The View part of the MVC pattern
 class View:
     def __init__(self):
@@ -113,14 +114,6 @@ class View:
     def display_canvas(self):
         # self.clear_screen()
         self.canvas.paint()
-
-    # def update_canvas(self, *args):
-    #     self.clear_screen()
-    #     try:
-    #         self.canvas.update(*args)
-    #         self.canvas.paint()
-    #     except NotImplementedError:
-    #         pass
 
     def get_username(self):
         inp = input()

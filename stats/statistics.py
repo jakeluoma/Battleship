@@ -1,11 +1,12 @@
 import pandas as pd
 
-from canvas import center_format, StatsCanvas
+from view.canvas import center_format, StatsCanvas
 
-import player
+from game import player
+
 # need to do import player due to circular import with player
 
-STATS_FILE = 'user_stats.csv'
+STATS_FILE = 'stats/user_stats.csv'
 
 
 class Statistics:

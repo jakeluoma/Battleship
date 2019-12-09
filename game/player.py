@@ -2,15 +2,14 @@ from enum import Enum
 from typing import List, Union
 from typing import Tuple
 
-from canvas import MenuOption
-from coordinate import Coordinate
-from player_logic import PlayerLogic
-from ship import Ship, ShipType
-from board import Board
+from components.tile import Coordinate
+from game.player_logic import PlayerLogic
+from components.ship import Ship, ShipType
+from components.board import Board
 
-import statistics
+from stats import statistics
 # need to do import statistics due to circular import with statistics
-
+from view.options import MenuOption
 
 
 class UserProfile:
