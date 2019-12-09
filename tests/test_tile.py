@@ -5,7 +5,8 @@ parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
 
 from components.tile import Coordinate
-import Tile
+import components.tile as Tile
+from components.ship import Ship
 
 
 def test_tile_init():
@@ -17,7 +18,7 @@ def test_tile_init():
     assert tile.get_hit_status() == Tile.TileHitStatus.EMPTY
 
 def test_tile_ship_functions():
-    ship = ship.Ship("test", 1)
+    ship = Ship("test", 1)
 
     coordinate = Coordinate(1, 1)
     tile = Tile.Tile(coordinate)

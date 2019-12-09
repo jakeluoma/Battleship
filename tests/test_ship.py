@@ -5,10 +5,11 @@ parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
 
 from components.tile import Coordinate
-import Tile
+from components.ship import Ship, ShipBuilder, ShipType
+import components.tile as Tile
 
 def test_ship_init_and_is_sunk():
-    ship = ship.Ship("test", 1)
+    ship = Ship("test", 1)
     coordinate = Coordinate(0, 0)
     tile = Tile.Tile(coordinate)
 
@@ -25,8 +26,8 @@ def test_ship_init_and_is_sunk():
     assert ship.is_sunk() == True
 
 def test_shipBuilder():
-    ship_builder = ship.ShipBuilder()
-    ship_builder.start_ship(ship.ShipType.BATTLESHIP)
+    ship_builder = ShipBuilder()
+    ship_builder.start_ship(ShipType.BATTLESHIP)
     assert ship_builder.get_ship_size() == 4
     assert ship_builder.return_completed_ship() == None
 

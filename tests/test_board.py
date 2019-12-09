@@ -5,8 +5,8 @@ parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir) 
 
 from components.board import Board, BoardHelper
-from components.tile import Coordinate
-import Tile
+from components.tile import Coordinate, Tile, TileHitStatus
+from components.ship import Ship
 
 def test_board_init():
     dimension = 10
@@ -29,7 +29,7 @@ def test_process_incoming_attack():
     dimension = 2
     board = Board(dimension)
 
-    ship = ship.Ship("test", 1)
+    ship = Ship("test", 1)
     tile = board.get_tile(0, 0)
     tile.set_ship(ship)
 
@@ -72,18 +72,18 @@ def test_update_hits_and_misses():
     misses.append(miss)
 
     board.update_hits_and_misses(hits, misses)
-    assert board.get_tile(0, 0).get_hit_status() == Tile.TileHitStatus.HIT
-    assert board.get_tile(1, 0).get_hit_status() == Tile.TileHitStatus.HIT
-    assert board.get_tile(0, 1).get_hit_status() == Tile.TileHitStatus.MISS
-    assert board.get_tile(1, 1).get_hit_status() == Tile.TileHitStatus.EMPTY
+    assert board.get_tile(0, 0).get_hit_status() == TileHitStatus.HIT
+    assert board.get_tile(1, 0).get_hit_status() == TileHitStatus.HIT
+    assert board.get_tile(0, 1).get_hit_status() == TileHitStatus.MISS
+    assert board.get_tile(1, 1).get_hit_status() == TileHitStatus.EMPTY
 
 def test_get_hit_runs():
     dimension = 3
     board = Board(dimension)
     
-    board.get_tile(0,0).set_hit_status(Tile.TileHitStatus.HIT)
-    board.get_tile(0,1).set_hit_status(Tile.TileHitStatus.HIT)
-    board.get_tile(1,0).set_hit_status(Tile.TileHitStatus.HIT)
+    board.get_tile(0,0).set_hit_status(TileHitStatus.HIT)
+    board.get_tile(0,1).set_hit_status(TileHitStatus.HIT)
+    board.get_tile(1,0).set_hit_status(TileHitStatus.HIT)
 
     horizontal, vertical = BoardHelper.get_hit_runs(board)
 
@@ -104,9 +104,9 @@ def test_get_tiles_with_no_attack_at_end_of_hit_runs():
     dimension = 3
     board = Board(dimension)
     
-    board.get_tile(0,0).set_hit_status(Tile.TileHitStatus.HIT)
-    board.get_tile(0,1).set_hit_status(Tile.TileHitStatus.HIT)
-    board.get_tile(1,0).set_hit_status(Tile.TileHitStatus.HIT)
+    board.get_tile(0,0).set_hit_status(TileHitStatus.HIT)
+    board.get_tile(0,1).set_hit_status(TileHitStatus.HIT)
+    board.get_tile(1,0).set_hit_status(TileHitStatus.HIT)
 
     tiles = BoardHelper.get_tiles_with_no_attack_at_end_of_hit_runs(board)
     assert len(tiles) == 2

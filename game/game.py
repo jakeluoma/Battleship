@@ -131,31 +131,32 @@ class Game:
     # Program and Game
     def save_game(self):
         # player1 is the human user
-        relative_file_path = "save_game_" + self.player1.user_profile.get_user_name() + ".p"
-        directory = os.path.dirname(__file__)
-        file_path = os.path.join(directory, "saves", relative_file_path)
+        file_name = "save_game_" + self.player1.user_profile.get_user_name() + ".p"
+        directory = os.path.dirname(os.path.dirname(__file__))
+        file_path = os.path.join(directory, "saves", file_name)
         try:
             pickle.dump(self, open(file_path, "wb"))
         except:
+            
             print("Failed to save game")
 
     def delete_game(self):
         # player1 is the human user
-        relative_file_path = "save_game_" + self.player1.user_profile.get_user_name() + ".p"
-        directory = os.path.dirname(__file__)
-        file_path = os.path.join(directory, "saves", relative_file_path)
+        file_name = "save_game_" + self.player1.user_profile.get_user_name() + ".p"
+        directory = os.path.dirname(os.path.dirname(__file__))
+        file_path = os.path.join(directory, "saves", file_name)
         try:
-            os.remove(relative_file_path)
+            os.remove(file_path)
         except OSError:
-            pass
+            print("Failed to delete game")
 
     # intended to be called by a non-Game instance.  Loads a saved game from a pickle
     # and returns a Game instance.
     @staticmethod
     def load_saved_game(user: UserProfile):
-        relative_file_path = "save_game_" + user.get_user_name() + ".p"
-        directory = os.path.dirname(__file__)
-        file_path = os.path.join(directory, "saves", relative_file_path)
+        file_name = "save_game_" + user.get_user_name() + ".p"
+        directory = os.path.dirname(os.path.dirname(__file__))
+        file_path = os.path.join(directory, "saves", file_name)
         ret: Game = None
         try:
             ret = pickle.load(open(file_path, "rb"))
