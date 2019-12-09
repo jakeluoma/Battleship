@@ -27,6 +27,9 @@ class MenuOption(Enum):
     GAMEOVER = 11
     LOGOUT = 12
     LOADGAME = 13
+    SHIPCELL = 14
+    HITCELL = 15
+    MISSCELL = 16
 
 
 class Canvas(ABC):
@@ -311,8 +314,12 @@ class TakeTurnCanvas(Canvas):
 class ConfigureDisplayStartCanvas(Canvas):
     def __init__(self):
         super().__init__()
-        self.display_string = center_format.format(
-            "Now you can configure display in the order: ship cell, hit cell, missed cell!!!")
+        self.display_string = center_format.format("Now you can configure display") + \
+            center_format.format("\n\n") + \
+            center_format.format("s: Change Ship Cell") + \
+            center_format.format("h: Change Hit Cell") + \
+            center_format.format("m: Change Miss Cell") + \
+            center_format.format("x: Back to Main Menu")
 
     def paint(self):
         print(self.display_string)
@@ -322,7 +329,7 @@ class EmptyCellChangeRequestCanvas(Canvas):
     def __init__(self):
         super().__init__()
         self.display_string = center_format.format(
-            "1. Do you want to change the representation of empty cell ? (Y|N): ")
+            "Please Change the representation of empty cell: ")
 
     def paint(self):
         print(self.display_string)
@@ -332,7 +339,7 @@ class NotHitCellChangeRequestCanvas(Canvas):
     def __init__(self):
         super().__init__()
         self.display_string = center_format.format(
-            "2. Do you want to change the representation of ship cell (not hit) ? (Y|N): ")
+            "Please Change the representation of ship cell (not hit): ")
 
     def paint(self):
         print(self.display_string)
@@ -342,7 +349,7 @@ class HitCellChangeRequestCanvas(Canvas):
     def __init__(self):
         super().__init__()
         self.display_string = center_format.format(
-            "3. Do you want to change the representation of hit cell ? (Y|N): ")
+            "Please Change the representation of hit cell: ")
 
     def paint(self):
         print(self.display_string)
@@ -352,7 +359,7 @@ class MissCellChangeRequestCanvas(Canvas):
     def __init__(self):
         super().__init__()
         self.display_string = center_format.format(
-            "4. Do you want to change the representation of missed cell ? (Y|N): ")
+            "Please Change the representation of missed cell: ")
 
     def paint(self):
         print(self.display_string)
@@ -457,6 +464,12 @@ def canvas_to_option(canvas: Canvas):
         return MenuOption.PLACESHIPS
     elif isinstance(canvas, FinishedPlacingShipsCanvas):
         return MenuOption.FINISHEDPLACING
+    elif isinstance(canvas, NotHitCellChangeRequestCanvas):
+        return MenuOption.SHIPCELL
+    elif isinstance(canvas, HitCellChangeRequestCanvas):
+        return MenuOption.HITCELL
+    elif isinstance(canvas, MissCellChangeRequestCanvas):
+        return MenuOption.MISSCELL
     elif isinstance(canvas, TakeTurnCanvas):
         return MenuOption.STARTGAME
     elif isinstance(canvas, GameOverScreenCanvas):
@@ -477,5 +490,6 @@ valid_screen_transitions = {
     MenuOption.PLACESHIPS: [MenuOption.STARTGAME, MenuOption.NEWGAMEMENU, MenuOption.EXIT],
     MenuOption.FINISHEDPLACING: [MenuOption.STARTGAME, MenuOption.NEWGAMEMENU, MenuOption.EXIT],
     MenuOption.GAMEOVER: [MenuOption.MAINMENU, MenuOption.EXIT],
-    MenuOption.STARTGAME: [MenuOption.MAINMENU, MenuOption.EXIT]
+    MenuOption.STARTGAME: [MenuOption.MAINMENU, MenuOption.EXIT],
+    MenuOption.VIEWCONFIG: [MenuOption.SHIPCELL, MenuOption.HITCELL, MenuOption.MISSCELL, MenuOption.MAINMENU]
 }
