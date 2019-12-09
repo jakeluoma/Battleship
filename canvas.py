@@ -3,39 +3,13 @@ from enum import Enum
 from typing import List
 
 from coordinate import Coordinate
+from options import MenuOption, CellConfig
+from settings import Settings
 from ship import ShipType, ship_size_map, Tile
 
-import settings
 # have to do "import settings" due to circular import with settings
 
 center_format = "{0:^100}\n"
-
-
-class SettingsOption(Enum):
-    CHANGE_SHIP_CELL = 0
-    CHANGE_HIT_CELL = 1
-    CHANGE_MISS_CELL = 2
-    NEW_GAME = 3
-
-
-class MenuOption(Enum):
-    STARTMENU = 0
-    LOGIN = 1
-    EXIT = 2
-    MAINMENU = 3
-    NEWGAMEMENU = 4
-    SHOWSTATS = 5
-    PLACESHIPSMENU = 6
-    VIEWCONFIG = 7
-    PLACESHIPS = 8
-    FINISHEDPLACING = 9
-    STARTGAME = 10
-    GAMEOVER = 11
-    LOGOUT = 12
-    LOADGAME = 13
-    SHIPCELL = 14
-    HITCELL = 15
-    MISSCELL = 16
 
 
 class Canvas(ABC):
@@ -178,7 +152,7 @@ class BoardCanvas(Canvas):
         self.is_target = is_target
         self.board_coordinates_dict = {k: {} for k in range(self.board_dimension)}
         for key in self.board_coordinates_dict:
-            self.board_coordinates_dict[key] = {k: settings.Settings.empty_cell for k in range(self.board_dimension)}
+            self.board_coordinates_dict[key] = {k: Settings.empty_cell for k in range(self.board_dimension)}
 
         super().__init__()
         self.display_string = self.update(self.board_coordinates_dict)
@@ -198,26 +172,26 @@ class BoardCanvas(Canvas):
 
     def update_hits(self, hits: List[Coordinate]) -> str:
         for coord in hits:
-            self.board_coordinates_dict[coord.row][coord.column] = settings.Settings.hit_cell
+            self.board_coordinates_dict[coord.row][coord.column] = CellConfig.hit_cell
         self.display_string = self.update(self.board_coordinates_dict)
         return self.display_string
 
     def update_misses(self, misses: List[Coordinate]) -> str:
         for coord in misses:
-            self.board_coordinates_dict[coord.row][coord.column] = settings.Settings.missed_cell
+            self.board_coordinates_dict[coord.row][coord.column] = CellConfig.missed_cell
         self.display_string = self.update(self.board_coordinates_dict)
         return self.display_string
 
     def update_ship_cells(self, ship_tiles: List[Tile]) -> str:
         for ship_tile in ship_tiles:
             coord = ship_tile.get_coordinate()
-            self.board_coordinates_dict[coord.row][coord.column] = settings.Settings.ship_cell
+            self.board_coordinates_dict[coord.row][coord.column] = CellConfig.ship_cell
         self.display_string = self.update(self.board_coordinates_dict)
         return self.display_string
 
     def update_empty_cells(self, empty_cells: List[Coordinate]) -> str:
         for coord in empty_cells:
-            self.board_coordinates_dict[coord.row][coord.column] = settings.Settings.empty_cell
+            self.board_coordinates_dict[coord.row][coord.column] = CellConfig.empty_cell
         self.display_string = self.update(self.board_coordinates_dict)
         return self.display_string
 
