@@ -59,21 +59,21 @@ class Program:
     def get_player_ship_placement_menu_canvas(self) -> PlaceShipsMenuCanvas:
         return self.game.get_player_ship_placement_canvas()
 
-    def configure_display(self) -> MenuOption:
-        Settings.configure_settings()
+    def configure_display(self, view: View) -> MenuOption:
+        Settings.configure_settings(view)
         return MenuOption.NEWGAMEMENU
 
-    def change_ship_cell(self) -> MenuOption:
-        Settings.change_ship_cell()
-        return MenuOption.NEWGAMEMENU
-
-    def change_hit_cell(self) -> MenuOption:
-        Settings.change_hit_cell()
-        return MenuOption.NEWGAMEMENU
-
-    def change_miss_cell(self) -> MenuOption:
-        Settings.change_missed_cell()
-        return MenuOption.NEWGAMEMENU
+    # def change_ship_cell(self) -> MenuOption:
+    #     Settings.change_ship_cell()
+    #     return MenuOption.NEWGAMEMENU
+    #
+    # def change_hit_cell(self) -> MenuOption:
+    #     Settings.change_hit_cell()
+    #     return MenuOption.NEWGAMEMENU
+    #
+    # def change_miss_cell(self) -> MenuOption:
+    #     Settings.change_missed_cell()
+    #     return MenuOption.NEWGAMEMENU
 
     def get_take_turn_canvas(self) -> TakeTurnCanvas:
         return self.game.get_take_turn_canvas()
