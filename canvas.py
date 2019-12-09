@@ -319,7 +319,7 @@ class ConfigureDisplayStartCanvas(Canvas):
             center_format.format("s: Change Ship Cell") + \
             center_format.format("h: Change Hit Cell") + \
             center_format.format("m: Change Miss Cell") + \
-            center_format.format("x: Back to Main Menu")
+            center_format.format("x: Back to Game Menu")
 
     def paint(self):
         print(self.display_string)

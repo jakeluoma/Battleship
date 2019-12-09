@@ -60,7 +60,7 @@ class Program:
 
     def configure_display(self) -> MenuOption:
         Settings.configure_settings()
-        return MenuOption.MAINMENU
+        return MenuOption.NEWGAMEMENU
 
     def change_ship_cell(self) -> MenuOption:
         Settings.change_ship_cell()
