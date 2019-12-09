@@ -52,11 +52,11 @@ class Settings:
 
         if yes_no in ['Y', 'y', 'YES', 'Yes', 'yes']:
             canvas.character_entry_request_canvas.paint()
-            Settings.empty_cell = input()
+            Settings.hit_cell = input()
             while (True):
                 if Settings.hit_cell == Settings.empty_cell or Settings.hit_cell == Settings.ship_cell:
                     canvas.enter_again_request_canvas.paint()
-                    Settings.ship_cell = input()
+                    Settings.hit_cell = input()
                     continue
                 else:
                     break
@@ -70,11 +70,11 @@ class Settings:
 
         if yes_no in ['Y', 'y', 'YES', 'Yes', 'yes']:
             canvas.character_entry_request_canvas.paint()
-            Settings.empty_cell = input()
+            Settings.missed_cell = input()
             while (True):
                 if Settings.missed_cell in [Settings.empty_cell, Settings.ship_cell, Settings.hit_cell]:
                     canvas.enter_again_request_canvas.paint()
-                    Settings.ship_cell = input()
+                    Settings.missed_cell = input()
                     continue
                 else:
                     break
