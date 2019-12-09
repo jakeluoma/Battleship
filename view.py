@@ -64,8 +64,14 @@ class InputParser:
             return MenuOption.PLACESHIPSMENU
         elif any(inp.lower().startswith(k) for k in ["c", "config", "display"]):
             return MenuOption.VIEWCONFIG
-        elif any(inp.lower().startswith(k) for k in ["n", "new", "a"]):
+        elif any(inp.lower().startswith(k) for k in ["n", "new"]):
             return MenuOption.STARTGAME
+        elif any(inp.lower().startswith(k) for k in ["i", "ship cell"]):
+            return MenuOption.SHIPCELL
+        elif any(inp.lower().startswith(k) for k in ["j", "hit cell"]):
+            return MenuOption.HITCELL
+        elif any(inp.lower().startswith(k) for k in ["k", "miss"]):
+            return MenuOption.MISSCELL
 
         if do_not_raise:
             return

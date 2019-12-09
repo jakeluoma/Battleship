@@ -4,7 +4,7 @@ from typing import Optional
 from canvas import login_canvas, start_menu_canvas, MenuOption, exit_canvas, main_menu_canvas, StatsCanvas, \
     new_game_canvas, PlaceShipsMenuCanvas, TakeTurnCanvas, \
     configure_display_start_canvas, not_hit_cell_change_request_canvas, hit_cell_change_request_canvas, \
-    miss_cell_change_request_canvas
+    miss_cell_change_request_canvas, ship_cell_changed_canvas, hit_cell_changed_canvas, miss_cell_changed_canvas
 from game import Game
 from player import UserProfile
 from settings import Settings
@@ -59,21 +59,14 @@ class Program:
     def get_player_ship_placement_menu_canvas(self) -> PlaceShipsMenuCanvas:
         return self.game.get_player_ship_placement_canvas()
 
-    def configure_display(self, view: View) -> MenuOption:
-        Settings.configure_settings(view)
-        return MenuOption.NEWGAMEMENU
+    def configure_ship_cell(self, view: View) -> MenuOption:
+        return Settings.change_ship_cell(view)
 
-    # def change_ship_cell(self) -> MenuOption:
-    #     Settings.change_ship_cell()
-    #     return MenuOption.NEWGAMEMENU
-    #
-    # def change_hit_cell(self) -> MenuOption:
-    #     Settings.change_hit_cell()
-    #     return MenuOption.NEWGAMEMENU
-    #
-    # def change_miss_cell(self) -> MenuOption:
-    #     Settings.change_missed_cell()
-    #     return MenuOption.NEWGAMEMENU
+    def configure_hit_cell(self, view: View) -> MenuOption:
+        return Settings.change_hit_cell(view)
+
+    def configure_miss_cell(self, view: View) -> MenuOption:
+        return Settings.change_missed_cell(view)
 
     def get_take_turn_canvas(self) -> TakeTurnCanvas:
         return self.game.get_take_turn_canvas()
@@ -101,12 +94,16 @@ class ProgramAndViewCoordinator:
         MenuOption.LOADGAME: None,
         MenuOption.SHIPCELL: not_hit_cell_change_request_canvas,
         MenuOption.HITCELL: hit_cell_change_request_canvas,
-        MenuOption.MISSCELL: miss_cell_change_request_canvas
+        MenuOption.MISSCELL: miss_cell_change_request_canvas,
+        MenuOption.SHIPCELLCHANGED: ship_cell_changed_canvas,
+        MenuOption.HITCELLCHANGED: hit_cell_changed_canvas,
+        MenuOption.MISSCELLCHANGED: miss_cell_changed_canvas
     }
 
     parameterized_with_program = [MenuOption.SHOWSTATS, MenuOption.PLACESHIPSMENU, MenuOption.STARTGAME]
 
-    takes_view_argument = [MenuOption.LOGIN, MenuOption.NEWGAMEMENU]
+    takes_view_argument = [MenuOption.LOGIN, MenuOption.NEWGAMEMENU, MenuOption.MISSCELL,
+                           MenuOption.SHIPCELL, MenuOption.HITCELL]
 
     option_program_method_map = {
         MenuOption.STARTMENU: 'noop',
@@ -117,13 +114,16 @@ class ProgramAndViewCoordinator:
         MenuOption.LOGOUT: 'logout',
         MenuOption.SHOWSTATS: 'show_user_stats',
         MenuOption.EXIT: 'exit',
-        MenuOption.VIEWCONFIG: 'configure_display',
+        MenuOption.VIEWCONFIG: 'noop',
         MenuOption.PLACESHIPS: 'place_ships',
         MenuOption.STARTGAME: 'start_game',
         MenuOption.LOADGAME: 'load_game',
-        MenuOption.SHIPCELL: 'change_ship_cell',
-        MenuOption.HITCELL: 'change_hit_cell',
-        MenuOption.MISSCELL: 'change_miss_cell'
+        MenuOption.SHIPCELL: 'configure_ship_cell',
+        MenuOption.HITCELL: 'configure_hit_cell',
+        MenuOption.MISSCELL: 'configure_miss_cell',
+        MenuOption.SHIPCELLCHANGED: 'noop',
+        MenuOption.HITCELLCHANGED: 'noop',
+        MenuOption.MISSCELLCHANGED: 'noop'
     }
 
     def __init__(self, program: Program, view: View):

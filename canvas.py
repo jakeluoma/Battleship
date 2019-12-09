@@ -290,14 +290,20 @@ class TakeTurnCanvas(Canvas):
 
 
 class ConfigureDisplayStartCanvas(Canvas):
-    def __init__(self):
+    def __init__(self, message_canvas: Canvas = None):
         super().__init__()
-        self.display_string = center_format.format("Now you can configure display") + \
+        self.display_string = ""
+        if message_canvas:
+            self.display_string += message_canvas.get_display_string() + center_format.format("\n\n")
+        self.display_string += center_format.format("Now you can configure display") + \
             center_format.format("\n\n") + \
-            center_format.format("s: Change Ship Cell") + \
-            center_format.format("h: Change Hit Cell") + \
-            center_format.format("m: Change Miss Cell") + \
-            center_format.format("x: Back to Game Menu")
+            center_format.format("i: Change Ship Cell") + \
+            center_format.format("j: Change Hit Cell") + \
+            center_format.format("k: Change Miss Cell") + \
+            center_format.format("g: Back to Game Menu")
+
+    def get_display_string(self):
+        return self.display_string
 
     def paint(self):
         print(self.display_string)
@@ -317,7 +323,7 @@ class NotHitCellChangeRequestCanvas(Canvas):
     def __init__(self):
         super().__init__()
         self.display_string = center_format.format(
-            "Please Change the representation of ship cell (not hit): ")
+            "Please Change the representation of ship cell: ")
 
     def paint(self):
         print(self.display_string)
@@ -347,17 +353,19 @@ class EmptyCellChangedCanvas(Canvas):
     def __init__(self):
         super().__init__()
         self.display_string = center_format.format(
-            "===Empty cell representation updated successfully===")
+            "===Empty cell representation updated successfully===") + \
+            ConfigureDisplayStartCanvas().get_display_string()
 
     def paint(self):
         print(self.display_string)
 
 
-class NotHitCellChangedCanvas(Canvas):
+class ShipCellChangedCanvas(Canvas):
     def __init__(self):
         super().__init__()
         self.display_string = center_format.format(
-            "===Ship cell (not hit) representation updated successfully===")
+            "===Ship cell representation updated successfully===") + \
+            ConfigureDisplayStartCanvas().get_display_string()
 
     def paint(self):
         print(self.display_string)
@@ -367,7 +375,8 @@ class HitCellChangedCanvas(Canvas):
     def __init__(self):
         super().__init__()
         self.display_string = center_format.format(
-            "===Hit cell representation updated successfully===")
+            "===Hit cell representation updated successfully===") + \
+            ConfigureDisplayStartCanvas().get_display_string()
 
     def paint(self):
         print(self.display_string)
@@ -377,7 +386,8 @@ class MissCellChangedCanvas(Canvas):
     def __init__(self):
         super().__init__()
         self.display_string = center_format.format(
-            "===Missed cell representation updated successfully===")
+            "===Missed cell representation updated successfully===") + \
+        ConfigureDisplayStartCanvas().get_display_string()
 
     def paint(self):
         print(self.display_string)
@@ -402,6 +412,7 @@ class EnterAgainRequestCanvas(Canvas):
     def paint(self):
         print(self.display_string)
 
+
 login_canvas = LoginCanvas()
 start_menu_canvas = StartMenuCanvas()
 main_menu_canvas = MainMenuCanvas()
@@ -414,7 +425,7 @@ not_hit_cell_change_request_canvas = NotHitCellChangeRequestCanvas()
 hit_cell_change_request_canvas = HitCellChangeRequestCanvas()
 miss_cell_change_request_canvas = MissCellChangeRequestCanvas()
 empty_cell_changed_canvas = EmptyCellChangedCanvas()
-not_hit_cell_changed_canvas = NotHitCellChangedCanvas()
+ship_cell_changed_canvas = ShipCellChangedCanvas()
 hit_cell_changed_canvas = HitCellChangedCanvas()
 miss_cell_changed_canvas = MissCellChangedCanvas()
 character_entry_request_canvas = CharacterEntryRequestCanvas()
@@ -452,6 +463,14 @@ def canvas_to_option(canvas: Canvas):
         return MenuOption.STARTGAME
     elif isinstance(canvas, GameOverScreenCanvas):
         return MenuOption.GAMEOVER
+    elif isinstance(canvas, CharacterEntryRequestCanvas):
+        return MenuOption.CHARENTRY
+    elif isinstance(canvas, ShipCellChangedCanvas):
+        return MenuOption.SHIPCELLCHANGED
+    elif isinstance(canvas, HitCellChangedCanvas):
+        return MenuOption.HITCELLCHANGED
+    elif isinstance(canvas, MissCellChangedCanvas):
+        return MenuOption.MISSCELLCHANGED
 
     raise Exception("No option found for canvas: ", canvas.__class__.__name__)
 
@@ -469,5 +488,8 @@ valid_screen_transitions = {
     MenuOption.FINISHEDPLACING: [MenuOption.STARTGAME, MenuOption.NEWGAMEMENU, MenuOption.EXIT],
     MenuOption.GAMEOVER: [MenuOption.MAINMENU, MenuOption.EXIT],
     MenuOption.STARTGAME: [MenuOption.MAINMENU, MenuOption.EXIT],
-    MenuOption.VIEWCONFIG: [MenuOption.SHIPCELL, MenuOption.HITCELL, MenuOption.MISSCELL, MenuOption.MAINMENU]
+    MenuOption.VIEWCONFIG: [MenuOption.SHIPCELL, MenuOption.HITCELL, MenuOption.MISSCELL, MenuOption.NEWGAMEMENU],
+    MenuOption.SHIPCELLCHANGED: [MenuOption.SHIPCELL, MenuOption.HITCELL, MenuOption.MISSCELL, MenuOption.NEWGAMEMENU],
+    MenuOption.HITCELLCHANGED: [MenuOption.SHIPCELL, MenuOption.HITCELL, MenuOption.MISSCELL, MenuOption.NEWGAMEMENU],
+    MenuOption.MISSCELLCHANGED: [MenuOption.SHIPCELL, MenuOption.HITCELL, MenuOption.MISSCELL, MenuOption.NEWGAMEMENU],
 }

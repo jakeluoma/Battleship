@@ -26,6 +26,10 @@ class MenuOption(Enum):
     SHIPCELL = 14
     HITCELL = 15
     MISSCELL = 16
+    CHARENTRY = 17
+    SHIPCELLCHANGED = 18
+    HITCELLCHANGED = 19
+    MISSCELLCHANGED = 20
 
 
 class CellConfig:
