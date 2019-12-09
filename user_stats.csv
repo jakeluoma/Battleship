@@ -1,6 +1,6 @@
 ,user_name,lifetime_wins,lifetime_losses,lifetime_hits,lifetime_hits_received,lifetime_misses,lifetime_misses_received,lifetime_ships_sunk,lifetime_ships_lost,most_recent_game_hits,most_recent_game_hits_received,most_recent_game_misses,most_recent_game_misses_received,most_recent_game_ships_sunk,most_recent_game_ships_lost
 0,nikhil,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-1,jake,3,2,57,52,50,52,17,15,0,1,1,0,0,0
-2,n,0,5,8,20,22,12,2,8,5,11,12,8,1,5
+1,jake,0,1,30,32,30,28,8,9,0,0,0,0,0,0
+2,n,0,5,8,22,24,12,2,8,0,0,0,0,0,0
 3,x,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 4,b,0,0,0,0,0,0,0,0,0,0,0,0,0,0

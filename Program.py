@@ -1,14 +1,15 @@
+import warnings
 from typing import Optional
 
-from game import Game
-from statistics import Statistics
-from player import UserProfile
 from canvas import login_canvas, start_menu_canvas, MenuOption, exit_canvas, main_menu_canvas, StatsCanvas, \
-    new_game_canvas, BoardCanvas, PlaceShipsMenuCanvas, FinishedPlacingShipsCanvas, TakeTurnCanvas, \
-    configure_display_start_canvas
-from view import View
+    new_game_canvas, PlaceShipsMenuCanvas, TakeTurnCanvas, \
+    configure_display_start_canvas, not_hit_cell_change_request_canvas, hit_cell_change_request_canvas, \
+    miss_cell_change_request_canvas
+from game import Game
+from player import UserProfile
 from settings import Settings
-import warnings
+from statistics import Statistics
+from view import View
 
 
 class Program:
@@ -60,7 +61,19 @@ class Program:
 
     def configure_display(self) -> MenuOption:
         Settings.configure_settings()
-        return MenuOption.MAINMENU
+        return MenuOption.NEWGAMEMENU
+
+    def change_ship_cell(self) -> MenuOption:
+        Settings.change_ship_cell()
+        return MenuOption.VIEWCONFIG
+
+    def change_hit_cell(self) -> MenuOption:
+        Settings.change_hit_cell()
+        return MenuOption.VIEWCONFIG
+
+    def change_miss_cell(self) -> MenuOption:
+        Settings.change_missed_cell()
+        return MenuOption.VIEWCONFIG
 
     def get_take_turn_canvas(self) -> TakeTurnCanvas:
         return self.game.get_take_turn_canvas()
@@ -85,7 +98,10 @@ class ProgramAndViewCoordinator:
         MenuOption.PLACESHIPSMENU: lambda program: program.get_player_ship_placement_menu_canvas(),
         MenuOption.PLACESHIPS: None,
         MenuOption.STARTGAME: lambda program: program.get_take_turn_canvas(),
-        MenuOption.LOADGAME: None
+        MenuOption.LOADGAME: None,
+        MenuOption.SHIPCELL: not_hit_cell_change_request_canvas,
+        MenuOption.HITCELL: hit_cell_change_request_canvas,
+        MenuOption.MISSCELL: miss_cell_change_request_canvas
     }
 
     parameterized_with_program = [MenuOption.SHOWSTATS, MenuOption.PLACESHIPSMENU, MenuOption.STARTGAME]
@@ -104,7 +120,10 @@ class ProgramAndViewCoordinator:
         MenuOption.VIEWCONFIG: 'configure_display',
         MenuOption.PLACESHIPS: 'place_ships',
         MenuOption.STARTGAME: 'start_game',
-        MenuOption.LOADGAME: 'load_game'
+        MenuOption.LOADGAME: 'load_game',
+        MenuOption.SHIPCELL: 'change_ship_cell',
+        MenuOption.HITCELL: 'change_hit_cell',
+        MenuOption.MISSCELL: 'change_miss_cell'
     }
 
     def __init__(self, program: Program, view: View):
