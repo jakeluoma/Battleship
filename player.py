@@ -2,6 +2,7 @@ from enum import Enum
 from typing import List, Union
 from typing import Tuple
 
+from canvas import MenuOption
 from Coordinate import Coordinate
 from PlayerLogic import PlayerLogic
 from Ship import Ship, ShipType
@@ -9,11 +10,10 @@ from board import Board
 
 import statistics
 # need to do import statistics due to circular import with statistics
-from canvas import MenuOption
+
 
 
 class UserProfile:
-    # should really have a reference to Statistics
     def __init__(self, user_name: str):
         self.user_name = user_name
 
@@ -69,7 +69,7 @@ class Player:
             return ret
         hits, misses, ships_lost = self.opponent.receive_attack([ret])
         self.target_board.update_hits_and_misses(hits, misses)
-        
+
         if self.user_profile is not None:
             statistics.Statistics.update_stats(self.user_profile.get_user_name(), len(hits), len(misses), len(ships_lost), True)
         

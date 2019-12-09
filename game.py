@@ -3,6 +3,7 @@ from enum import Enum
 from time import sleep
 from typing import List, Optional
 
+import os
 import pickle
 
 from board import Board
@@ -17,8 +18,6 @@ import statistics
 
 class GameMode:
     def __init__(self):
-        #self.board_dimension = 10
-        #self.ship_types: List[ShipType] = [ShipType.BATTLESHIP, ShipType.CARRIER, ShipType.DESTROYER, ShipType.PATROL_BOAT, ShipType.SUBMARINE]
         self.board_dimension = 5
         self.ship_types: List[ShipType] = [ShipType.SUBMARINE, ShipType.SUBMARINE, ShipType.SUBMARINE]
 
@@ -125,22 +124,31 @@ class Game:
         if self.player1.is_victorious():
             user_won = True
         statistics.Statistics.update_win_loss_stats(self.player1.user_profile.get_user_name(), user_won)
+        self.delete_game()
         self.view.update_display(GameOverScreenCanvas(user_won=user_won))
 
     # saves game to pickle, which gets written to file
     def save_game(self):
         # player1 is the human user
-        file_name = self.player1.user_profile.get_user_name() + "_saved_game.p"
+        file_name = "save_game_" + self.player1.user_profile.get_user_name() + ".p"
         try:
             pickle.dump(self, open(file_name, "wb"))
         except:
             print("Failed to save game")
 
+    def delete_game(self):
+        # player1 is the human user
+        file_name = "save_game_" + self.player1.user_profile.get_user_name() + ".p"
+        try:
+            os.remove(file_name)
+        except OSError:
+            pass
+
     # intended to be called by a non-Game instance.  Loads a saved game from a pickle
     # and returns a Game instance.
     @staticmethod
     def load_saved_game(user: UserProfile):
-        file_name = user.get_user_name() + "_saved_game.p"
+        file_name = "save_game_" + user.get_user_name() + ".p"
         ret: Game = None
         try:
             ret = pickle.load(open(file_name, "rb"))
