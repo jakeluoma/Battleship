@@ -5,8 +5,8 @@ from time import sleep
 from typing import List, Optional
 
 import statistics
-from PlayerLogic import CommandLineInstruction, AI
-from Ship import ShipType
+from player_logic import CommandLineInstruction, AI
+from ship import ShipType
 from board import Board
 from canvas import PlaceShipsMenuCanvas, PlaceShipsCanvas, FinishedPlacingShipsCanvas, TakeTurnCanvas, center_format, \
     GameOverScreenCanvas, MenuOption

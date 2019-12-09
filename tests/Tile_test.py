@@ -6,9 +6,9 @@ current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentfra
 parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
 
-from Coordinate import Coordinate
+from coordinate import Coordinate
 import Tile
-import Ship
+import ship
 
 def test_tile_init():
     coordinate = Coordinate(1, 1)
@@ -19,7 +19,7 @@ def test_tile_init():
     assert tile.get_hit_status() == Tile.TileHitStatus.EMPTY
 
 def test_tile_ship_functions():
-    ship = Ship.Ship("test", 1)
+    ship = ship.Ship("test", 1)
 
     coordinate = Coordinate(1, 1)
     tile = Tile.Tile(coordinate)

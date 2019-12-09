@@ -7,8 +7,8 @@ parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
 
 from board import Board
-from PlayerLogic import AI
-from Ship import ShipType
+from player_logic import AI
+from ship import ShipType
 
 """ Testing ship placement """
 # 2x2 board, placing two patrol boats.  All tiles should correspond to a ship.

@@ -3,8 +3,8 @@ from enum import Enum
 from typing import List, Optional, Tuple, Union
 from random import randrange
 
-from Coordinate import Coordinate
-from Ship import ShipBuilder, Ship, ShipType
+from coordinate import Coordinate
+from ship import ShipBuilder, Ship, ShipType
 from Tile import Tile, TileHitStatus
 from board import Board, BoardHelper
 from canvas import MenuOption

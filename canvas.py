@@ -2,13 +2,20 @@ from abc import ABC
 from enum import Enum
 from typing import List
 
-from Coordinate import Coordinate
-from Ship import ShipType, ship_size_map, Tile
+from coordinate import Coordinate
+from ship import ShipType, ship_size_map, Tile
 
 import settings
 # have to do "import settings" due to circular import with settings
 
 center_format = "{0:^100}\n"
+
+
+class SettingsOption(Enum):
+    CHANGE_SHIP_CELL = 0
+    CHANGE_HIT_CELL = 1
+    CHANGE_MISS_CELL = 2
+    NEW_GAME = 3
 
 
 class MenuOption(Enum):

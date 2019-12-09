@@ -1,8 +1,8 @@
 from enum import Enum
 from typing import List, Tuple
 
-from Coordinate import Coordinate
-from Ship import Tile, TileHitStatus
+from coordinate import Coordinate
+from ship import Tile, TileHitStatus
 from canvas import BoardCanvas
 
 

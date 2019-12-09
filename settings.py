@@ -3,11 +3,7 @@ import canvas
 from enum import Enum
 from view import InputParser
 
-class SettingsOption(Enum):
-    CHANGE_SHIP_CELL = 0
-    CHANGE_HIT_CELL = 1
-    CHANGE_MISS_CELL = 2
-    NEW_GAME = 3
+
 
 
 class Settings:

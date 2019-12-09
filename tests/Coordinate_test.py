@@ -6,7 +6,7 @@ current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentfra
 parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
 
-from Coordinate import Coordinate
+from coordinate import Coordinate
 
 def test_coordinate_init():
     coordinate = Coordinate(1, 1)

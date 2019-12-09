@@ -4,7 +4,7 @@ from enum import Enum
 from typing import List
 
 # need to do "import Tile" since it has a circular import with Ship
-from Coordinate import Coordinate
+from coordinate import Coordinate
 
 
 class Ship:

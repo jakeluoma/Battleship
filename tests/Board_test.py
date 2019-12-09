@@ -7,8 +7,8 @@ parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir) 
 
 from board import Board, BoardHelper
-from Coordinate import Coordinate
-import Ship
+from coordinate import Coordinate
+import ship
 import Tile
 
 def test_board_init():
@@ -32,7 +32,7 @@ def test_process_incoming_attack():
     dimension = 2
     board = Board(dimension)
 
-    ship = Ship.Ship("test", 1)
+    ship = ship.Ship("test", 1)
     tile = board.get_tile(0, 0)
     tile.set_ship(ship)
 

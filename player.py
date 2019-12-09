@@ -3,9 +3,9 @@ from typing import List, Union
 from typing import Tuple
 
 from canvas import MenuOption
-from Coordinate import Coordinate
-from PlayerLogic import PlayerLogic
-from Ship import Ship, ShipType
+from coordinate import Coordinate
+from player_logic import PlayerLogic
+from ship import Ship, ShipType
 from board import Board
 
 import statistics

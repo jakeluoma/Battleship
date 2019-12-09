@@ -6,12 +6,12 @@ current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentfra
 parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
 
-from Coordinate import Coordinate
-import Ship
+from coordinate import Coordinate
+import ship
 import Tile
 
 def test_ship_init_and_is_sunk():
-    ship = Ship.Ship("test", 1)
+    ship = ship.Ship("test", 1)
     coordinate = Coordinate(0, 0)
     tile = Tile.Tile(coordinate)
 
@@ -28,8 +28,8 @@ def test_ship_init_and_is_sunk():
     assert ship.is_sunk() == True
 
 def test_shipBuilder():
-    ship_builder = Ship.ShipBuilder()
-    ship_builder.start_ship(Ship.ShipType.BATTLESHIP)
+    ship_builder = ship.ShipBuilder()
+    ship_builder.start_ship(ship.ShipType.BATTLESHIP)
     assert ship_builder.get_ship_size() == 4
     assert ship_builder.return_completed_ship() == None
 

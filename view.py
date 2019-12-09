@@ -1,7 +1,7 @@
 import os
 from typing import Tuple, Optional, Union
 
-from Coordinate import Coordinate
+from coordinate import Coordinate
 from board import Board, Direction
 from canvas import Canvas, MenuOption, valid_screen_transitions, canvas_to_option
 from settings import SettingsOption
