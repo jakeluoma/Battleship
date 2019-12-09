@@ -4,11 +4,11 @@ from typing import List, Optional, Tuple, Union
 from random import randrange
 
 from coordinate import Coordinate
-from ship import ShipBuilder, Ship, ShipType
-from Tile import Tile, TileHitStatus
+from ship import ShipBuilder, Ship, ShipType, Tile, TileHitStatus
 from board import Board, BoardHelper
 from canvas import MenuOption
 from view import View
+
 
 class PlayerLogic(ABC):
     def __init__(self):

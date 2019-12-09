@@ -1,10 +1,8 @@
 from abc import ABC
-from enum import Enum
 from typing import List
 
 from coordinate import Coordinate
 from options import MenuOption, CellConfig
-from settings import Settings
 from ship import ShipType, ship_size_map, Tile
 
 # have to do "import settings" due to circular import with settings
@@ -152,7 +150,7 @@ class BoardCanvas(Canvas):
         self.is_target = is_target
         self.board_coordinates_dict = {k: {} for k in range(self.board_dimension)}
         for key in self.board_coordinates_dict:
-            self.board_coordinates_dict[key] = {k: Settings.empty_cell for k in range(self.board_dimension)}
+            self.board_coordinates_dict[key] = {k: CellConfig.empty_cell for k in range(self.board_dimension)}
 
         super().__init__()
         self.display_string = self.update(self.board_coordinates_dict)
