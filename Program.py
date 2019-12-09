@@ -64,15 +64,15 @@ class Program:
 
     def change_ship_cell(self) -> MenuOption:
         Settings.change_ship_cell()
-        return MenuOption.VIEWCONFIG
+        return MenuOption.NEWGAMEMENU
 
     def change_hit_cell(self) -> MenuOption:
         Settings.change_hit_cell()
-        return MenuOption.VIEWCONFIG
+        return MenuOption.NEWGAMEMENU
 
     def change_miss_cell(self) -> MenuOption:
         Settings.change_missed_cell()
-        return MenuOption.VIEWCONFIG
+        return MenuOption.NEWGAMEMENU
 
     def get_take_turn_canvas(self) -> TakeTurnCanvas:
         return self.game.get_take_turn_canvas()

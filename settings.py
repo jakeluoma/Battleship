@@ -8,6 +8,7 @@ class Settings:
     hit_cell = 'X'
     missed_cell = 'O'
 
+
     @staticmethod
     def configure_settings():
         # canvas.configure_display_start_canvas.paint()
