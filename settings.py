@@ -1,5 +1,14 @@
 import canvas
 # have to do "import canvas" due to circular import with canvas
+from enum import Enum
+from view import InputParser
+
+class SettingsOption(Enum):
+    CHANGE_SHIP_CELL = 0
+    CHANGE_HIT_CELL = 1
+    CHANGE_MISS_CELL = 2
+    NEW_GAME = 3
+
 
 class Settings:
 
@@ -12,23 +21,22 @@ class Settings:
     @staticmethod
     def configure_settings():
         # canvas.configure_display_start_canvas.paint()
-        settings = input()
-        if (settings in ['s', 'S', 'ship', 'Ship', 'SHIP']):
+        settings_inp = input()
+        option = InputParser.parse_settings(settings_inp)
+        if option == 0:
             Settings.change_ship_cell()
-        elif (settings in ['h', 'H', 'hit', 'Hit', 'HIT']):
+        elif option == 1:
             Settings.change_hit_cell()
-        elif (settings in ['m', 'M', 'miss', 'Miss', 'MISS']):
+        elif option == 2:
             Settings.change_missed_cell()
         return
 
     @staticmethod
     def change_empty_cell():
         canvas.empty_cell_change_request_canvas.paint()
-        yes_no = input()
-        if yes_no in ['Y', 'y', 'YES', 'Yes', 'yes']:
-            canvas.character_entry_request_canvas.paint()
-            Settings.empty_cell = input()
-            canvas.empty_cell_changed_canvas.paint()
+        canvas.character_entry_request_canvas.paint()
+        Settings.empty_cell = input()
+        canvas.empty_cell_changed_canvas.paint()
         return
 
     @staticmethod

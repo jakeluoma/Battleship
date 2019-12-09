@@ -4,6 +4,7 @@ from typing import Tuple, Optional, Union
 from Coordinate import Coordinate
 from board import Board, Direction
 from canvas import Canvas, MenuOption, valid_screen_transitions, canvas_to_option
+from settings import SettingsOption
 
 
 class InputParser:
@@ -70,6 +71,17 @@ class InputParser:
             return
 
         raise Exception("Invalid selection.  Try again.")
+
+    @staticmethod
+    def parse_settings(inp) -> SettingsOption:
+        if (inp in ['s', 'S', 'ship', 'Ship', 'SHIP']):
+            return SettingsOption.CHANGE_SHIP_CELL
+        elif (inp in ['h', 'H', 'hit', 'Hit', 'HIT']):
+            return SettingsOption.CHANGE_HIT_CELL
+        elif (inp in ['m', 'M', 'miss', 'Miss', 'MISS']):
+            return SettingsOption.CHANGE_MISS_CELL
+        else:
+            return SettingsOption.NEW_GAME
 
 # The View part of the MVC pattern
 class View:
