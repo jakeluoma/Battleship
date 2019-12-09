@@ -49,6 +49,7 @@ class Game:
         # human player will start first
         self.current_player = self.player2
 
+        # Game implements the Model part of the MVC pattern
         self.view = view
 
     # Switch the current player
@@ -128,6 +129,8 @@ class Game:
         self.view.update_display(GameOverScreenCanvas(user_won=user_won))
 
     # saves game to pickle, which gets written to file
+    # the pickle files implicitly implment the Memento pattern with
+    # Program and Game
     def save_game(self):
         # player1 is the human user
         file_name = "save_game_" + self.player1.user_profile.get_user_name() + ".p"

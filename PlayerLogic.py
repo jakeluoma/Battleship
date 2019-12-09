@@ -12,8 +12,8 @@ from view import View
 
 class PlayerLogic(ABC):
     def __init__(self):
-        self.ship_builder = ShipBuilder()
-        self.view = View()
+        self.ship_builder = ShipBuilder() # implements the Builder pattern to make Ships
+        self.view = View() # PlayerLogic implements the Controller part of the MVC pattern
 
     def place_ship(self, board: Board, ship_type: ShipType) -> Ship:
         pass

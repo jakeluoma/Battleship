@@ -30,7 +30,7 @@ class Player:
     def __init__(self, user_profile: UserProfile, player_logic: PlayerLogic, fleet_board: Board, target_board: Board,
                  ships_to_place: List[ShipType], is_ai=False):
         self.user_profile = user_profile
-        self.player_logic = player_logic
+        self.player_logic = player_logic # delegates decision-making to the player_logic class via the Strategy pattern
         self.fleet_board = fleet_board
         self.target_board = target_board
         self.is_ai = is_ai

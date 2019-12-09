@@ -71,7 +71,7 @@ class InputParser:
 
         raise Exception("Invalid selection.  Try again.")
 
-
+# The View part of the MVC pattern
 class View:
     def __init__(self):
         self.menu_option = None

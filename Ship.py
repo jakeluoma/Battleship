@@ -46,6 +46,7 @@ ship_size_map = {
 
 # Usage: call startShip(), then placeShip(), then returnCompletedShip() to get a Ship object.
 # Can call getShipSize() at any time
+# Implements the Builder pattern along with PlayerLogic
 class ShipBuilder:
     def __init__(self):
         self.ship = None
