@@ -449,7 +449,7 @@ def canvas_to_option(canvas: Canvas):
     elif isinstance(canvas, GameOverScreenCanvas):
         return MenuOption.GAMEOVER
 
-    raise Exception("No option found for canvas")
+    raise Exception("No option found for canvas: ", canvas.__class__.__name__)
 
 
 valid_screen_transitions = {
@@ -463,5 +463,6 @@ valid_screen_transitions = {
     MenuOption.PLACESHIPSMENU: [MenuOption.PLACESHIPS, MenuOption.STARTGAME, MenuOption.NEWGAMEMENU, MenuOption.EXIT],
     MenuOption.PLACESHIPS: [MenuOption.STARTGAME, MenuOption.NEWGAMEMENU, MenuOption.EXIT],
     MenuOption.FINISHEDPLACING: [MenuOption.STARTGAME, MenuOption.NEWGAMEMENU, MenuOption.EXIT],
-    MenuOption.GAMEOVER: [MenuOption.MAINMENU, MenuOption.EXIT]
+    MenuOption.GAMEOVER: [MenuOption.MAINMENU, MenuOption.EXIT],
+    MenuOption.STARTGAME: [MenuOption.MAINMENU, MenuOption.EXIT]
 }

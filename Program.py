@@ -1,3 +1,5 @@
+from typing import Optional
+
 from game import Game
 from statistics import Statistics
 from player import UserProfile
@@ -11,7 +13,7 @@ class Program:
         self.known_users = list(Statistics.user_stats.user_name)
         self.ai_types = [0, 1]
         self.user = None
-        # self.game = None
+        self.game = None
 
     def login(self, view) -> MenuOption:
         user_name = view.get_username()
@@ -40,13 +42,13 @@ class Program:
         # there is no logic to be run by the program class. This currently happens for menu screens.
         pass
 
-    def start_game(self):
-        self.game.run_game()
+    def start_game(self) -> Optional[MenuOption]:
+        return self.game.run_game()
 
     def load_game(self):
         try:
-            game = Game.load_saved_game(self.user)
-            game.run_game()
+            self.game = Game.load_saved_game(self.user)
+            return MenuOption.STARTGAME
         except:
             return
 
@@ -75,7 +77,7 @@ class ProgramAndViewCoordinator:
         MenuOption.PLACESHIPSMENU: lambda program: program.get_player_ship_placement_menu_canvas(),
         MenuOption.PLACESHIPS: None,
         MenuOption.STARTGAME: lambda program: program.get_take_turn_canvas(),
-        MenuOption.LOADGAME: TakeTurnCanvas
+        MenuOption.LOADGAME: None
     }
 
     parameterized_with_program = [MenuOption.SHOWSTATS, MenuOption.PLACESHIPSMENU, MenuOption.STARTGAME]

@@ -1,14 +1,14 @@
 from abc import ABC
 from enum import Enum
 from time import sleep
-from typing import List
+from typing import List, Optional
 
 import pickle
 
 from board import Board
 from Ship import ShipType
 from canvas import PlaceShipsMenuCanvas, PlaceShipsCanvas, FinishedPlacingShipsCanvas, TakeTurnCanvas, center_format, \
-    GameOverScreenCanvas
+    GameOverScreenCanvas, MenuOption
 from player import Player, UserProfile
 from PlayerLogic import CommandLineInstruction, AI
 from view import View
@@ -60,7 +60,8 @@ class Game:
             self.current_player = self.player1
 
     # Alternates between players' turns. Continues loop as long as no player has achieved victory
-    def run_game(self, dry_run=False):
+    def run_game(self, dry_run=False) -> Optional[MenuOption]:
+        # dry_run=True
         if dry_run:
             self.player2.victory = True
             self.end_game()
@@ -69,7 +70,11 @@ class Game:
         while not self.current_player.is_victorious():
             self.save_game() # the game is saved after every turn
             self.switch_player()
-            hits, misses, ships_lost = self.current_player.take_turn()
+            ret = self.current_player.take_turn()
+            if isinstance(ret, MenuOption):
+                return ret
+            hits, misses, ships_lost = ret
+
             message = ""
             if self.current_player == self.player1:
                 self.player1.target_board.canvas.update_hits(hits)
