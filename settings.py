@@ -1,7 +1,7 @@
 # have to do "import canvas" due to circular import with canvas
 from canvas import empty_cell_change_request_canvas, character_entry_request_canvas, empty_cell_changed_canvas, \
     not_hit_cell_changed_canvas, enter_again_request_canvas, miss_cell_changed_canvas, hit_cell_changed_canvas
-from options import CellConfig
+from options import CellConfig, SettingsOption
 from view import InputParser, View
 
 
@@ -11,11 +11,11 @@ class Settings:
         # canvas.configure_display_start_canvas.paint()
         settings_inp = input()
         option = InputParser.parse_settings(settings_inp)
-        if option == 0:
+        if option == SettingsOption.CHANGE_SHIP_CELL:
             Settings.change_ship_cell(view)
-        elif option == 1:
+        elif option == SettingsOption.CHANGE_HIT_CELL:
             Settings.change_hit_cell(view)
-        elif option == 2:
+        elif option == SettingsOption.CHANGE_MISS_CELL:
             Settings.change_missed_cell(view)
         return
 
